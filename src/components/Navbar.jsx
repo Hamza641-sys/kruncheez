@@ -36,22 +36,7 @@ const Navbar = () => {
           : 'bg-transparent'
       }`}
     >
-      {/* Top info bar */}
-      <div className="hidden md:block bg-krunch-red py-1.5">
-        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-white text-xs font-body">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <Phone size={11} />
-              0317-7787648 | 0308-4509090 | 0335-6609178
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>⏰ Open: 11:00am – 2:00am</span>
-            <span>🛵 Free Home Delivery</span>
-            <span>✅ Halal</span>
-          </div>
-        </div>
-      </div>
+      {/* Top info bar — removed */}
 
       {/* Main nav */}
       <nav className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
