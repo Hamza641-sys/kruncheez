@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0A0A0A;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #E31E24;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B01519;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-semibold px-6 py-3 rounded-full transition-all duration-300 uppercase tracking-wider;
+  }
+
+  .btn-outline {
+    @apply border-2 border-krunch-red text-krunch-red hover:bg-krunch-red hover:text-white font-heading font-semibold px-6 py-3 rounded-full transition-all duration-300 uppercase tracking-wider;
+  }
+
+  .section-title {
+    @apply font-heading text-3xl md:text-4xl lg:text-5xl font-bold uppercase tracking-wider;
+  }
+
+  .card-dark {
+    @apply bg-krunch-card border border-krunch-border rounded-xl overflow-hidden;
+  }
+
+  .badge-red {
+    @apply bg-krunch-red text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider;
+  }
+
+  .nav-link {
+    @apply text-krunch-light hover:text-krunch-red transition-colors duration-200 font-body font-medium uppercase tracking-wider text-sm;
+  }
+}
+
+/* Red glow text effect */
+.text-glow-red {
+  text-shadow: 0 0 20px rgba(227, 30, 36, 0.5);
+}
+
+/* Hero overlay */
+.hero-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+/* Card hover effect */
+.food-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(227, 30, 36, 0.2);
+}
+
+.food-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Animated underline */
+.animated-underline::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 3px;
+  background: #E31E24;
+  transition: width 0.3s ease;
+}
+
+.animated-underline:hover::after {
+  width: 100%;
+}
+
+/* Shine effect on buttons */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-shine:hover::before {
+  left: 100%;
+}
+
+/* Diagonal red accent bar */
+.accent-bar {
+  position: relative;
+}
+
+.accent-bar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #E31E24;
+  border-radius: 2px;
+}
