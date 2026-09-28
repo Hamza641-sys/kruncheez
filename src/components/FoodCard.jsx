@@ -69,7 +69,7 @@ const FoodCard = ({ item, compact = false }) => {
   };
 
   const badgeClass = item.badge ? (badgeColors[item.badge] || 'bg-krunch-red') : '';
-  const img = categoryImages[item.category];
+  const img = item.img || categoryImages[item.category];
   const emoji = categoryEmoji[item.category] || '🍴';
 
   return (
