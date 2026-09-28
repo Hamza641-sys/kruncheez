@@ -27,7 +27,7 @@ const slides = [
     tag1: 'Save',
     tag2: 'Big',
     tag3: 'Combos',
-    bgImg: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=1920&q=90&auto=format&fit=crop',
+    bgImg: 'https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=1920&q=90&auto=format&fit=crop',
   },
   {
     id: 3,
