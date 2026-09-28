@@ -53,8 +53,8 @@ const slides = [
     tag1: 'Wok Fired',
     tag2: 'Fresh',
     tag3: 'Spicy',
-    // Chinese noodles / stir fry image
-    bgImg: 'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=1920&q=90&auto=format&fit=crop',
+    // Chinese noodles / chowmein dish image
+    bgImg: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1920&q=90&auto=format&fit=crop',
   },
 ];
 
