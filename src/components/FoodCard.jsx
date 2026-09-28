@@ -17,20 +17,39 @@ const badgeColors = {
   'FAMILY FEAST': 'bg-blue-600',
 };
 
-// Category emoji map
+// Real food images per category — all chicken-based / accurate
+const categoryImages = {
+  // Crispy chicken zinger burger (NOT beef)
+  burgers: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&q=80&auto=format&fit=crop',
+  // BBQ grilled chicken
+  bbq: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&q=80&auto=format&fit=crop',
+  // Chicken wrap / shawarma
+  wraps: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&q=80&auto=format&fit=crop',
+  // Loaded pizza
+  pizza: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80&auto=format&fit=crop',
+  // Chinese noodles
+  chinese: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=400&q=80&auto=format&fit=crop',
+  // Pasta
+  pasta: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400&q=80&auto=format&fit=crop',
+  // Crispy chicken wings / starters
+  starters: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&q=80&auto=format&fit=crop',
+  // Sandwich
+  sandwich: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80&auto=format&fit=crop',
+  // Fried chicken pieces
+  chicken: 'https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=400&q=80&auto=format&fit=crop',
+  // Soup bowl
+  soup: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80&auto=format&fit=crop',
+  // BBQ platter
+  platter: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80&auto=format&fit=crop',
+  // Combo deal
+  deals: 'https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&q=80&auto=format&fit=crop',
+};
+
+// Fallback emoji if image fails
 const categoryEmoji = {
-  burgers: '🍔',
-  bbq: '🔥',
-  wraps: '🌯',
-  pizza: '🍕',
-  chinese: '🍜',
-  pasta: '🍝',
-  starters: '🍗',
-  sandwich: '🥪',
-  chicken: '🍗',
-  soup: '🍲',
-  platter: '🥘',
-  deals: '🏷️',
+  burgers: '🍗', bbq: '🔥', wraps: '🌯', pizza: '🍕',
+  chinese: '🍜', pasta: '🍝', starters: '🍗', sandwich: '🥪',
+  chicken: '🍗', soup: '🍲', platter: '🥘', deals: '🏷️',
 };
 
 const FoodCard = ({ item, compact = false }) => {
@@ -50,6 +69,7 @@ const FoodCard = ({ item, compact = false }) => {
   };
 
   const badgeClass = item.badge ? (badgeColors[item.badge] || 'bg-krunch-red') : '';
+  const img = categoryImages[item.category];
   const emoji = categoryEmoji[item.category] || '🍴';
 
   return (
@@ -65,13 +85,29 @@ const FoodCard = ({ item, compact = false }) => {
         </div>
       )}
 
-      {/* Image area */}
-      <div className={`relative overflow-hidden bg-gradient-to-br from-krunch-dark to-krunch-black ${compact ? 'h-28' : 'h-40'} flex items-center justify-center`}>
-        <div className="text-6xl select-none group-hover:scale-110 transition-transform duration-300">
+      {/* Image area — real food photo */}
+      <div className={`relative overflow-hidden bg-krunch-black ${compact ? 'h-32' : 'h-44'}`}>
+        {img ? (
+          <img
+            src={img}
+            alt={item.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={e => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        {/* Emoji fallback (hidden by default, shown if img fails) */}
+        <div
+          className="absolute inset-0 items-center justify-center text-5xl select-none bg-gradient-to-br from-krunch-dark to-krunch-black"
+          style={{ display: img ? 'none' : 'flex' }}
+        >
           {emoji}
         </div>
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-krunch-card/80 to-transparent" />
+        {/* Overlay gradient at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-krunch-card to-transparent" />
       </div>
 
       {/* Content */}

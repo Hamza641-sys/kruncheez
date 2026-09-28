@@ -14,8 +14,8 @@ const slides = [
     tag1: 'Fresh',
     tag2: 'Hot',
     tag3: 'Tasty',
-    // Full screen background food image
-    bgImg: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&q=90&auto=format&fit=crop',
+    // Full screen background food image — crispy chicken zinger burger
+    bgImg: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1920&q=90&auto=format&fit=crop',
   },
   {
     id: 2,
