@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { CheckCircle, ShoppingCart, MapPin, Phone, User, MessageSquare, ArrowLeft, Truck, Store, CreditCard } from 'lucide-react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { CheckCircle, ShoppingCart, MapPin, Phone, User, MessageSquare, ArrowLeft, Truck, Store, CreditCard, Tag, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { placeOrder } from '../firebase/orderService';
+import { validatePromoCode, usePromoCode } from '../firebase/promoService';
+import { sendWhatsAppOrderNotification } from '../firebase/whatsappService';
 import toast from 'react-hot-toast';
 
 const categoryEmoji = {
