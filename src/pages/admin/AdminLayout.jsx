@@ -3,18 +3,21 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
-  BarChart3, Settings, LogOut, Menu, X, Bell, Tag
+  BarChart3, Settings, LogOut, Menu, X, Bell, Tag,
+  QrCode, CreditCard
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
-  { path: '/admin',           label: 'Dashboard',   icon: <LayoutDashboard size={18} /> },
-  { path: '/admin/orders',    label: 'Orders',      icon: <ShoppingBag size={18} /> },
-  { path: '/admin/menu',      label: 'Menu',        icon: <UtensilsCrossed size={18} /> },
-  { path: '/admin/customers', label: 'Customers',   icon: <Users size={18} /> },
-  { path: '/admin/analytics', label: 'Analytics',   icon: <BarChart3 size={18} /> },
-  { path: '/admin/promos',    label: 'Promo Codes', icon: <Tag size={18} /> },
-  { path: '/admin/settings',  label: 'Settings',    icon: <Settings size={18} /> },
+  { path: '/admin',           label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
+  { path: '/admin/orders',    label: 'Orders',        icon: <ShoppingBag size={18} /> },
+  { path: '/admin/menu',      label: 'Menu',          icon: <UtensilsCrossed size={18} /> },
+  { path: '/admin/qr',        label: 'QR Codes',      icon: <QrCode size={18} /> },
+  { path: '/admin/cards',     label: 'Loyalty Cards', icon: <CreditCard size={18} /> },
+  { path: '/admin/customers', label: 'Customers',     icon: <Users size={18} /> },
+  { path: '/admin/analytics', label: 'Analytics',     icon: <BarChart3 size={18} /> },
+  { path: '/admin/promos',    label: 'Promo Codes',   icon: <Tag size={18} /> },
+  { path: '/admin/settings',  label: 'Settings',      icon: <Settings size={18} /> },
 ];
 
 const AdminLayout = () => {

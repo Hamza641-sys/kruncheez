@@ -164,6 +164,11 @@ const Navbar = () => {
                           <span className="ml-auto text-amber-400 font-bold text-xs">{userData.loyaltyPoints}</span>
                         )}
                       </Link>
+                      <Link to="/my-card"
+                        className="flex items-center gap-3 px-4 py-2.5 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
+                        <span className="text-base">🃏</span>
+                        My Loyalty Card
+                      </Link>
                       <Link to="/profile"
                         className="flex items-center gap-3 px-4 py-2.5 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
                         <User size={15} className="text-purple-400" />
@@ -272,6 +277,10 @@ const Navbar = () => {
                   <Link to="/loyalty"
                     className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
                     <Gift size={15} className="text-amber-400" /> Loyalty Points
+                  </Link>
+                  <Link to="/my-card"
+                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
+                    <span className="text-base">🃏</span> My Loyalty Card
                   </Link>
                   {isAdmin && (
                     <Link to="/admin"

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, QrCode } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { menuCategories, menuItems } from '../data/menuData';
 import FoodCard from '../components/FoodCard';
 import { useCart } from '../context/CartContext';
@@ -10,6 +11,8 @@ const MenuPage = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('popular');
   const { setIsCartOpen, cartCount } = useCart();
+  const [searchParams] = useSearchParams();
+  const tableNumber = searchParams.get('table');
 
   const items = useMemo(() => {
     let base = search.trim()
@@ -28,6 +31,22 @@ const MenuPage = () => {
 
   return (
     <div className="min-h-screen bg-krunch-black pt-24 pb-16">
+      {/* Table Banner — shows when QR scanned */}
+      {tableNumber && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-krunch-red text-white px-4 py-3 text-center"
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
+            <QrCode size={18} />
+            <span className="font-heading font-bold text-sm uppercase tracking-widest">
+              📍 You are at Table {tableNumber} — Order directly from your seat!
+            </span>
+          </div>
+        </motion.div>
+      )}
+
       {/* Page Header */}
       <div className="bg-krunch-dark border-b border-krunch-border py-10">
         <div className="max-w-7xl mx-auto px-4">

@@ -1,16 +1,17 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle, ShoppingCart, MapPin, Phone,
   User, MessageSquare, ArrowLeft, Truck,
-  Store, CreditCard, Tag, X, ArrowRight
+  Store, CreditCard, Tag, X, ArrowRight, QrCode
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { placeOrder } from '../firebase/orderService';
 import { validatePromoCode, usePromoCode } from '../firebase/promoService';
 import { sendWhatsAppOrderNotification } from '../firebase/whatsappService';
+import { getCardByCardId, addVisitAndPoints, applyCardDiscount, getCardByUserId } from '../firebase/cardService';
 import toast from 'react-hot-toast';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
@@ -25,17 +26,24 @@ const CheckoutPage = () => {
   const { cartItems, cartSubtotal, deliveryFee, cartTotal, clearCart } = useCart();
   const { user, userData } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tableNumber = searchParams.get('table');
 
   const [form, setForm] = useState({
     name: '', phone: '', address: '', area: '',
-    notes: '', paymentMethod: 'cash', orderType: 'delivery',
+    notes: '', paymentMethod: 'cash',
+    orderType: tableNumber ? 'dine-in' : 'delivery',
   });
-  const [promoCode, setPromoCode]       = useState('');
-  const [promoResult, setPromoResult]   = useState(null);
-  const [promoLoading, setPromoLoading] = useState(false);
-  const [loading, setLoading]           = useState(false);
-  const [ordered, setOrdered]           = useState(false);
-  const [orderId, setOrderId]           = useState('');
+  const [promoCode, setPromoCode]           = useState('');
+  const [promoResult, setPromoResult]       = useState(null);
+  const [promoLoading, setPromoLoading]     = useState(false);
+  const [cardNumber, setCardNumber]         = useState('');
+  const [cardResult, setCardResult]         = useState(null);
+  const [cardLoading, setCardLoading]       = useState(false);
+  const [cardDiscount, setCardDiscount]     = useState(0);
+  const [loading, setLoading]               = useState(false);
+  const [ordered, setOrdered]               = useState(false);
+  const [orderId, setOrderId]               = useState('');
 
   // Pre-fill form from logged-in user data
   useEffect(() => {
@@ -53,9 +61,9 @@ const CheckoutPage = () => {
   }, [userData]);
 
   const discount      = promoResult?.discount || 0;
-  const finalSubtotal = cartSubtotal - discount;
+  const finalSubtotal = cartSubtotal - discount - cardDiscount;
   const finalDelivery = form.orderType === 'delivery' ? deliveryFee : 0;
-  const finalTotal    = finalSubtotal + finalDelivery;
+  const finalTotal    = Math.max(finalSubtotal + finalDelivery, 0);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -78,6 +86,32 @@ const CheckoutPage = () => {
 
   const removePromo = () => { setPromoResult(null); setPromoCode(''); };
 
+  // Apply loyalty card
+  const handleCard = async () => {
+    if (!cardNumber.trim()) { toast.error('Enter your card number', toastStyle); return; }
+    setCardLoading(true);
+    try {
+      const card = await getCardByCardId(cardNumber);
+      if (!card) { toast.error('Card not found', toastStyle); setCardLoading(false); return; }
+      if (!card.active) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
+
+      const visitsLeft = card.visitsForDiscount - card.visits;
+      if (card.visits >= card.visitsForDiscount) {
+        const disc = Math.floor((cartSubtotal * card.discountPercent) / 100);
+        setCardResult(card);
+        setCardDiscount(disc);
+        toast.success(`🎉 ${card.discountPercent}% loyalty discount applied! (Rs.${disc} off)`, toastStyle);
+      } else {
+        setCardResult(card);
+        setCardDiscount(0);
+        toast(`Card found! ${visitsLeft} more visit(s) for ${card.discountPercent}% discount`, { icon: '🃏', ...toastStyle });
+      }
+    } catch { toast.error('Could not verify card', toastStyle); }
+    finally { setCardLoading(false); }
+  };
+
+  const removeCard = () => { setCardResult(null); setCardDiscount(0); setCardNumber(''); };
+
   // Place order
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +126,7 @@ const CheckoutPage = () => {
           address: form.address,
           area: form.area,
         },
+        tableNumber: tableNumber || null,
         items: cartItems.map(i => ({
           id: i.id, name: i.name, price: i.price,
           quantity: i.quantity, subtotal: i.price * i.quantity,
@@ -100,10 +135,12 @@ const CheckoutPage = () => {
         summary: {
           subtotal:    cartSubtotal,
           discount:    discount,
+          cardDiscount: cardDiscount,
           deliveryFee: finalDelivery,
           total:       finalTotal,
         },
         promoCode:     promoResult?.promo?.code || null,
+        loyaltyCard:   cardResult?.cardId || null,
         orderType:     form.orderType,
         paymentMethod: form.paymentMethod,
         notes:         form.notes,
@@ -115,6 +152,21 @@ const CheckoutPage = () => {
       // Use promo code (increment usage)
       if (promoResult?.promo?.id) {
         await usePromoCode(promoResult.promo.id);
+      }
+
+      // Process loyalty card
+      if (cardResult?.id) {
+        if (cardDiscount > 0) {
+          // Applied 10% — reset visits
+          await applyCardDiscount(cardResult.id, cartSubtotal);
+        } else {
+          // Just add visit + points
+          await addVisitAndPoints(cardResult.id, finalTotal);
+        }
+      } else if (user?.uid) {
+        // Auto-add visit to user's card if they have one
+        const userCard = await getCardByUserId(user.uid);
+        if (userCard?.id) await addVisitAndPoints(userCard.id, finalTotal);
       }
 
       // WhatsApp notification to admin
@@ -224,6 +276,12 @@ const CheckoutPage = () => {
             <h1 className="font-heading font-black text-2xl text-white uppercase tracking-wider">Checkout</h1>
             <p className="text-krunch-gray font-body text-xs">{cartItems.reduce((s,i) => s + i.quantity, 0)} items in cart</p>
           </div>
+          {tableNumber && (
+            <div className="ml-auto flex items-center gap-2 bg-krunch-red/10 border border-krunch-red/30 px-4 py-2 rounded-xl">
+              <QrCode size={16} className="text-krunch-red" />
+              <span className="text-white font-heading font-bold text-sm">TABLE {tableNumber}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -239,10 +297,11 @@ const CheckoutPage = () => {
                 <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
                   <Truck size={18} className="text-krunch-red" /> Order Type
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   {[
-                    { value: 'delivery', label: 'Home Delivery', icon: <Truck size={18} />, desc: 'Delivered to your door' },
-                    { value: 'pickup',   label: 'Self Pickup',   icon: <Store size={18} />, desc: 'Pick up from branch' },
+                    { value: 'delivery', label: 'Home Delivery', icon: <Truck size={16} />, desc: 'Delivered to door' },
+                    { value: 'pickup',   label: 'Self Pickup',   icon: <Store size={16} />, desc: 'Pick from branch' },
+                    { value: 'dine-in',  label: 'Dine In',       icon: <QrCode size={16} />, desc: tableNumber ? `Table ${tableNumber}` : 'At restaurant' },
                   ].map(opt => (
                     <button key={opt.value} type="button"
                       onClick={() => setForm({ ...form, orderType: opt.value })}
@@ -372,6 +431,51 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
+              {/* Loyalty Card */}
+              <div className="card-dark p-6">
+                <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
+                  <span className="text-2xl">🃏</span> Loyalty Card
+                </h3>
+                {cardResult ? (
+                  <div className={`flex items-center justify-between rounded-xl px-4 py-3 border ${
+                    cardDiscount > 0
+                      ? 'bg-green-900/20 border-green-700/30'
+                      : 'bg-amber-900/20 border-amber-700/30'
+                  }`}>
+                    <div>
+                      <p className={`font-body font-bold text-sm ${cardDiscount > 0 ? 'text-green-400' : 'text-amber-400'}`}>
+                        {cardResult.cardId}
+                      </p>
+                      <p className={`font-body text-xs mt-0.5 ${cardDiscount > 0 ? 'text-green-300' : 'text-amber-300'}`}>
+                        {cardDiscount > 0
+                          ? `🎉 10% discount applied! Rs.${cardDiscount} off`
+                          : `${cardResult.visitsForDiscount - cardResult.visits} more visit(s) for 10% discount`
+                        }
+                      </p>
+                    </div>
+                    <button onClick={removeCard} className="text-krunch-gray hover:text-red-400 transition-colors">
+                      <X size={18} />
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex gap-3">
+                      <input type="text" value={cardNumber}
+                        onChange={e => setCardNumber(e.target.value.toUpperCase())}
+                        placeholder="Enter card no. e.g. KC-12345"
+                        className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-heading font-bold text-sm tracking-widest placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors uppercase" />
+                      <button type="button" onClick={handleCard} disabled={cardLoading}
+                        className="bg-amber-600 hover:bg-amber-700 text-white font-body font-bold text-sm px-5 rounded-xl transition-all disabled:opacity-70">
+                        {cardLoading ? '...' : 'Apply'}
+                      </button>
+                    </div>
+                    <p className="text-krunch-gray font-body text-xs mt-2">
+                      🃏 10 visits = 10% discount on your order
+                    </p>
+                  </div>
+                )}
+              </div>
+
               {/* Promo Code */}
               <div className="card-dark p-6">
                 <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
@@ -453,6 +557,12 @@ const CheckoutPage = () => {
                         <div className="flex justify-between font-body text-sm">
                           <span className="text-green-400">Promo Discount</span>
                           <span className="text-green-400 font-semibold">- Rs. {discount.toLocaleString()}</span>
+                        </div>
+                      )}
+                      {cardDiscount > 0 && (
+                        <div className="flex justify-between font-body text-sm">
+                          <span className="text-amber-400">Card Discount (10%)</span>
+                          <span className="text-amber-400 font-semibold">- Rs. {cardDiscount.toLocaleString()}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-krunch-gray font-body text-sm">

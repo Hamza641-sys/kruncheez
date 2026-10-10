@@ -41,6 +41,11 @@ import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminPromos from './pages/admin/AdminPromos';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminQR from './pages/admin/AdminQR';
+import AdminCards from './pages/admin/AdminCards';
+
+// New Customer Pages
+import MyCardPage from './pages/customer/MyCardPage';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -92,6 +97,7 @@ const AppLayout = () => {
         <Route path="/loyalty" element={<ProtectedRoute><PublicLayout><LoyaltyPage /></PublicLayout></ProtectedRoute>} />
         <Route path="/review/:orderId" element={<ProtectedRoute><PublicLayout><ReviewPage /></PublicLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><ProfilePage /></PublicLayout></ProtectedRoute>} />
+        <Route path="/my-card" element={<ProtectedRoute><PublicLayout><MyCardPage /></PublicLayout></ProtectedRoute>} />
 
         {/* ── ADMIN ROUTES (admin only) ── */}
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -101,6 +107,8 @@ const AppLayout = () => {
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="promos"    element={<AdminPromos />} />
           <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="qr"        element={<AdminQR />} />
+          <Route path="cards"     element={<AdminCards />} />
           <Route path="settings"  element={<AdminSettings />} />
         </Route>
 
