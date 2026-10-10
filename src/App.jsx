@@ -30,6 +30,7 @@ import TrackOrderPage from './pages/customer/TrackOrderPage';
 import AddressesPage from './pages/customer/AddressesPage';
 import LoyaltyPage from './pages/customer/LoyaltyPage';
 import ReviewPage from './pages/customer/ReviewPage';
+import ProfilePage from './pages/customer/ProfilePage';
 
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -39,6 +40,7 @@ import AdminMenu from './pages/admin/AdminMenu';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminPromos from './pages/admin/AdminPromos';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -89,6 +91,7 @@ const AppLayout = () => {
         <Route path="/addresses" element={<ProtectedRoute><PublicLayout><AddressesPage /></PublicLayout></ProtectedRoute>} />
         <Route path="/loyalty" element={<ProtectedRoute><PublicLayout><LoyaltyPage /></PublicLayout></ProtectedRoute>} />
         <Route path="/review/:orderId" element={<ProtectedRoute><PublicLayout><ReviewPage /></PublicLayout></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PublicLayout><ProfilePage /></PublicLayout></ProtectedRoute>} />
 
         {/* ── ADMIN ROUTES (admin only) ── */}
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -96,8 +99,9 @@ const AppLayout = () => {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="menu" element={<AdminMenu />} />
           <Route path="customers" element={<AdminCustomers />} />
-          <Route path="promos" element={<AdminPromos />} />
-          <Route path="settings" element={<AdminSettings />} />
+          <Route path="promos"    element={<AdminPromos />} />
+          <Route path="analytics" element={<AdminAnalytics />} />
+          <Route path="settings"  element={<AdminSettings />} />
         </Route>
 
         {/* ── 404 ── */}
