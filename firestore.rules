@@ -2,50 +2,68 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Users — own data only, admin can read all
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Orders — customer creates own, admin reads/writes all
-    match /orders/{orderId} {
-      allow create: if request.auth != null;
-      allow read: if request.auth != null && (
-        resource.data.userId == request.auth.uid ||
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
-      );
-      allow update, delete: if request.auth != null &&
+    // Helper function
+    function isAdmin() {
+      return request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    function isLoggedIn() {
+      return request.auth != null;
+    }
 
-    // Menu — anyone can read, admin can write
+    // Users — own data only, admin can read/write all
+    match /users/{userId} {
+      allow read, write: if isLoggedIn() && request.auth.uid == userId;
+      allow read, write: if isAdmin();
+    }
+
+    // Orders — customer creates, admin manages all
+    match /orders/{orderId} {
+      allow create: if isLoggedIn();
+      allow read: if isLoggedIn() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow update, delete: if isAdmin();
+    }
+
+    // Menu — anyone reads, admin writes
     match /menu/{itemId} {
       allow read: if true;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if isAdmin();
     }
 
-    // Reviews — authenticated users can create, anyone can read
+    // Tables (QR system) — admin full access, anyone can read
+    match /tables/{tableId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Loyalty Cards — customer reads own, admin manages all
+    match /loyaltyCards/{cardId} {
+      allow read: if true;
+      allow create: if isLoggedIn();
+      allow update: if isLoggedIn() && (
+        resource.data.userId == request.auth.uid || isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Reviews — anyone reads, authenticated creates, admin manages
     match /reviews/{reviewId} {
       allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow create: if isLoggedIn();
+      allow update, delete: if isAdmin();
     }
 
-    // Promo Codes — anyone can read active ones, admin manages
+    // Promo Codes — anyone reads, admin manages
     match /promoCodes/{codeId} {
       allow read: if true;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow write: if isAdmin();
     }
 
     // Analytics — admin only
     match /analytics/{doc} {
-      allow read, write: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read, write: if isAdmin();
     }
   }
 }
