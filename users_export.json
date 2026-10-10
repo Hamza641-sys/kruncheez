@@ -1,0 +1,11 @@
+{"users": [
+{
+  "localId": "fC8iXy0rN1TCss3YBNkfikA0Uqs2",
+  "email": "admin@kruncheez.com",
+  "emailVerified": false,
+  "passwordHash": "iagje96xzQFNYas28/jzv/Tmk/wgyOVcCRJ2A8R4q3F8ana+aN1vKtXX9JB+ySeoK1uPxCqeKbuQULXLv+tczA==",
+  "salt": "1QtDxqOMlqMDpw==",
+  "lastSignedInAt": "1790174967943",
+  "createdAt": "1790156065507",
+  "providerUserInfo": []
+}]}
