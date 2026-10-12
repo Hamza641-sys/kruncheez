@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Eye, X, Plus, ToggleLeft, ToggleRight,
@@ -17,7 +17,7 @@ const tierColors = {
   Gold:   'text-amber-400 bg-amber-500/20 border-amber-500/30',
 };
 
-const tierEmoji = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' };
+const tierEmoji = { Bronze: 'ðŸ¥‰', Silver: 'ðŸ¥ˆ', Gold: 'ðŸ¥‡' };
 
 const AdminCards = () => {
   const [cards, setCards]         = useState([]);
@@ -59,12 +59,10 @@ const AdminCards = () => {
     }
   };
 
-  // ── PRINT SINGLE CARD — Using exact design image from ImgBB ───────────────
   const printCard = (card) => {
     const visits     = card.visits || 0;
     const isEligible = visits >= 10;
 
-    // Exact design images uploaded by user
     const frontImg = 'https://i.ibb.co/F4DWd97M/image.jpg';
     const backImg  = 'https://i.ibb.co/Xx5D1m3P/image.jpg';
 
@@ -86,11 +84,11 @@ const AdminCards = () => {
 
     const stampsHTML = Array.from({ length: 10 }, (_, i) => `
       <div style="
-        width:50px; height:50px; border-radius:50%;
+        width:48px; height:48px; border-radius:50%;
         background:${i < visits ? 'rgba(245,166,35,0.9)' : 'transparent'};
         border:2px solid ${i < visits ? '#F5A623' : 'rgba(255,255,255,0.2)'};
         display:inline-flex; align-items:center; justify-content:center;
-        box-shadow:${i < visits ? '0 0 12px rgba(245,166,35,0.6)' : 'none'};
+        box-shadow:${i < visits ? '0 0 10px rgba(245,166,35,0.6)' : 'none'};
       ">${i < visits ? chefFilled : chefEmpty}</div>
     `).join('');
 
@@ -98,145 +96,172 @@ const AdminCards = () => {
     win.document.write(`<!DOCTYPE html>
 <html>
 <head>
-  <title>KrunchEez Loyalty Card — ${card.cardId}</title>
+  <title>KrunchEez Loyalty Card</title>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Inter:wght@500;700;900&display=swap" rel="stylesheet"/>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      background:#ccc8bf;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      min-height:100vh;
-      font-family:'Inter',Arial,sans-serif;
-      padding:30px 20px; gap:24px;
-    }
-    .lbl{
-      font-size:11px; font-weight:600; color:#555;
-      letter-spacing:2px; text-transform:uppercase;
-      margin-bottom:6px; align-self:flex-start;
-    }
-    .wrap{ display:flex; flex-direction:column; align-items:flex-start; }
+    * { margin:0; padding:0; box-sizing:border-box; }
 
-    .card{
-      width:750px; height:420px;
-      border-radius:24px; position:relative; overflow:hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
     }
-    .card-img{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover; display:block;
-    }
-    /* Front overlay — customer name + card ID bottom */
-    .f-overlay{
-      position:absolute; inset:0;
-      display:flex; flex-direction:column; justify-content:flex-end;
-      padding:22px 30px;
-      background:linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 45%);
-    }
-    .f-name{
-      font-family:'Oswald',Arial; font-size:16px; font-weight:700;
-      color:rgba(255,255,255,0.5); letter-spacing:3px; text-transform:uppercase;
-    }
-    .f-id{
-      font-family:'Oswald',Arial; font-size:14px;
-      color:rgba(245,166,35,0.65); letter-spacing:4px; margin-top:3px;
-    }
-    /* Back overlay */
-    .b-overlay{ position:absolute; inset:0; pointer-events:none; }
-    /* Stamps grid positioned over back card stamp area */
-    .stamps-grid{
-      position:absolute;
-      top:160px; left:28px;
-      display:flex; flex-wrap:wrap; gap:9px;
-      width:340px;
-    }
-    /* Eligible badge */
-    .elig{
-      position:absolute; top:162px; right:26px;
-      background:rgba(16,185,129,0.92);
-      border-radius:10px; padding:7px 14px;
-      font-family:'Oswald',Arial; font-size:12px; font-weight:900;
-      color:white; letter-spacing:1px;
-      box-shadow:0 4px 16px rgba(16,185,129,0.4);
-    }
-    /* Customer info bottom of back */
-    .b-customer{
-      position:absolute; bottom:16px; left:28px; right:28px;
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    .b-name{ font-family:'Oswald',Arial; font-size:13px; color:rgba(255,255,255,0.35); letter-spacing:2px; }
-    .b-id  { font-family:'Oswald',Arial; font-size:12px; color:rgba(245,166,35,0.45); letter-spacing:2px; }
 
-    @media print{
-      body{ background:#ccc8bf; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    body {
+      background: #c8c0b4;
+      font-family: 'Inter', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .lbl {
+      font-size: 10px; font-weight: 700; color: #555;
+      letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 5px; align-self: flex-start;
+      width: 100%; max-width: 600px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 1.75 / 1;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .card-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: fill;
+      display: block;
+      border-radius: 16px;
+    }
+
+    /* Front: name + ID at bottom */
+    .f-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 16px 22px;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 40%);
+      border-radius: 16px;
+    }
+    .f-name {
+      font-family: 'Oswald', Arial; font-size: 13px; font-weight: 700;
+      color: rgba(255,255,255,0.5); letter-spacing: 3px; text-transform: uppercase;
+    }
+    .f-id {
+      font-family: 'Oswald', Arial; font-size: 11px;
+      color: rgba(245,166,35,0.7); letter-spacing: 4px; margin-top: 2px;
+    }
+
+    /* Back: stamps overlay */
+    .b-overlay { position: absolute; inset: 0; pointer-events: none; border-radius: 16px; }
+
+    .stamps-layer {
+      position: absolute;
+      top: 41%;
+      left: 4%;
+      display: flex; flex-wrap: wrap;
+      gap: 7px;
+      width: 54%;
+    }
+
+    .stamp {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    .elig {
+      position: absolute;
+      top: 42%; right: 4%;
+      background: rgba(16,185,129,0.92);
+      border-radius: 8px; padding: 5px 10px;
+      font-family: 'Oswald', Arial; font-size: 10px;
+      font-weight: 900; color: white; letter-spacing: 1px;
+    }
+
+    .b-customer {
+      position: absolute; bottom: 3%; left: 4%; right: 4%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .b-name { font-family: 'Oswald', Arial; font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 2px; }
+    .b-id   { font-family: 'Oswald', Arial; font-size: 10px; color: rgba(245,166,35,0.45); letter-spacing: 2px; }
+
+    @media print {
+      body {
+        background: #c8c0b4;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 0;
+        margin: 0;
+        gap: 15px;
+      }
+      .card { page-break-inside: avoid; }
     }
   </style>
 </head>
 <body>
 
 <!-- FRONT -->
-<div class="wrap">
-  <div class="lbl">Front Side</div>
-  <div class="card">
-    <img class="card-img" src="${frontImg}" alt="front"
-      onerror="this.style.background='#111';this.style.display='block';" />
-    <div class="f-overlay">
-      <div class="f-name">${(card.userName || 'Customer').toUpperCase()}</div>
-      <div class="f-id">${card.cardId}</div>
-    </div>
+<div class="lbl">Front Side</div>
+<div class="card">
+  <img class="card-img" src="${frontImg}" alt="front" />
+  <div class="f-overlay">
+    <div class="f-name">${(card.userName || 'Customer').toUpperCase()}</div>
+    <div class="f-id">${card.cardId}</div>
   </div>
 </div>
 
 <!-- BACK -->
-<div class="wrap">
-  <div class="lbl">Back Side</div>
-  <div class="card">
-    <img class="card-img" src="${backImg}" alt="back"
-      onerror="this.style.background='#111';this.style.display='block';" />
-    <div class="b-overlay">
-      <div class="stamps-grid">${stampsHTML}</div>
-      ${isEligible ? '<div class="elig">🎉 10% DISCOUNT READY!</div>' : ''}
-      <div class="b-customer">
-        <div class="b-name">${(card.userName || 'Customer').toUpperCase()}</div>
-        <div class="b-id">${card.cardId}${card.phone ? ' • ' + card.phone : ''}</div>
-      </div>
+<div class="lbl">Back Side</div>
+<div class="card">
+  <img class="card-img" src="${backImg}" alt="back" />
+  <div class="b-overlay">
+    <div class="stamps-layer">${stampsHTML}</div>
+    ${isEligible ? '<div class="elig">ðŸŽ‰ 10% DISCOUNT READY!</div>' : ''}
+    <div class="b-customer">
+      <div class="b-name">${(card.userName || 'Customer').toUpperCase()}</div>
+      <div class="b-id">${card.cardId}${card.phone ? ' â€¢ ' + card.phone : ''}</div>
     </div>
   </div>
 </div>
 
 <script>
-  (function() {
-    var imgs = document.querySelectorAll('img');
-    var total = imgs.length, done = 0;
-    function tryPrint() {
-      done++;
-      if (done >= total) { setTimeout(function(){ window.print(); window.close(); }, 600); }
-    }
-    imgs.forEach(function(img) {
-      if (img.complete) tryPrint();
-      else { img.onload = tryPrint; img.onerror = tryPrint; }
-    });
-    if (!total) { setTimeout(function(){ window.print(); window.close(); }, 1000); }
-    setTimeout(function(){ window.print(); window.close(); }, 5000);
-  })();
+  var imgs = document.querySelectorAll('img');
+  var done = 0;
+  function tryPrint() {
+    done++;
+    if (done >= imgs.length) setTimeout(function(){ window.print(); window.close(); }, 800);
+  }
+  imgs.forEach(function(img) {
+    if (img.complete && img.naturalHeight !== 0) { tryPrint(); }
+    else { img.onload = tryPrint; img.onerror = tryPrint; }
+  });
+  if (!imgs.length) setTimeout(function(){ window.print(); window.close(); }, 1000);
+  setTimeout(function(){ window.print(); window.close(); }, 6000);
 </script>
 </body>
 </html>`);
     win.document.close();
   };
 
-  // ── PRINT ALL CARDS ────────────────────────────────────────────────────────
+  // â”€â”€ PRINT ALL CARDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const printAllCards = () => {
     const cardsHTML = cards.map(card => {
       const visits     = card.visits || 0;
       const tier       = card.tier || 'Bronze';
-      const tierBadge  = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' }[tier] || '🥉';
+      const tierBadge  = { Bronze: 'ðŸ¥‰', Silver: 'ðŸ¥ˆ', Gold: 'ðŸ¥‡' }[tier] || 'ðŸ¥‰';
       const isEligible = visits >= 10;
 
       const stampsRow = Array.from({ length: 10 }, (_, i) => `
         <div style="width:46px;height:46px;border-radius:50%;background:${i < visits ? '#F5A623' : 'transparent'};border:2px solid ${i < visits ? '#F5A623' : 'rgba(255,255,255,0.18)'};display:inline-flex;align-items:center;justify-content:center;font-size:20px;">
-          ${i < visits ? '👨‍🍳' : '<span style="opacity:0.2">👨‍🍳</span>'}
+          ${i < visits ? 'ðŸ‘¨â€ðŸ³' : '<span style="opacity:0.2">ðŸ‘¨â€ðŸ³</span>'}
         </div>
       `).join('');
 
@@ -244,9 +269,9 @@ const AdminCards = () => {
         <div style="width:680px;height:380px;background:#0f0f0f;border-radius:20px;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.4);page-break-inside:avoid;">
           <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;background:#F5A623;border-radius:50%;z-index:1;"></div>
           <div style="position:absolute;bottom:-50px;left:-50px;width:140px;height:140px;background:#F5A623;border-radius:50%;z-index:1;opacity:0.6;"></div>
-          <div style="position:absolute;left:8px;bottom:-12px;font-size:95px;z-index:3;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5));">🍔</div>
-          <div style="position:absolute;left:75px;bottom:25px;font-size:58px;z-index:3;">🍟</div>
-          <div style="position:absolute;right:148px;bottom:-5px;font-size:72px;z-index:3;">🍗</div>
+          <div style="position:absolute;left:8px;bottom:-12px;font-size:95px;z-index:3;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5));">ðŸ”</div>
+          <div style="position:absolute;left:75px;bottom:25px;font-size:58px;z-index:3;">ðŸŸ</div>
+          <div style="position:absolute;right:148px;bottom:-5px;font-size:72px;z-index:3;">ðŸ—</div>
           <div style="position:absolute;top:22px;right:22px;width:115px;height:115px;background:#F5A623;border-radius:50%;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(245,166,35,0.5);border:3px solid rgba(255,255,255,0.4);">
             <div style="font-size:11px;font-weight:900;color:#000;letter-spacing:1px;">GET</div>
             <div style="font-family:Arial;font-size:36px;font-weight:900;color:#000;line-height:1;">10%</div>
@@ -254,7 +279,7 @@ const AdminCards = () => {
             <div style="font-size:8px;font-weight:700;color:#333;text-align:center;line-height:1.3;margin-top:2px;">ON YOUR NEXT<br/>ORDER</div>
           </div>
           <div style="position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:24px;">
-            <div style="font-size:16px;font-weight:700;color:white;letter-spacing:3px;">👨‍🍳 The</div>
+            <div style="font-size:16px;font-weight:700;color:white;letter-spacing:3px;">ðŸ‘¨â€ðŸ³ The</div>
             <div style="font-size:48px;color:#F5A623;line-height:1;font-weight:900;font-style:italic;">Kruncheez</div>
             <div style="font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:2px;">Crunch in Every Bite</div>
             <div style="font-size:32px;font-weight:900;color:white;letter-spacing:6px;margin-top:6px;">LOYALTY <span style="color:#F5A623;">CARD</span></div>
@@ -287,7 +312,7 @@ const AdminCards = () => {
     win.document.close();
   };
 
-  // ── ISSUE CARD ─────────────────────────────────────────────────────────────
+  // â”€â”€ ISSUE CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleIssue = async () => {
     if (!issueForm.name || !issueForm.cardId) { toast.error('Name and Card ID required', toastStyle); return; }
     const cardId = issueForm.cardId.toUpperCase().startsWith('KC-')
@@ -402,8 +427,8 @@ const AdminCards = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-white font-body font-semibold text-sm">{card.userName || '—'}</p>
-                      <p className="text-krunch-gray font-body text-xs">{card.phone || '—'}</p>
+                      <p className="text-white font-body font-semibold text-sm">{card.userName || 'â€”'}</p>
+                      <p className="text-krunch-gray font-body text-xs">{card.phone || 'â€”'}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${tierColors[card.tier] || tierColors.Bronze}`}>
@@ -497,7 +522,7 @@ const AdminCards = () => {
                 ))}
                 <div className="bg-krunch-black border border-krunch-border rounded-xl p-3">
                   <p className="text-krunch-gray font-body text-xs">
-                    Card: <span className="text-white">0/10 visits</span> • <span className="text-white">Bronze tier</span> • <span className="text-white">10% after 10 visits</span>
+                    Card: <span className="text-white">0/10 visits</span> â€¢ <span className="text-white">Bronze tier</span> â€¢ <span className="text-white">10% after 10 visits</span>
                   </p>
                 </div>
                 <button onClick={handleIssue} disabled={issuing}
@@ -544,7 +569,7 @@ const AdminCards = () => {
                     { label: 'Points',   value: selected.points||0 },
                     { label: 'Saved',    value: `Rs.${(selected.totalSaved||0).toLocaleString()}` },
                     { label: 'Tier',     value: `${tierEmoji[selected.tier]} ${selected.tier}` },
-                    { label: 'Status',   value: selected.active ? '✅ Active' : '❌ Off' },
+                    { label: 'Status',   value: selected.active ? 'âœ… Active' : 'âŒ Off' },
                   ].map((s, i) => (
                     <div key={i} className="bg-krunch-black border border-krunch-border rounded-xl p-3 text-center">
                       <p className="font-heading font-black text-krunch-red text-lg">{s.value}</p>
@@ -560,7 +585,7 @@ const AdminCards = () => {
                         className={`flex-1 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${
                           i < (selected.visits||0) ? 'bg-krunch-red text-white' : 'bg-krunch-black border border-krunch-border text-krunch-gray'
                         }`}>
-                        {i < (selected.visits||0) ? '✓' : i+1}
+                        {i < (selected.visits||0) ? 'âœ“' : i+1}
                       </div>
                     ))}
                   </div>
