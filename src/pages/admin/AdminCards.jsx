@@ -59,28 +59,32 @@ const AdminCards = () => {
     }
   };
 
-  // Print single loyalty card
+  // Print single loyalty card — Credit Card Style
   const printCard = (card) => {
-    const visits = card.visits || 0;
+    const visits      = card.visits || 0;
     const totalVisits = card.totalVisits || 0;
-    const points = card.points || 0;
-    const tier = card.tier || 'Bronze';
-    const tierEmojis = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' };
-    const tierBadge = tierEmojis[tier] || '🥉';
-    const isEligible = visits >= 10;
+    const points      = card.points || 0;
+    const tier        = card.tier || 'Bronze';
+    const isEligible  = visits >= 10;
 
-    // Build visit dots HTML
+    const tierColors = {
+      Bronze: { bg: 'linear-gradient(135deg, #1a0a00 0%, #3d1f00 50%, #1a0a00 100%)', accent: '#CD7F32', glow: 'rgba(205,127,50,0.4)' },
+      Silver: { bg: 'linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%)', accent: '#C0C0C0', glow: 'rgba(192,192,192,0.4)' },
+      Gold:   { bg: 'linear-gradient(135deg, #1a1200 0%, #3d2e00 50%, #1a1200 100%)', accent: '#FFD700', glow: 'rgba(255,215,0,0.5)' },
+    };
+    const tc = tierColors[tier] || tierColors.Bronze;
+
+    // Dots — small circles
     const dotsHTML = Array.from({ length: 10 }, (_, i) => `
       <div style="
-        width: 42px; height: 42px;
-        border-radius: 50%;
-        background: ${i < visits ? '#E31E24' : '#1A1A1A'};
-        border: 2px solid ${i < visits ? '#E31E24' : '#333'};
-        display: flex; align-items: center; justify-content: center;
-        font-size: 14px; font-weight: 900;
-        color: ${i < visits ? '#fff' : '#555'};
-        flex-shrink: 0;
-      ">${i < visits ? '✓' : i + 1}</div>
+        width:28px;height:28px;border-radius:50%;
+        background:${i < visits ? '#E31E24' : 'rgba(255,255,255,0.05)'};
+        border:1.5px solid ${i < visits ? '#E31E24' : 'rgba(255,255,255,0.15)'};
+        display:inline-flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:900;
+        color:${i < visits ? '#fff' : 'rgba(255,255,255,0.2)'};
+        box-shadow:${i < visits ? '0 0 8px rgba(227,30,36,0.6)' : 'none'};
+      ">${i < visits ? '✓' : ''}</div>
     `).join('');
 
     const win = window.open('', '_blank');
@@ -88,189 +92,378 @@ const AdminCards = () => {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Loyalty Card - ${card.cardId}</title>
+        <title>KrunchEez Loyalty Card — ${card.cardId}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
         <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font-family: Arial, sans-serif; background: #fff; }
+          * { margin:0; padding:0; box-sizing:border-box; }
+          body {
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Inter', Arial, sans-serif;
+            padding: 20px;
+          }
 
-          .card {
-            width: 3.5in;
-            height: 5.5in;
-            margin: 0.25in auto;
-            background: #0A0A0A;
-            border: 3px solid #E31E24;
-            border-radius: 18px;
-            overflow: hidden;
+          .page {
             display: flex;
             flex-direction: column;
-            page-break-after: always;
+            align-items: center;
+            gap: 24px;
           }
 
-          /* Red Header */
-          .header {
-            background: #E31E24;
-            padding: 14px 16px;
+          /* ═══ FRONT OF CARD ═══ */
+          .card-front {
+            width: 3.375in;
+            height: 2.125in;
+            border-radius: 16px;
+            background: ${tc.bg};
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px ${tc.glow};
+            border: 1px solid ${tc.accent}33;
+          }
+
+          /* Holographic shimmer overlay */
+          .card-front::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+              135deg,
+              transparent 0%,
+              rgba(255,255,255,0.03) 40%,
+              rgba(255,255,255,0.08) 50%,
+              rgba(255,255,255,0.03) 60%,
+              transparent 100%
+            );
+            z-index: 1;
+          }
+
+          /* Red diagonal stripe */
+          .stripe {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #E31E24, #ff4444, #E31E24);
+            z-index: 2;
+          }
+
+          /* Circular bg decoration */
+          .circle-deco {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 1;
+          }
+
+          .front-content {
+            position: relative;
+            z-index: 3;
+            padding: 14px 18px;
+            height: 100%;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
           }
-          .brand { color: white; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
-          .tagline { color: rgba(255,255,255,0.8); font-size: 8px; letter-spacing: 2px; margin-top: 2px; }
-          .tier-badge {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            font-size: 11px;
+
+          /* Top row */
+          .front-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+          }
+
+          .brand-name {
+            font-family: 'Oswald', Arial, sans-serif;
+            font-size: 20px;
             font-weight: 900;
-            padding: 4px 10px;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(227,30,36,0.5);
+            line-height: 1;
+          }
+          .brand-sub {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 7px;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 3px;
+          }
+
+          .tier-pill {
+            background: linear-gradient(135deg, ${tc.accent}33, ${tc.accent}11);
+            border: 1px solid ${tc.accent}66;
+            color: ${tc.accent};
+            font-size: 10px;
+            font-weight: 900;
+            padding: 3px 10px;
             border-radius: 20px;
+            letter-spacing: 1px;
+            font-family: 'Oswald', Arial, sans-serif;
+            text-shadow: 0 0 10px ${tc.glow};
           }
 
-          /* Body */
-          .body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
-
-          /* Card ID */
-          .card-id-label { color: #666; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; }
-          .card-id { color: #E31E24; font-size: 22px; font-weight: 900; letter-spacing: 3px; margin-top: 2px; }
-
-          /* Customer */
-          .customer-name { color: white; font-size: 20px; font-weight: 900; }
-          .customer-phone { color: #888; font-size: 11px; margin-top: 2px; }
-
-          /* Divider */
-          .divider { height: 1px; background: #222; }
-
-          /* Visits */
-          .section-label { color: #888; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
-          .dots { display: flex; gap: 5px; flex-wrap: wrap; }
-
-          /* Progress bar */
-          .progress-bg {
-            height: 6px; background: #1A1A1A;
-            border-radius: 3px; overflow: hidden; margin-top: 8px;
+          /* Chip */
+          .chip {
+            width: 36px; height: 26px;
+            background: linear-gradient(135deg, #d4af37, #f5d87c, #b8860b);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
           }
-          .progress-fill {
-            height: 100%; background: #E31E24; border-radius: 3px;
-            width: ${Math.min((visits / 10) * 100, 100)}%;
+          .chip::before {
+            content: '';
+            position: absolute;
+            left: 50%; top: 0; bottom: 0;
+            width: 1px;
+            background: rgba(0,0,0,0.3);
+          }
+          .chip::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0; right: 0;
+            height: 1px;
+            background: rgba(0,0,0,0.3);
           }
 
-          /* Stats row */
-          .stats { display: flex; gap: 8px; }
-          .stat-box {
-            flex: 1; background: #111; border: 1px solid #222;
-            border-radius: 10px; padding: 8px; text-align: center;
+          /* Card number */
+          .card-number {
+            font-family: 'Oswald', 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
           }
-          .stat-val { color: #E31E24; font-size: 18px; font-weight: 900; }
-          .stat-val.amber { color: #F59E0B; }
-          .stat-val.green { color: #10B981; }
-          .stat-label { color: #666; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+          /* Bottom row */
+          .front-bottom {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+          }
+          .holder-label {
+            font-size: 7px;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Inter', Arial;
+          }
+          .holder-name {
+            font-family: 'Oswald', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            margin-top: 2px;
+            text-transform: uppercase;
+          }
+          .loyalty-badge {
+            text-align: right;
+          }
+          .loyalty-text {
+            font-size: 7px;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+          }
+          .loyalty-val {
+            font-family: 'Oswald', Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            color: ${tc.accent};
+            text-shadow: 0 0 10px ${tc.glow};
+          }
+
+          /* ═══ BACK OF CARD ═══ */
+          .card-back {
+            width: 3.375in;
+            height: 2.125in;
+            border-radius: 16px;
+            background: ${tc.bg};
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid ${tc.accent}33;
+          }
+
+          /* Magnetic stripe */
+          .mag-stripe {
+            height: 0.4in;
+            background: linear-gradient(180deg, #111 0%, #222 50%, #111 100%);
+            margin-top: 0.2in;
+          }
+
+          .back-content {
+            position: relative;
+            z-index: 3;
+            padding: 12px 18px;
+          }
+
+          /* Visit tracker */
+          .visit-section {
+            margin-top: 8px;
+          }
+          .visit-label {
+            font-size: 7px;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-family: 'Inter', Arial;
+          }
+          .dots-row {
+            display: flex;
+            gap: 4px;
+            flex-wrap: nowrap;
+          }
+
+          /* Progress */
+          .progress-wrap { margin-top: 8px; }
+          .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+          }
+          .progress-text { font-size: 8px; color: rgba(255,255,255,0.4); font-family:'Inter',Arial; }
+          .progress-val  { font-size: 8px; color: #E31E24; font-weight: 700; font-family:'Inter',Arial; }
+          .progress-bg   { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+          .progress-fill { height: 100%; background: linear-gradient(90deg, #E31E24, #ff4444); border-radius: 2px; width: ${Math.min((visits/10)*100,100)}%; }
+
+          /* Stats */
+          .stats-row { display: flex; gap: 6px; margin-top: 8px; }
+          .stat {
+            flex: 1; background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 5px; text-align: center;
+          }
+          .stat-val { font-family:'Oswald',Arial; font-size:15px; font-weight:900; }
+          .stat-val.red { color:#E31E24; }
+          .stat-val.gold { color:${tc.accent}; }
+          .stat-val.green { color:#10B981; }
+          .stat-label { font-size:6px; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; margin-top:1px; font-family:'Inter',Arial; }
 
           /* Eligible banner */
-          .eligible {
+          .eligible-banner {
+            margin-top: 8px;
             background: rgba(16,185,129,0.1);
             border: 1px solid rgba(16,185,129,0.3);
-            border-radius: 10px; padding: 8px;
+            border-radius: 8px; padding: 5px 10px;
             text-align: center;
           }
-          .eligible-text { color: #10B981; font-size: 12px; font-weight: 900; letter-spacing: 1px; }
-          .eligible-sub { color: rgba(16,185,129,0.7); font-size: 9px; margin-top: 2px; }
+          .eligible-text { color:#10B981; font-size:10px; font-weight:900; font-family:'Oswald',Arial; letter-spacing:1px; }
 
-          .pending {
-            background: #111; border: 1px solid #222;
-            border-radius: 10px; padding: 8px; text-align: center;
-          }
-          .pending-text { color: #888; font-size: 10px; }
-          .pending-text span { color: #E31E24; font-weight: 900; }
-
-          /* Footer */
-          .footer {
-            background: #111;
-            border-top: 1px solid #222;
-            padding: 8px 16px;
+          .back-footer {
+            position: absolute;
+            bottom: 10px; left: 18px; right: 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
           }
-          .footer-text { color: #444; font-size: 8px; letter-spacing: 1px; }
+          .back-footer-text { font-size:7px; color:rgba(255,255,255,0.2); letter-spacing:1px; font-family:'Inter',Arial; }
 
           @media print {
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body {
+              background: white;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
           }
         </style>
       </head>
       <body>
-        <div class="card">
+        <div class="page">
 
-          <!-- Header -->
-          <div class="header">
-            <div>
-              <div class="brand">🐂 THE KRUNCHEEZ</div>
-              <div class="tagline">FAST FOOD • CHINESE • BBQ</div>
-            </div>
-            <div class="tier-badge">${tierBadge} ${tier}</div>
-          </div>
+          <!-- ═══ FRONT ═══ -->
+          <div class="card-front">
+            <div class="stripe"></div>
 
-          <!-- Body -->
-          <div class="body">
+            <!-- Decorative circles -->
+            <div class="circle-deco" style="width:200px;height:200px;background:rgba(227,30,36,0.05);top:-80px;right:-60px;"></div>
+            <div class="circle-deco" style="width:120px;height:120px;background:${tc.accent}08;bottom:-40px;left:-30px;"></div>
 
-            <!-- Card ID -->
-            <div>
-              <div class="card-id-label">Card Number</div>
-              <div class="card-id">${card.cardId}</div>
-            </div>
-
-            <!-- Customer -->
-            <div>
-              <div class="customer-name">${card.userName || 'Customer'}</div>
-              <div class="customer-phone">${card.phone || ''}</div>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- Visit Tracker -->
-            <div>
-              <div class="section-label">Visits — 10 visits = 10% discount</div>
-              <div class="dots">${dotsHTML}</div>
-              <div class="progress-bg"><div class="progress-fill"></div></div>
-            </div>
-
-            <div class="divider"></div>
-
-            <!-- Stats -->
-            <div class="stats">
-              <div class="stat-box">
-                <div class="stat-val">${visits}/10</div>
-                <div class="stat-label">Current</div>
+            <div class="front-content">
+              <!-- Top: Brand + Tier -->
+              <div class="front-top">
+                <div>
+                  <div class="brand-name">🐂 KRUNCHEEZ</div>
+                  <div class="brand-sub">Fast Food • Chinese • BBQ</div>
+                </div>
+                <div class="tier-pill">${tier === 'Bronze' ? '🥉' : tier === 'Silver' ? '🥈' : '🥇'} ${tier}</div>
               </div>
-              <div class="stat-box">
-                <div class="stat-val">${totalVisits}</div>
-                <div class="stat-label">Total</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-val amber">${points}</div>
-                <div class="stat-label">Points</div>
-              </div>
-            </div>
 
-            <!-- Status -->
-            ${isEligible ? `
-              <div class="eligible">
-                <div class="eligible-text">🎉 10% DISCOUNT READY!</div>
-                <div class="eligible-sub">Show this card at checkout</div>
+              <!-- Chip + Card Number -->
+              <div style="display:flex;align-items:center;gap:16px;">
+                <div class="chip"></div>
+                <div class="card-number">${card.cardId.replace('KC-', 'KC ').replace(/(.{4})/g,'$1 ').trim()}</div>
               </div>
-            ` : `
-              <div class="pending">
-                <div class="pending-text">
-                  <span>${10 - visits}</span> more visit(s) for <span>10% discount</span>
+
+              <!-- Bottom: Name + Points -->
+              <div class="front-bottom">
+                <div>
+                  <div class="holder-label">Card Holder</div>
+                  <div class="holder-name">${(card.userName || 'Customer').substring(0, 18)}</div>
+                </div>
+                <div class="loyalty-badge">
+                  <div class="loyalty-text">Points</div>
+                  <div class="loyalty-val">${points}</div>
                 </div>
               </div>
-            `}
-
+            </div>
           </div>
 
-          <!-- Footer -->
-          <div class="footer">
-            <div class="footer-text">kruncheez-pos.web.app</div>
-            <div class="footer-text">✅ HALAL CERTIFIED</div>
+          <!-- ═══ BACK ═══ -->
+          <div class="card-back">
+            <!-- Magnetic stripe -->
+            <div class="mag-stripe"></div>
+
+            <div class="back-content">
+              <!-- Visit Tracker -->
+              <div class="visit-section">
+                <div class="visit-label">Visit Tracker — 10 visits = 10% discount</div>
+                <div class="dots-row">${dotsHTML}</div>
+                <div class="progress-wrap">
+                  <div class="progress-label">
+                    <span class="progress-text">Progress</span>
+                    <span class="progress-val">${visits}/10 visits</span>
+                  </div>
+                  <div class="progress-bg"><div class="progress-fill"></div></div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="stats-row">
+                <div class="stat">
+                  <div class="stat-val red">${visits}/10</div>
+                  <div class="stat-label">Current</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-val gold">${totalVisits}</div>
+                  <div class="stat-label">Total</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-val green">Rs.${(card.totalSaved||0).toLocaleString()}</div>
+                  <div class="stat-label">Saved</div>
+                </div>
+              </div>
+
+              ${isEligible ? `
+                <div class="eligible-banner">
+                  <div class="eligible-text">🎉 10% DISCOUNT READY!</div>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="back-footer">
+              <div class="back-footer-text">kruncheez-pos.web.app</div>
+              <div class="back-footer-text">✅ HALAL CERTIFIED • ${card.phone || ''}</div>
+            </div>
           </div>
 
         </div>
