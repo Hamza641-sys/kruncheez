@@ -551,18 +551,23 @@ const AdminCards = () => {
       <AnimatePresence>
         {showIssue && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setShowIssue(false)} className="fixed inset-0 bg-black/70 z-50" />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md bg-krunch-dark border border-krunch-border rounded-2xl z-50 overflow-hidden"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowIssue(false)}
+              className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
-                <h3 className="font-heading font-bold text-white uppercase">Issue Loyalty Card</h3>
-                <button onClick={() => setShowIssue(false)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.2 }}
+                onClick={e => e.stopPropagation()}
+                className="w-full max-w-md bg-krunch-dark border border-krunch-border rounded-2xl z-50 overflow-y-auto max-h-[90vh]"
+              >
+                <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
+                  <h3 className="font-heading font-bold text-white uppercase">Issue Loyalty Card</h3>
+                  <button onClick={() => setShowIssue(false)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
+                </div>
               <div className="p-6 flex flex-col gap-4">
                 {[
                   { key: 'name',   label: 'Customer Name *', placeholder: 'Muhammad Ahmed' },
@@ -590,6 +595,7 @@ const AdminCards = () => {
                 </button>
               </div>
             </motion.div>
+            </motion.div>
           </>
         )}
       </AnimatePresence>
@@ -598,15 +604,20 @@ const AdminCards = () => {
       <AnimatePresence>
         {selected && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setSelected(null)} className="fixed inset-0 bg-black/70 z-50" />
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-md bg-krunch-dark border border-krunch-border rounded-2xl z-50 overflow-y-auto max-h-[90vh]"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setSelected(null)}
+              className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
             >
-              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.2 }}
+                onClick={e => e.stopPropagation()}
+                className="w-full max-w-md bg-krunch-dark border border-krunch-border rounded-2xl z-50 overflow-y-auto max-h-[90vh]"
+              >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
                 <h3 className="font-heading font-bold text-white uppercase">Card Details</h3>
                 <button onClick={() => setSelected(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
               </div>
@@ -665,6 +676,7 @@ const AdminCards = () => {
                   </button>
                 </div>
               </div>
+            </motion.div>
             </motion.div>
           </>
         )}
