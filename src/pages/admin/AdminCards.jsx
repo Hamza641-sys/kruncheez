@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Eye, X, Plus, ToggleLeft, ToggleRight,
-  TrendingUp, Users, Gift, Star
+  TrendingUp, Users, Gift, Star, Printer
 } from 'lucide-react';
 import { getAllCards, toggleCard, manualAddVisit } from '../../firebase/cardService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -59,6 +59,317 @@ const AdminCards = () => {
     }
   };
 
+  // Print single loyalty card
+  const printCard = (card) => {
+    const visits = card.visits || 0;
+    const totalVisits = card.totalVisits || 0;
+    const points = card.points || 0;
+    const tier = card.tier || 'Bronze';
+    const tierEmojis = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' };
+    const tierBadge = tierEmojis[tier] || '🥉';
+    const isEligible = visits >= 10;
+
+    // Build visit dots HTML
+    const dotsHTML = Array.from({ length: 10 }, (_, i) => `
+      <div style="
+        width: 42px; height: 42px;
+        border-radius: 50%;
+        background: ${i < visits ? '#E31E24' : '#1A1A1A'};
+        border: 2px solid ${i < visits ? '#E31E24' : '#333'};
+        display: flex; align-items: center; justify-content: center;
+        font-size: 14px; font-weight: 900;
+        color: ${i < visits ? '#fff' : '#555'};
+        flex-shrink: 0;
+      ">${i < visits ? '✓' : i + 1}</div>
+    `).join('');
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Loyalty Card - ${card.cardId}</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: Arial, sans-serif; background: #fff; }
+
+          .card {
+            width: 3.5in;
+            height: 5.5in;
+            margin: 0.25in auto;
+            background: #0A0A0A;
+            border: 3px solid #E31E24;
+            border-radius: 18px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+          }
+
+          /* Red Header */
+          .header {
+            background: #E31E24;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .brand { color: white; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
+          .tagline { color: rgba(255,255,255,0.8); font-size: 8px; letter-spacing: 2px; margin-top: 2px; }
+          .tier-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 20px;
+          }
+
+          /* Body */
+          .body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+          /* Card ID */
+          .card-id-label { color: #666; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; }
+          .card-id { color: #E31E24; font-size: 22px; font-weight: 900; letter-spacing: 3px; margin-top: 2px; }
+
+          /* Customer */
+          .customer-name { color: white; font-size: 20px; font-weight: 900; }
+          .customer-phone { color: #888; font-size: 11px; margin-top: 2px; }
+
+          /* Divider */
+          .divider { height: 1px; background: #222; }
+
+          /* Visits */
+          .section-label { color: #888; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+          .dots { display: flex; gap: 5px; flex-wrap: wrap; }
+
+          /* Progress bar */
+          .progress-bg {
+            height: 6px; background: #1A1A1A;
+            border-radius: 3px; overflow: hidden; margin-top: 8px;
+          }
+          .progress-fill {
+            height: 100%; background: #E31E24; border-radius: 3px;
+            width: ${Math.min((visits / 10) * 100, 100)}%;
+          }
+
+          /* Stats row */
+          .stats { display: flex; gap: 8px; }
+          .stat-box {
+            flex: 1; background: #111; border: 1px solid #222;
+            border-radius: 10px; padding: 8px; text-align: center;
+          }
+          .stat-val { color: #E31E24; font-size: 18px; font-weight: 900; }
+          .stat-val.amber { color: #F59E0B; }
+          .stat-val.green { color: #10B981; }
+          .stat-label { color: #666; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+          /* Eligible banner */
+          .eligible {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 10px; padding: 8px;
+            text-align: center;
+          }
+          .eligible-text { color: #10B981; font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+          .eligible-sub { color: rgba(16,185,129,0.7); font-size: 9px; margin-top: 2px; }
+
+          .pending {
+            background: #111; border: 1px solid #222;
+            border-radius: 10px; padding: 8px; text-align: center;
+          }
+          .pending-text { color: #888; font-size: 10px; }
+          .pending-text span { color: #E31E24; font-weight: 900; }
+
+          /* Footer */
+          .footer {
+            background: #111;
+            border-top: 1px solid #222;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .footer-text { color: #444; font-size: 8px; letter-spacing: 1px; }
+
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+
+          <!-- Header -->
+          <div class="header">
+            <div>
+              <div class="brand">🐂 THE KRUNCHEEZ</div>
+              <div class="tagline">FAST FOOD • CHINESE • BBQ</div>
+            </div>
+            <div class="tier-badge">${tierBadge} ${tier}</div>
+          </div>
+
+          <!-- Body -->
+          <div class="body">
+
+            <!-- Card ID -->
+            <div>
+              <div class="card-id-label">Card Number</div>
+              <div class="card-id">${card.cardId}</div>
+            </div>
+
+            <!-- Customer -->
+            <div>
+              <div class="customer-name">${card.userName || 'Customer'}</div>
+              <div class="customer-phone">${card.phone || ''}</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Visit Tracker -->
+            <div>
+              <div class="section-label">Visits — 10 visits = 10% discount</div>
+              <div class="dots">${dotsHTML}</div>
+              <div class="progress-bg"><div class="progress-fill"></div></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Stats -->
+            <div class="stats">
+              <div class="stat-box">
+                <div class="stat-val">${visits}/10</div>
+                <div class="stat-label">Current</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val">${totalVisits}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-val amber">${points}</div>
+                <div class="stat-label">Points</div>
+              </div>
+            </div>
+
+            <!-- Status -->
+            ${isEligible ? `
+              <div class="eligible">
+                <div class="eligible-text">🎉 10% DISCOUNT READY!</div>
+                <div class="eligible-sub">Show this card at checkout</div>
+              </div>
+            ` : `
+              <div class="pending">
+                <div class="pending-text">
+                  <span>${10 - visits}</span> more visit(s) for <span>10% discount</span>
+                </div>
+              </div>
+            `}
+
+          </div>
+
+          <!-- Footer -->
+          <div class="footer">
+            <div class="footer-text">kruncheez-pos.web.app</div>
+            <div class="footer-text">✅ HALAL CERTIFIED</div>
+          </div>
+
+        </div>
+        <script>window.onload = () => { window.print(); window.close(); }</script>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
+  // Print ALL cards
+  const printAllCards = () => {
+    const cardsHTML = cards.map(card => {
+      const visits = card.visits || 0;
+      const tier = card.tier || 'Bronze';
+      const tierEmojis = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' };
+      const isEligible = visits >= 10;
+
+      const dotsHTML = Array.from({ length: 10 }, (_, i) => `
+        <div style="width:38px;height:38px;border-radius:50%;background:${i < visits ? '#E31E24' : '#1A1A1A'};border:2px solid ${i < visits ? '#E31E24' : '#333'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:${i < visits ? '#fff' : '#555'}">${i < visits ? '✓' : i + 1}</div>
+      `).join('');
+
+      return `
+        <div class="card">
+          <div class="header">
+            <div><div class="brand">🐂 THE KRUNCHEEZ</div><div class="tagline">FAST FOOD • CHINESE • BBQ</div></div>
+            <div class="tier-badge">${tierEmojis[tier]} ${tier}</div>
+          </div>
+          <div class="body">
+            <div><div class="card-id-label">Card Number</div><div class="card-id">${card.cardId}</div></div>
+            <div><div class="customer-name">${card.userName || 'Customer'}</div><div class="customer-phone">${card.phone || ''}</div></div>
+            <div class="divider"></div>
+            <div>
+              <div class="section-label">10 visits = 10% discount</div>
+              <div class="dots">${dotsHTML}</div>
+              <div class="progress-bg"><div class="progress-fill" style="width:${Math.min((visits/10)*100,100)}%"></div></div>
+            </div>
+            <div class="divider"></div>
+            <div class="stats">
+              <div class="stat-box"><div class="stat-val">${visits}/10</div><div class="stat-label">Current</div></div>
+              <div class="stat-box"><div class="stat-val">${card.totalVisits||0}</div><div class="stat-label">Total</div></div>
+              <div class="stat-box"><div class="stat-val amber">${card.points||0}</div><div class="stat-label">Points</div></div>
+            </div>
+            ${isEligible
+              ? `<div class="eligible"><div class="eligible-text">🎉 10% DISCOUNT READY!</div></div>`
+              : `<div class="pending"><div class="pending-text"><span>${10-visits}</span> more visit(s) for <span>10% discount</span></div></div>`
+            }
+          </div>
+          <div class="footer">
+            <div class="footer-text">kruncheez-pos.web.app</div>
+            <div class="footer-text">✅ HALAL CERTIFIED</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html><html><head><title>All Loyalty Cards - KrunchEez</title>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:Arial,sans-serif;background:#fff;}
+        .grid{display:flex;flex-wrap:wrap;gap:0.2in;padding:0.25in;justify-content:center;}
+        .card{width:3.5in;height:5.5in;background:#0A0A0A;border:3px solid #E31E24;border-radius:18px;overflow:hidden;display:flex;flex-direction:column;page-break-inside:avoid;}
+        .header{background:#E31E24;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+        .brand{color:white;font-size:17px;font-weight:900;letter-spacing:1px;}
+        .tagline{color:rgba(255,255,255,0.8);font-size:8px;letter-spacing:2px;margin-top:2px;}
+        .tier-badge{background:rgba(255,255,255,0.2);color:white;font-size:11px;font-weight:900;padding:4px 10px;border-radius:20px;}
+        .body{padding:14px;flex:1;display:flex;flex-direction:column;gap:10px;}
+        .card-id-label{color:#666;font-size:9px;letter-spacing:3px;text-transform:uppercase;}
+        .card-id{color:#E31E24;font-size:20px;font-weight:900;letter-spacing:3px;margin-top:2px;}
+        .customer-name{color:white;font-size:18px;font-weight:900;}
+        .customer-phone{color:#888;font-size:11px;margin-top:2px;}
+        .divider{height:1px;background:#222;}
+        .section-label{color:#888;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+        .dots{display:flex;gap:4px;flex-wrap:wrap;}
+        .progress-bg{height:5px;background:#1A1A1A;border-radius:3px;overflow:hidden;margin-top:6px;}
+        .progress-fill{height:100%;background:#E31E24;border-radius:3px;}
+        .stats{display:flex;gap:6px;}
+        .stat-box{flex:1;background:#111;border:1px solid #222;border-radius:8px;padding:6px;text-align:center;}
+        .stat-val{color:#E31E24;font-size:16px;font-weight:900;}
+        .stat-val.amber{color:#F59E0B;}
+        .stat-label{color:#666;font-size:7px;letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+        .eligible{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:6px;text-align:center;}
+        .eligible-text{color:#10B981;font-size:11px;font-weight:900;}
+        .pending{background:#111;border:1px solid #222;border-radius:8px;padding:6px;text-align:center;}
+        .pending-text{color:#888;font-size:9px;}
+        .pending-text span{color:#E31E24;font-weight:900;}
+        .footer{background:#111;border-top:1px solid #222;padding:6px 14px;display:flex;justify-content:space-between;}
+        .footer-text{color:#444;font-size:7px;letter-spacing:1px;}
+        @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+      </style></head>
+      <body><div class="grid">${cardsHTML}</div>
+      <script>window.onload=()=>{window.print();window.close();}</script>
+      </body></html>
+    `);
+    win.document.close();
+  };
+
   // Manual issue card
   const handleIssue = async () => {
     if (!issueForm.name || !issueForm.cardId) { toast.error('Name and Card ID required', toastStyle); return; }
@@ -106,10 +417,18 @@ const AdminCards = () => {
           <h2 className="font-heading font-black text-2xl text-white uppercase">Loyalty Cards</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards issued</p>
         </div>
-        <button onClick={() => setShowIssue(true)}
-          className="flex items-center gap-2 btn-primary text-sm">
-          <Plus size={16} /> Issue Card
-        </button>
+        <div className="flex items-center gap-3">
+          {cards.length > 0 && (
+            <button onClick={printAllCards}
+              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+              <Printer size={15} /> Print All
+            </button>
+          )}
+          <button onClick={() => setShowIssue(true)}
+            className="flex items-center gap-2 btn-primary text-sm">
+            <Plus size={16} /> Issue Card
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -127,9 +446,7 @@ const AdminCards = () => {
             <p className="text-krunch-gray font-body text-xs uppercase tracking-wider">{s.label}</p>
           </div>
         ))}
-      </div>
-
-      {/* Search */}
+      </div>      {/* Search */}
       <div className="relative mb-5">
         <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
         <input type="text" placeholder="Search by card ID, name, phone..." value={search}
@@ -215,6 +532,10 @@ const AdminCards = () => {
                         <button onClick={() => handleAddVisit(card)}
                           className="text-[10px] px-2 py-1 rounded-lg bg-krunch-red/10 text-krunch-red border border-krunch-red/20 hover:bg-krunch-red hover:text-white transition-all font-bold whitespace-nowrap">
                           +Visit
+                        </button>
+                        <button onClick={() => printCard(card)}
+                          className="text-[10px] px-2 py-1 rounded-lg bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all font-bold whitespace-nowrap flex items-center gap-1">
+                          <Printer size={10} /> Print
                         </button>
                       </div>
                     </td>
@@ -329,6 +650,10 @@ const AdminCards = () => {
                   <button onClick={() => handleAddVisit(selected)}
                     className="flex-1 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-sm py-3 rounded-xl transition-all uppercase">
                     + Add Visit
+                  </button>
+                  <button onClick={() => { printCard(selected); }}
+                    className="flex items-center justify-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-3 rounded-xl transition-all">
+                    <Printer size={15} /> Print
                   </button>
                   <button onClick={() => handleToggle(selected)}
                     className={`flex-1 font-heading font-bold text-sm py-3 rounded-xl transition-all uppercase border ${
