@@ -31,6 +31,7 @@ import AddressesPage from './pages/customer/AddressesPage';
 import LoyaltyPage from './pages/customer/LoyaltyPage';
 import ReviewPage from './pages/customer/ReviewPage';
 import ProfilePage from './pages/customer/ProfilePage';
+import FollowPage from './pages/FollowPage';
 
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -88,6 +89,9 @@ const AppLayout = () => {
         {/* ── AUTH ROUTES (no navbar) ── */}
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
+
+        {/* ── SOCIAL FOLLOW PAGE (no auth needed) ── */}
+        <Route path="/follow" element={<FollowPage />} />
 
         {/* ── CUSTOMER ROUTES (protected) ── */}
         <Route path="/dashboard" element={<ProtectedRoute><PublicLayout><DashboardPage /></PublicLayout></ProtectedRoute>} />
