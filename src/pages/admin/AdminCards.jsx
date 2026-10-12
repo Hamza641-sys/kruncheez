@@ -59,36 +59,39 @@ const AdminCards = () => {
     }
   };
 
-  // ── PRINT SINGLE CARD — Exact KrunchEez Brand Design ──────────────────────
+  // ── PRINT SINGLE CARD — Using exact design image from ImgBB ───────────────
   const printCard = (card) => {
     const visits     = card.visits || 0;
-    const totalVisits= card.totalVisits || 0;
-    const points     = card.points || 0;
-    const tier       = card.tier || 'Bronze';
     const isEligible = visits >= 10;
 
-    // Real food images from Unsplash
-    const burgerImg = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&q=90&auto=format&fit=crop';
-    const friesImg  = 'https://images.unsplash.com/photo-1576107232684-1279f390859f?w=200&q=90&auto=format&fit=crop';
-    const wingsImg  = 'https://images.unsplash.com/photo-1562967914-608f82629710?w=250&q=90&auto=format&fit=crop';
+    // Exact design images uploaded by user
+    const frontImg = 'https://i.ibb.co/F4DWd97M/image.jpg';
+    const backImg  = 'https://i.ibb.co/Xx5D1m3P/image.jpg';
 
-    // Chef hat SVG icon for stamps
-    const chefHatSVG = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
-      <path d="M12 2C9.5 2 7.5 3.5 7 5.5C5.3 5.8 4 7.3 4 9C4 10.9 5.6 12.5 7.5 12.5H16.5C18.4 12.5 20 10.9 20 9C20 7.3 18.7 5.8 17 5.5C16.5 3.5 14.5 2 12 2Z" fill="currentColor"/>
-      <path d="M7 12.5V19C7 19.6 7.4 20 8 20H16C16.6 20 17 19.6 17 19V12.5H7Z" fill="currentColor" opacity="0.7"/>
-      <line x1="9" y1="15" x2="15" y2="15" stroke="white" stroke-width="1.2" opacity="0.8"/>
-      <line x1="9" y1="17" x2="15" y2="17" stroke="white" stroke-width="1.2" opacity="0.8"/>
+    const chefFilled = `<svg viewBox="0 0 32 32" fill="#1a1200" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+      <ellipse cx="16" cy="10" rx="8" ry="6" fill="#1a1200"/>
+      <ellipse cx="16" cy="8" rx="4" ry="4" fill="#1a1200"/>
+      <rect x="9" y="15" width="14" height="10" rx="2" fill="#1a1200" opacity="0.85"/>
+      <line x1="11" y1="18" x2="21" y2="18" stroke="#F5A623" stroke-width="1.2"/>
+      <line x1="11" y1="21" x2="21" y2="21" stroke="#F5A623" stroke-width="1.2"/>
     </svg>`;
 
-    const stamps = Array.from({ length: 10 }, (_, i) => `
+    const chefEmpty = `<svg viewBox="0 0 32 32" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
+      <ellipse cx="16" cy="10" rx="8" ry="6"/>
+      <ellipse cx="16" cy="8" rx="4" ry="4"/>
+      <rect x="9" y="15" width="14" height="10" rx="2"/>
+      <line x1="11" y1="18" x2="21" y2="18" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <line x1="11" y1="21" x2="21" y2="21" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    </svg>`;
+
+    const stampsHTML = Array.from({ length: 10 }, (_, i) => `
       <div style="
-        width:54px; height:54px; border-radius:50%;
-        background:${i < visits ? '#F5A623' : 'transparent'};
+        width:50px; height:50px; border-radius:50%;
+        background:${i < visits ? 'rgba(245,166,35,0.9)' : 'transparent'};
         border:2px solid ${i < visits ? '#F5A623' : 'rgba(255,255,255,0.2)'};
         display:inline-flex; align-items:center; justify-content:center;
-        box-shadow:${i < visits ? '0 2px 12px rgba(245,166,35,0.5)' : 'none'};
-        color:${i < visits ? '#1a1200' : 'rgba(255,255,255,0.15)'};
-      ">${chefHatSVG}</div>
+        box-shadow:${i < visits ? '0 0 12px rgba(245,166,35,0.6)' : 'none'};
+      ">${i < visits ? chefFilled : chefEmpty}</div>
     `).join('');
 
     const win = window.open('', '_blank');
@@ -96,325 +99,128 @@ const AdminCards = () => {
 <html>
 <head>
   <title>KrunchEez Loyalty Card — ${card.cardId}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Pacifico&family=Oswald:wght@600;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;900&family=Inter:wght@500;700;900&display=swap" rel="stylesheet"/>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;}
     body{
-      background:#d6cfc4;
+      background:#ccc8bf;
       display:flex; flex-direction:column;
       align-items:center; justify-content:center;
       min-height:100vh;
       font-family:'Inter',Arial,sans-serif;
-      padding:24px 16px; gap:16px;
+      padding:30px 20px; gap:24px;
     }
-    .side-label{
-      font-family:'Inter',Arial; font-size:11px; font-weight:600;
-      color:#666; letter-spacing:2px; text-transform:uppercase;
-      margin-bottom:4px; align-self:flex-start;
+    .lbl{
+      font-size:11px; font-weight:600; color:#555;
+      letter-spacing:2px; text-transform:uppercase;
+      margin-bottom:6px; align-self:flex-start;
     }
-    .card-wrap{ display:flex; flex-direction:column; align-items:flex-start; }
+    .wrap{ display:flex; flex-direction:column; align-items:flex-start; }
 
-    /* ══════════ FRONT ══════════ */
-    .cf{
-      width:720px; height:400px;
-      background:#111111;
-      border-radius:22px; position:relative; overflow:hidden;
-      box-shadow:0 30px 80px rgba(0,0,0,0.5);
+    .card{
+      width:750px; height:420px;
+      border-radius:24px; position:relative; overflow:hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
     }
-
-    /* Dot pattern overlay */
-    .cf-dots{
-      position:absolute; inset:0; z-index:1;
-      background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size:18px 18px;
+    .card-img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover; display:block;
     }
-
-    /* Yellow circle top-right */
-    .cf-ytr{
-      position:absolute; top:-45px; right:-45px;
-      width:220px; height:220px;
-      background:#F5A623; border-radius:50%; z-index:2;
+    /* Front overlay — customer name + card ID bottom */
+    .f-overlay{
+      position:absolute; inset:0;
+      display:flex; flex-direction:column; justify-content:flex-end;
+      padding:22px 30px;
+      background:linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 45%);
     }
-    /* Yellow circle bottom-left */
-    .cf-ybl{
-      position:absolute; bottom:-60px; left:-60px;
-      width:180px; height:180px;
-      background:#F5A623; border-radius:50%; z-index:2; opacity:0.65;
+    .f-name{
+      font-family:'Oswald',Arial; font-size:16px; font-weight:700;
+      color:rgba(255,255,255,0.5); letter-spacing:3px; text-transform:uppercase;
     }
-
-    /* Burger photo — left */
-    .cf-burger{
-      position:absolute; left:-10px; bottom:-20px;
-      width:280px; height:300px; z-index:3;
-      object-fit:cover; object-position:center;
-      filter: drop-shadow(0 15px 40px rgba(0,0,0,0.7));
-      border-radius:0 0 0 22px;
+    .f-id{
+      font-family:'Oswald',Arial; font-size:14px;
+      color:rgba(245,166,35,0.65); letter-spacing:4px; margin-top:3px;
     }
-    /* Fries — top left */
-    .cf-fries{
-      position:absolute; left:180px; top:20px;
-      width:110px; height:130px; z-index:3;
-      object-fit:cover; object-position:center top;
-      filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6));
-      border-radius:8px;
+    /* Back overlay */
+    .b-overlay{ position:absolute; inset:0; pointer-events:none; }
+    /* Stamps grid positioned over back card stamp area */
+    .stamps-grid{
+      position:absolute;
+      top:160px; left:28px;
+      display:flex; flex-wrap:wrap; gap:9px;
+      width:340px;
     }
-    /* Wings — right side */
-    .cf-wings{
-      position:absolute; right:145px; bottom:-10px;
-      width:200px; height:220px; z-index:3;
-      object-fit:cover; object-position:center;
-      filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6));
-      border-radius:8px;
+    /* Eligible badge */
+    .elig{
+      position:absolute; top:162px; right:26px;
+      background:rgba(16,185,129,0.92);
+      border-radius:10px; padding:7px 14px;
+      font-family:'Oswald',Arial; font-size:12px; font-weight:900;
+      color:white; letter-spacing:1px;
+      box-shadow:0 4px 16px rgba(16,185,129,0.4);
     }
-
-    /* 10% circle badge */
-    .cf-badge{
-      position:absolute; top:24px; right:24px;
-      width:118px; height:118px;
-      background:#F5A623; border-radius:50%; z-index:6;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      box-shadow:0 6px 24px rgba(245,166,35,0.6);
-      border:3px solid rgba(255,255,255,0.5);
-    }
-    .cb-get{ font-family:'Inter',Arial; font-size:10px; font-weight:900; color:#000; letter-spacing:2px; line-height:1; }
-    .cb-pct{ font-family:'Oswald',Arial; font-size:38px; font-weight:900; color:#000; line-height:1; }
-    .cb-off{ font-family:'Oswald',Arial; font-size:15px; font-weight:900; color:#000; line-height:1; }
-    .cb-sub{ font-family:'Inter',Arial; font-size:8px; font-weight:700; color:#333; text-align:center; line-height:1.4; margin-top:3px; }
-
-    /* Center content */
-    .cf-cnt{
-      position:absolute; inset:0; z-index:5;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding-bottom:10px;
-    }
-    .cf-the{ font-family:'Inter',Arial; font-size:15px; font-weight:800; color:white; letter-spacing:4px; margin-bottom:2px; }
-    .cf-brand{
-      font-family:'Pacifico',cursive;
-      font-size:54px; color:#F5A623; line-height:1;
-      text-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 30px rgba(245,166,35,0.3);
-    }
-    .cf-crunch{ font-family:'Inter',Arial; font-size:11px; color:rgba(255,255,255,0.45); letter-spacing:4px; margin-top:4px; }
-    .cf-lc{
-      font-family:'Oswald',Arial; font-size:32px; font-weight:900;
-      color:white; letter-spacing:8px; margin-top:10px;
-    }
-    .cf-lc span{ color:#F5A623; }
-    .cf-eat{ display:flex; align-items:center; gap:14px; margin-top:8px; }
-    .cf-eat-t{ font-family:'Inter',Arial; font-size:12px; font-weight:700; color:rgba(255,255,255,0.5); letter-spacing:3px; }
-    .cf-eat-d{ width:5px; height:5px; background:#F5A623; border-radius:50%; }
-
-    /* Customer strip at bottom */
-    .cf-strip{
-      position:absolute; bottom:0; left:0; right:0; z-index:6;
-      padding:10px 24px;
+    /* Customer info bottom of back */
+    .b-customer{
+      position:absolute; bottom:16px; left:28px; right:28px;
       display:flex; justify-content:space-between; align-items:center;
-      background:linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
     }
-    .cf-name{ font-family:'Oswald',Arial; font-size:13px; font-weight:700; color:rgba(255,255,255,0.5); letter-spacing:3px; }
-    .cf-id{ font-family:'Oswald',Arial; font-size:13px; font-weight:700; color:rgba(245,166,35,0.6); letter-spacing:3px; }
-
-
-    /* ══════════ BACK ══════════ */
-    .cb{
-      width:720px; height:400px;
-      background:#111111;
-      border-radius:22px; position:relative; overflow:hidden;
-      box-shadow:0 30px 80px rgba(0,0,0,0.5);
-    }
-    .cb-dots{
-      position:absolute; inset:0; z-index:1;
-      background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1px);
-      background-size:18px 18px;
-    }
-    .cb-ytr{ position:absolute; top:-30px; right:-30px; width:140px; height:140px; background:#F5A623; border-radius:50%; z-index:2; opacity:0.85; }
-    .cb-ybl{ position:absolute; bottom:-35px; left:-35px; width:120px; height:120px; background:#F5A623; border-radius:50%; z-index:2; opacity:0.6; }
-
-    .cb-inner{ position:relative; z-index:4; display:flex; height:100%; padding:26px 28px 50px; gap:28px; }
-
-    /* LEFT SIDE */
-    .cb-left{ flex:1; display:flex; flex-direction:column; }
-    .cbl-the{ font-family:'Inter',Arial; font-size:12px; font-weight:800; color:white; letter-spacing:3px; margin-bottom:0; }
-    .cbl-brand{ font-family:'Pacifico',cursive; font-size:32px; color:#F5A623; line-height:1.1; text-shadow:0 2px 10px rgba(245,166,35,0.3); }
-    .cbl-tag{ font-family:'Inter',Arial; font-size:9px; color:rgba(255,255,255,0.3); letter-spacing:2px; margin-bottom:16px; }
-
-    .stamps-grid{ display:flex; flex-wrap:wrap; gap:9px; max-width:330px; }
-
-    .ty{ margin-top:auto; padding-top:8px; }
-    .ty1{ font-family:'Inter',Arial; font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:1px; font-style:italic; }
-    .ty2{ font-family:'Pacifico',cursive; font-size:18px; color:#F5A623; line-height:1.3; }
-    .ty3{ font-family:'Inter',Arial; font-size:10px; color:rgba(255,255,255,0.25); margin-top:2px; }
-
-    /* RIGHT SIDE */
-    .cb-right{ width:240px; display:flex; flex-direction:column; gap:14px; }
-
-    .gf-txt{ text-align:right; }
-    .gf1,.gf2{ font-family:'Inter',Arial; font-size:13px; color:rgba(255,255,255,0.4); line-height:1.4; }
-    .gf3{ font-family:'Dancing Script',cursive; font-size:24px; color:white; line-height:1.2; }
-    .gf-heart{ color:#F5A623; }
-
-    /* Yellow brush stroke OFF box */
-    .off-box{
-      position:relative; padding:12px 16px;
-      background:#F5A623;
-      border-radius:8px;
-      overflow:hidden;
-    }
-    /* Brush stroke effect */
-    .off-box::before{
-      content:'';
-      position:absolute; inset:-4px -6px;
-      background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M5,30 Q50,5 100,28 Q150,50 195,25' stroke='%23F5A623' stroke-width='35' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/cover no-repeat;
-      opacity:0.3;
-      z-index:0;
-    }
-    .ob-row{ position:relative; z-index:1; display:flex; align-items:baseline; gap:4px; }
-    .ob-pct{ font-family:'Oswald',Arial; font-size:40px; font-weight:900; color:#000; line-height:1; }
-    .ob-off{ font-family:'Oswald',Arial; font-size:18px; font-weight:900; color:#000; }
-    .ob-txt{ position:relative; z-index:1; font-family:'Inter',Arial; font-size:11px; font-weight:900; color:#000; letter-spacing:1px; margin-top:2px; }
-    .ob-sub{ position:relative; z-index:1; font-family:'Inter',Arial; font-size:8px; color:rgba(0,0,0,0.6); font-weight:700; margin-top:3px; }
-
-    .terms-box{ flex:1; }
-    .terms-t{ font-family:'Inter',Arial; font-size:10px; font-weight:700; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-bottom:5px; }
-    .terms-l{ list-style:none; }
-    .terms-l li{
-      font-family:'Inter',Arial; font-size:9px; color:rgba(255,255,255,0.28);
-      padding:2px 0; display:flex; align-items:flex-start; gap:5px;
-    }
-    .terms-l li::before{ content:'•'; color:#F5A623; flex-shrink:0; }
-
-    /* Bottom strip */
-    .cb-strip{
-      position:absolute; bottom:0; left:0; right:0; z-index:5;
-      padding:10px 28px;
-      display:flex; justify-content:space-between; align-items:center;
-      background:linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-    }
-    .cb-sn{ font-family:'Oswald',Arial; font-size:12px; color:rgba(255,255,255,0.3); letter-spacing:2px; }
-    .cb-si{ font-family:'Oswald',Arial; font-size:12px; color:rgba(245,166,35,0.45); letter-spacing:2px; }
+    .b-name{ font-family:'Oswald',Arial; font-size:13px; color:rgba(255,255,255,0.35); letter-spacing:2px; }
+    .b-id  { font-family:'Oswald',Arial; font-size:12px; color:rgba(245,166,35,0.45); letter-spacing:2px; }
 
     @media print{
-      body{ background:#d6cfc4; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      body{ background:#ccc8bf; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══ FRONT ══ -->
-<div class="card-wrap">
-  <div class="side-label">Front Side</div>
-  <div class="cf">
-    <div class="cf-dots"></div>
-    <div class="cf-ytr"></div>
-    <div class="cf-ybl"></div>
-
-    <!-- Real food images -->
-    <img class="cf-burger" src="${burgerImg}" alt="" crossorigin="anonymous"
-      onerror="this.style.display='none'" />
-    <img class="cf-fries" src="${friesImg}" alt="" crossorigin="anonymous"
-      onerror="this.style.display='none'" />
-    <img class="cf-wings" src="${wingsImg}" alt="" crossorigin="anonymous"
-      onerror="this.style.display='none'" />
-
-    <!-- 10% badge -->
-    <div class="cf-badge">
-      <div class="cb-get">GET</div>
-      <div class="cb-pct">10%</div>
-      <div class="cb-off">OFF</div>
-      <div class="cb-sub">ON YOUR NEXT<br/>ORDER</div>
-    </div>
-
-    <!-- Center brand & text -->
-    <div class="cf-cnt">
-      <div class="cf-the">The</div>
-      <div class="cf-brand">Kruncheez</div>
-      <div class="cf-crunch">Crunch in Every Bite</div>
-      <div class="cf-lc">LOYALTY <span>CARD</span></div>
-      <div class="cf-eat">
-        <span class="cf-eat-t">EAT</span>
-        <div class="cf-eat-d"></div>
-        <span class="cf-eat-t">EARN</span>
-        <div class="cf-eat-d"></div>
-        <span class="cf-eat-t">ENJOY</span>
-      </div>
-    </div>
-
-    <!-- Customer strip -->
-    <div class="cf-strip">
-      <div class="cf-name">${(card.userName || 'Customer').toUpperCase()}</div>
-      <div class="cf-id">${card.cardId}</div>
+<!-- FRONT -->
+<div class="wrap">
+  <div class="lbl">Front Side</div>
+  <div class="card">
+    <img class="card-img" src="${frontImg}" alt="front"
+      onerror="this.style.background='#111';this.style.display='block';" />
+    <div class="f-overlay">
+      <div class="f-name">${(card.userName || 'Customer').toUpperCase()}</div>
+      <div class="f-id">${card.cardId}</div>
     </div>
   </div>
 </div>
 
-<!-- ══ BACK ══ -->
-<div class="card-wrap">
-  <div class="side-label">Back Side</div>
-  <div class="cb">
-    <div class="cb-dots"></div>
-    <div class="cb-ytr"></div>
-    <div class="cb-ybl"></div>
-
-    <div class="cb-inner">
-      <!-- LEFT -->
-      <div class="cb-left">
-        <div class="cbl-the">The</div>
-        <div class="cbl-brand">Kruncheez</div>
-        <div class="cbl-tag">Crunch in Every Bite</div>
-
-        <!-- Chef hat stamps -->
-        <div class="stamps-grid">
-          ${stamps}
-        </div>
-
-        <div class="ty">
-          <div class="ty1">Thank You</div>
-          <div class="ty2">for being a part of</div>
-          <div class="ty3">The Kruncheez Family!</div>
-        </div>
+<!-- BACK -->
+<div class="wrap">
+  <div class="lbl">Back Side</div>
+  <div class="card">
+    <img class="card-img" src="${backImg}" alt="back"
+      onerror="this.style.background='#111';this.style.display='block';" />
+    <div class="b-overlay">
+      <div class="stamps-grid">${stampsHTML}</div>
+      ${isEligible ? '<div class="elig">🎉 10% DISCOUNT READY!</div>' : ''}
+      <div class="b-customer">
+        <div class="b-name">${(card.userName || 'Customer').toUpperCase()}</div>
+        <div class="b-id">${card.cardId}${card.phone ? ' • ' + card.phone : ''}</div>
       </div>
-
-      <!-- RIGHT -->
-      <div class="cb-right">
-        <div class="gf-txt">
-          <div class="gf1">Good Food</div>
-          <div class="gf2">Brings People</div>
-          <div class="gf3">Together <span class="gf-heart">♥</span></div>
-        </div>
-
-        <!-- Brush stroke 10% box -->
-        <div class="off-box">
-          <div class="ob-row">
-            <div class="ob-pct">10%</div>
-            <div class="ob-off">OFF</div>
-          </div>
-          <div class="ob-txt">ON YOUR NEXT ORDER</div>
-          ${isEligible
-            ? '<div class="ob-sub">✅ DISCOUNT READY!</div>'
-            : `<div class="ob-sub">${10 - visits} more visit(s) to unlock</div>`}
-        </div>
-
-        <div class="terms-box">
-          <div class="terms-t">Terms &amp; Conditions:</div>
-          <ul class="terms-l">
-            <li>Valid for dine-in &amp; online orders</li>
-            <li>One card per customer</li>
-            <li>Not valid with other offers</li>
-            <li>Keep this card safe</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="cb-strip">
-      <div class="cb-sn">${(card.userName || 'Customer').toUpperCase()}</div>
-      <div class="cb-si">${card.cardId} • ${card.phone || ''}</div>
     </div>
   </div>
 </div>
 
-<script>window.onload = () => { window.print(); window.close(); }</script>
+<script>
+  (function() {
+    var imgs = document.querySelectorAll('img');
+    var total = imgs.length, done = 0;
+    function tryPrint() {
+      done++;
+      if (done >= total) { setTimeout(function(){ window.print(); window.close(); }, 600); }
+    }
+    imgs.forEach(function(img) {
+      if (img.complete) tryPrint();
+      else { img.onload = tryPrint; img.onerror = tryPrint; }
+    });
+    if (!total) { setTimeout(function(){ window.print(); window.close(); }, 1000); }
+    setTimeout(function(){ window.print(); window.close(); }, 5000);
+  })();
+</script>
 </body>
 </html>`);
     win.document.close();
@@ -438,18 +244,15 @@ const AdminCards = () => {
         <div style="width:680px;height:380px;background:#0f0f0f;border-radius:20px;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.4);page-break-inside:avoid;">
           <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;background:#F5A623;border-radius:50%;z-index:1;"></div>
           <div style="position:absolute;bottom:-50px;left:-50px;width:140px;height:140px;background:#F5A623;border-radius:50%;z-index:1;opacity:0.6;"></div>
-          <!-- Food -->
           <div style="position:absolute;left:8px;bottom:-12px;font-size:95px;z-index:3;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.5));">🍔</div>
           <div style="position:absolute;left:75px;bottom:25px;font-size:58px;z-index:3;">🍟</div>
           <div style="position:absolute;right:148px;bottom:-5px;font-size:72px;z-index:3;">🍗</div>
-          <!-- Discount -->
           <div style="position:absolute;top:22px;right:22px;width:115px;height:115px;background:#F5A623;border-radius:50%;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(245,166,35,0.5);border:3px solid rgba(255,255,255,0.4);">
             <div style="font-size:11px;font-weight:900;color:#000;letter-spacing:1px;">GET</div>
             <div style="font-family:Arial;font-size:36px;font-weight:900;color:#000;line-height:1;">10%</div>
             <div style="font-size:14px;font-weight:900;color:#000;">OFF</div>
             <div style="font-size:8px;font-weight:700;color:#333;text-align:center;line-height:1.3;margin-top:2px;">ON YOUR NEXT<br/>ORDER</div>
           </div>
-          <!-- Content -->
           <div style="position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:24px;">
             <div style="font-size:16px;font-weight:700;color:white;letter-spacing:3px;">👨‍🍳 The</div>
             <div style="font-size:48px;color:#F5A623;line-height:1;font-weight:900;font-style:italic;">Kruncheez</div>
