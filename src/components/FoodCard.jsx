@@ -69,6 +69,7 @@ const FoodCard = ({ item, compact = false }) => {
   };
 
   const badgeClass = item.badge ? (badgeColors[item.badge] || 'bg-krunch-red') : '';
+  // item.img takes priority (Firebase Storage or URL), then category fallback
   const img = item.img || categoryImages[item.category];
   const emoji = categoryEmoji[item.category] || '🍴';
 
@@ -99,7 +100,7 @@ const FoodCard = ({ item, compact = false }) => {
             }}
           />
         ) : null}
-        {/* Emoji fallback (hidden by default, shown if img fails) */}
+        {/* Emoji fallback */}
         <div
           className="absolute inset-0 items-center justify-center text-5xl select-none bg-gradient-to-br from-krunch-dark to-krunch-black"
           style={{ display: img ? 'none' : 'flex' }}

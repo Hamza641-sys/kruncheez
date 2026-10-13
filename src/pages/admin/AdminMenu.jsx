@@ -34,8 +34,8 @@ const AdminMenu = () => {
     return matchCat && matchSearch;
   });
 
-  const openAdd = () => { setForm(emptyItem); setEditItem(null); setShowForm(true); };
-  const openEdit = (item) => { setForm({ ...item }); setEditItem(item); setShowForm(true); };
+  const openAdd  = () => { setForm(emptyItem); setEditItem(null); setShowForm(true); };
+  const openEdit = (item) => { setForm({ ...emptyItem, ...item }); setEditItem(item); setShowForm(true); };
 
   const handleSave = async () => {
     if (!form.name || !form.price) { toast.error('Name and price required', toastStyle); return; }
@@ -159,10 +159,10 @@ const AdminMenu = () => {
               </div>
               <div className="p-6 flex flex-col gap-4">
                 {[
-                  { key: 'name', label: 'Item Name *', placeholder: 'e.g. Zinger Burger' },
-                  { key: 'price', label: 'Price (Rs.) *', placeholder: 'e.g. 390', type: 'number' },
-                  { key: 'description', label: 'Description', placeholder: 'Short description...' },
-                  { key: 'img', label: 'Image URL', placeholder: 'https://...' },
+                  { key: 'name',        label: 'Item Name *',   placeholder: 'e.g. Zinger Burger' },
+                  { key: 'price',       label: 'Price (Rs.) *', placeholder: 'e.g. 390', type: 'number' },
+                  { key: 'description', label: 'Description',   placeholder: 'Short description...' },
+                  { key: 'img',         label: 'Image URL',     placeholder: 'https://i.ibb.co/... ya koi bhi image URL' },
                 ].map(f => (
                   <div key={f.key}>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{f.label}</label>
@@ -171,6 +171,18 @@ const AdminMenu = () => {
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                   </div>
                 ))}
+
+                {/* Image Preview */}
+                {form.img && (
+                  <div className="rounded-xl overflow-hidden border border-krunch-border">
+                    <img
+                      src={form.img}
+                      alt="preview"
+                      className="w-full h-40 object-cover"
+                      onError={e => { e.target.parentElement.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Category</label>
