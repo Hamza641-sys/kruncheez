@@ -44,7 +44,7 @@ const AdminReports = () => {
       const [oSnap, eSnap, pSnap] = await Promise.all([
           getDocs(collection(db, 'orders')),
           getDocs(collection(db, 'expenses')),
-          getDocs(collection(db, 'stockPurchases')),
+          getDocs(collection(db, 'supplierPayments')),
         ]);
         const oData = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const eData = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -73,10 +73,12 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── EXPENSE calculations ──────────────────────────────────────────────
-  const totalExp   = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
-  const stockExp   = filteredExpenses.filter(e => e.category === 'Stock Purchase').reduce((s,e) => s + Number(e.amount||0), 0);
-  const salaryExp  = filteredExpenses.filter(e => e.category === 'Salaries').reduce((s,e) => s + Number(e.amount||0), 0);
-  const otherExp   = totalExp - stockExp - salaryExp;
+  const dailyExp       = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
+  const supplierPaidExp= filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
+  const totalExp       = dailyExp + supplierPaidExp;
+  const stockExp       = filteredExpenses.filter(e => e.category === 'Supplier Payment').reduce((s,e) => s + Number(e.amount||0), 0);
+  const salaryExp      = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
+  const otherExp       = dailyExp - stockExp - salaryExp;
 
   // ── PROFIT ─────────────────────────────────────────────────────────────
   const profit        = totalRev - totalExp;

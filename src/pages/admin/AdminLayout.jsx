@@ -10,22 +10,20 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
-  { path: '/admin',              label: 'Dashboard',      icon: <LayoutDashboard size={17} /> },
-  { path: '/admin/orders',       label: 'Orders',         icon: <ShoppingBag size={17} /> },
-  { path: '/admin/pos',          label: 'POS / Billing',  icon: <Receipt size={17} /> },
-  { path: '/admin/menu',         label: 'Menu',           icon: <UtensilsCrossed size={17} /> },
-  { path: '/admin/qr',           label: 'QR Codes',       icon: <QrCode size={17} /> },
-  { path: '/admin/cards',        label: 'Loyalty Cards',  icon: <CreditCard size={17} /> },
-  { path: '/kitchen',            label: '🍳 Kitchen Screen', icon: <ChefHat size={17} />, external: true },
-  { path: '/admin/reports',      label: 'Sales Reports',  icon: <BarChart3 size={17} /> },
-  { path: '/admin/inventory',    label: 'Inventory',      icon: <Package size={17} /> },
-  { path: '/admin/suppliers',    label: 'Suppliers',      icon: <Truck size={17} /> },
-  { path: '/admin/expenses',     label: 'Expenses',       icon: <TrendingDown size={17} /> },
-  { path: '/admin/staff',        label: 'Staff',          icon: <UserCheck size={17} /> },
-  { path: '/admin/customers',    label: 'Customers',      icon: <Users size={17} /> },
-  { path: '/admin/promos',       label: 'Promo Codes',    icon: <Tag size={17} /> },
-  { path: '/admin/analytics',    label: 'Analytics',      icon: <FileText size={17} /> },
-  { path: '/admin/settings',     label: 'Settings',       icon: <Settings size={17} /> },
+  { path: '/admin',           label: 'Dashboard',        icon: <LayoutDashboard size={17} /> },
+  { path: '/admin/orders',    label: 'Orders',           icon: <ShoppingBag size={17} /> },
+  { path: '/admin/pos',       label: 'POS / Billing',    icon: <Receipt size={17} /> },
+  { path: '/admin/menu',      label: 'Menu',             icon: <UtensilsCrossed size={17} /> },
+  { path: '/admin/reports',   label: 'Sales + Reports',  icon: <BarChart3 size={17} /> },
+  { path: '/admin/suppliers', label: 'Suppliers',        icon: <Truck size={17} /> },
+  { path: '/admin/expenses',  label: 'Daily Expenses',   icon: <TrendingDown size={17} /> },
+  { path: '/admin/staff',     label: 'Staff',            icon: <UserCheck size={17} /> },
+  { path: '/admin/qr',        label: 'QR Codes',         icon: <QrCode size={17} /> },
+  { path: '/admin/cards',     label: 'Loyalty Cards',    icon: <CreditCard size={17} /> },
+  { path: '/admin/customers', label: 'Customers',        icon: <Users size={17} /> },
+  { path: '/admin/promos',    label: 'Promo Codes',      icon: <Tag size={17} /> },
+  { path: '/admin/settings',  label: 'Settings',         icon: <Settings size={17} /> },
+  { path: '/kitchen',         label: '🍳 Kitchen Screen', icon: <ChefHat size={17} />, external: true },
 ];
 
 const AdminLayout = () => {
