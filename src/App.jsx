@@ -44,6 +44,13 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminQR from './pages/admin/AdminQR';
 import AdminCards from './pages/admin/AdminCards';
+import AdminReports from './pages/admin/AdminReports';
+import AdminPOS from './pages/admin/AdminPOS';
+import AdminInventory from './pages/admin/AdminInventory';
+import AdminSuppliers from './pages/admin/AdminSuppliers';
+import AdminExpenses from './pages/admin/AdminExpenses';
+import AdminStaff from './pages/admin/AdminStaff';
+import KitchenScreen from './pages/KitchenScreen';
 
 // New Customer Pages
 import MyCardPage from './pages/customer/MyCardPage';
@@ -103,16 +110,25 @@ const AppLayout = () => {
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><ProfilePage /></PublicLayout></ProtectedRoute>} />
         <Route path="/my-card" element={<ProtectedRoute><PublicLayout><MyCardPage /></PublicLayout></ProtectedRoute>} />
 
+        {/* ── KITCHEN SCREEN (open, fullscreen for kitchen TV) ── */}
+        <Route path="/kitchen" element={<KitchenScreen />} />
+
         {/* ── ADMIN ROUTES (admin only) ── */}
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
           <Route index element={<AdminDashboard />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="menu" element={<AdminMenu />} />
+          <Route path="orders"    element={<AdminOrders />} />
+          <Route path="pos"       element={<AdminPOS />} />
+          <Route path="menu"      element={<AdminMenu />} />
+          <Route path="qr"        element={<AdminQR />} />
+          <Route path="cards"     element={<AdminCards />} />
+          <Route path="reports"   element={<AdminReports />} />
+          <Route path="inventory" element={<AdminInventory />} />
+          <Route path="suppliers" element={<AdminSuppliers />} />
+          <Route path="expenses"  element={<AdminExpenses />} />
+          <Route path="staff"     element={<AdminStaff />} />
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="promos"    element={<AdminPromos />} />
           <Route path="analytics" element={<AdminAnalytics />} />
-          <Route path="qr"        element={<AdminQR />} />
-          <Route path="cards"     element={<AdminCards />} />
           <Route path="settings"  element={<AdminSettings />} />
         </Route>
 

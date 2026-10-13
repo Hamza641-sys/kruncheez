@@ -4,20 +4,28 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
   BarChart3, Settings, LogOut, Menu, X, Bell, Tag,
-  QrCode, CreditCard
+  QrCode, CreditCard, ChefHat, Receipt, Package,
+  Truck, TrendingDown, UserCheck, FileText
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
-  { path: '/admin',           label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
-  { path: '/admin/orders',    label: 'Orders',        icon: <ShoppingBag size={18} /> },
-  { path: '/admin/menu',      label: 'Menu',          icon: <UtensilsCrossed size={18} /> },
-  { path: '/admin/qr',        label: 'QR Codes',      icon: <QrCode size={18} /> },
-  { path: '/admin/cards',     label: 'Loyalty Cards', icon: <CreditCard size={18} /> },
-  { path: '/admin/customers', label: 'Customers',     icon: <Users size={18} /> },
-  { path: '/admin/analytics', label: 'Analytics',     icon: <BarChart3 size={18} /> },
-  { path: '/admin/promos',    label: 'Promo Codes',   icon: <Tag size={18} /> },
-  { path: '/admin/settings',  label: 'Settings',      icon: <Settings size={18} /> },
+  { path: '/admin',              label: 'Dashboard',      icon: <LayoutDashboard size={17} /> },
+  { path: '/admin/orders',       label: 'Orders',         icon: <ShoppingBag size={17} /> },
+  { path: '/admin/pos',          label: 'POS / Billing',  icon: <Receipt size={17} /> },
+  { path: '/admin/menu',         label: 'Menu',           icon: <UtensilsCrossed size={17} /> },
+  { path: '/admin/qr',           label: 'QR Codes',       icon: <QrCode size={17} /> },
+  { path: '/admin/cards',        label: 'Loyalty Cards',  icon: <CreditCard size={17} /> },
+  { path: '/kitchen',            label: '🍳 Kitchen Screen', icon: <ChefHat size={17} />, external: true },
+  { path: '/admin/reports',      label: 'Sales Reports',  icon: <BarChart3 size={17} /> },
+  { path: '/admin/inventory',    label: 'Inventory',      icon: <Package size={17} /> },
+  { path: '/admin/suppliers',    label: 'Suppliers',      icon: <Truck size={17} /> },
+  { path: '/admin/expenses',     label: 'Expenses',       icon: <TrendingDown size={17} /> },
+  { path: '/admin/staff',        label: 'Staff',          icon: <UserCheck size={17} /> },
+  { path: '/admin/customers',    label: 'Customers',      icon: <Users size={17} /> },
+  { path: '/admin/promos',       label: 'Promo Codes',    icon: <Tag size={17} /> },
+  { path: '/admin/analytics',    label: 'Analytics',      icon: <FileText size={17} /> },
+  { path: '/admin/settings',     label: 'Settings',       icon: <Settings size={17} /> },
 ];
 
 const AdminLayout = () => {
@@ -62,10 +70,19 @@ const AdminLayout = () => {
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             {navItems.map(item => {
               const active = location.pathname === item.path ||
-                (item.path !== '/admin' && location.pathname.startsWith(item.path));
+                (item.path !== '/admin' && !item.external && location.pathname.startsWith(item.path));
+              if (item.external) {
+                return (
+                  <a key={item.path} href={item.path} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-xl mb-1 transition-all duration-200 font-body font-semibold text-sm text-amber-400 hover:bg-amber-400/10 border border-amber-400/20 hover:border-amber-400/40 mb-2">
+                    {item.icon}
+                    {item.label}
+                  </a>
+                );
+              }
               return (
                 <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-all duration-200 font-body font-semibold text-sm ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl mb-1 transition-all duration-200 font-body font-semibold text-sm ${
                     active
                       ? 'bg-krunch-red text-white shadow-red-glow'
                       : 'text-krunch-gray hover:bg-krunch-card hover:text-white'
