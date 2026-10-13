@@ -1,6 +1,6 @@
 import {
   collection, addDoc, updateDoc, doc, getDocs,
-  query, where, orderBy, onSnapshot, serverTimestamp, getDoc, increment,
+  query, where, onSnapshot, serverTimestamp, getDoc, increment,
 } from 'firebase/firestore';
 import { db } from './config';
 
@@ -27,13 +27,10 @@ export const placeOrder = async (orderData) => {
 
 // ── Get Customer Orders ──────────────────────────────────────────
 export const getCustomerOrders = async (userId) => {
-  const q = query(
-    collection(db, 'orders'),
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
-  );
+  const q = query(collection(db, 'orders'), where('userId', '==', userId));
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return data.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
 };
 
 // ── Listen to Order (realtime) ───────────────────────────────────
@@ -45,9 +42,11 @@ export const listenToOrder = (orderId, callback) => {
 
 // ── Get All Orders (Admin) ───────────────────────────────────────
 export const getAllOrders = (callback) => {
-  const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+  const q = query(collection(db, 'orders'));
   return onSnapshot(q, (snap) => {
-    callback(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    data.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
+    callback(data);
   });
 };
 

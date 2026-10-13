@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { Plus, Trash2, Search, X, Download, TrendingDown } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -27,8 +27,14 @@ const AdminExpenses = () => {
 
   const fetch = async () => {
     setLoading(true);
-    const snap = await getDocs(query(collection(db, 'expenses'), orderBy('createdAt', 'desc')));
-    setExpenses(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const snap = await getDocs(collection(db, 'expenses'));
+    const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    data.sort((a, b) => {
+      const da = a.createdAt?.toDate?.() || new Date(a.date || 0);
+      const db2 = b.createdAt?.toDate?.() || new Date(b.date || 0);
+      return db2 - da;
+    });
+    setExpenses(data);
     setLoading(false);
   };
   useEffect(() => { fetch(); }, []);

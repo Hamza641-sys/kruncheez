@@ -2,7 +2,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function
     function isAdmin() {
       return request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
@@ -11,13 +10,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Users — own data only, admin can read/write all
+    // Users
     match /users/{userId} {
       allow read, write: if isLoggedIn() && request.auth.uid == userId;
       allow read, write: if isAdmin();
     }
 
-    // Orders — customer creates, admin manages all
+    // Orders
     match /orders/{orderId} {
       allow create: if isLoggedIn();
       allow read: if isLoggedIn() && (
@@ -26,19 +25,19 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
-    // Menu — anyone reads, admin writes
+    // Menu
     match /menu/{itemId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Tables (QR system) — admin full access, anyone can read
+    // Tables (QR)
     match /tables/{tableId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Loyalty Cards — customer reads own, admin manages all
+    // Loyalty Cards
     match /loyaltyCards/{cardId} {
       allow read: if true;
       allow create: if isLoggedIn();
@@ -48,20 +47,63 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Reviews — anyone reads, authenticated creates, admin manages
+    // Reviews
     match /reviews/{reviewId} {
       allow read: if true;
       allow create: if isLoggedIn();
       allow update, delete: if isAdmin();
     }
 
-    // Promo Codes — anyone reads, admin manages
+    // Promo Codes
     match /promoCodes/{codeId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Analytics — admin only
+    // ── NEW COLLECTIONS ──────────────────────────────────────────────
+
+    // Inventory
+    match /inventory/{itemId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Stock Updates log
+    match /stockUpdates/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // Suppliers
+    match /suppliers/{supplierId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Stock Purchases
+    match /stockPurchases/{purchaseId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Expenses
+    match /expenses/{expenseId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Staff
+    match /staff/{staffId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Attendance
+    match /attendance/{attendanceId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Settings
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Analytics
     match /analytics/{doc} {
       allow read, write: if isAdmin();
     }

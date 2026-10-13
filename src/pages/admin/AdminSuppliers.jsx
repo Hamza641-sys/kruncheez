@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { Plus, Edit2, Trash2, Search, X, Phone, MapPin, Package, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -25,10 +25,16 @@ const AdminSuppliers = () => {
   const fetchAll = async () => {
     const [supSnap, purSnap] = await Promise.all([
       getDocs(collection(db, 'suppliers')),
-      getDocs(query(collection(db, 'stockPurchases'), orderBy('createdAt', 'desc'))),
+      getDocs(collection(db, 'stockPurchases')),
     ]);
     setSuppliers(supSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    setPurchases(purSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    const purData = purSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    purData.sort((a, b) => {
+      const da = a.createdAt?.toDate?.() || 0;
+      const db2 = b.createdAt?.toDate?.() || 0;
+      return db2 - da;
+    });
+    setPurchases(purData);
   };
   useEffect(() => { fetchAll(); }, []);
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { Plus, Edit2, Trash2, Search, X, Clock, CheckCircle, DollarSign } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -24,10 +24,17 @@ const AdminStaff = () => {
   const fetchAll = async () => {
     const [sSnap, aSnap] = await Promise.all([
       getDocs(collection(db, 'staff')),
-      getDocs(query(collection(db, 'attendance'), orderBy('date', 'desc'))),
+      getDocs(collection(db, 'attendance')),
     ]);
     setStaff(sSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-    setAttendance(aSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    // Sort attendance by date desc in JS
+    const attData = aSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    attData.sort((a, b) => {
+      const da = a.createdAt?.toDate?.() || new Date(a.date || 0);
+      const db2 = b.createdAt?.toDate?.() || new Date(b.date || 0);
+      return db2 - da;
+    });
+    setAttendance(attData);
   };
   useEffect(() => { fetchAll(); }, []);
 

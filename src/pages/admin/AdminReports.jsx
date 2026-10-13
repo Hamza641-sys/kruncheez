@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Download, Calendar, Package, Users, Star, ArrowUp, ArrowDown } from 'lucide-react';
 
@@ -41,14 +41,19 @@ const AdminReports = () => {
     const load = async () => {
       setLoading(true);
       try {
-        const [oSnap, eSnap, pSnap] = await Promise.all([
-          getDocs(query(collection(db, 'orders'),       orderBy('createdAt', 'desc'))),
-          getDocs(query(collection(db, 'expenses'),     orderBy('createdAt', 'desc'))),
-          getDocs(query(collection(db, 'stockPurchases'), orderBy('createdAt', 'desc'))),
+      const [oSnap, eSnap, pSnap] = await Promise.all([
+          getDocs(collection(db, 'orders')),
+          getDocs(collection(db, 'expenses')),
+          getDocs(collection(db, 'stockPurchases')),
         ]);
-        setOrders(oSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-        setExpenses(eSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-        setPurchases(pSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+        const oData = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const eData = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        // Sort by date desc
+        const sortDesc = (a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
+        setOrders(oData.sort(sortDesc));
+        setExpenses(eData.sort(sortDesc));
+        setPurchases(pData.sort(sortDesc));
       } catch(e) { console.error(e); }
       setLoading(false);
     };

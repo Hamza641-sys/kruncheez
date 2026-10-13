@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { collection, onSnapshot, query, where, orderBy, updateDoc, doc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { ChefHat, Clock, CheckCircle, Bell, Maximize } from 'lucide-react';
 
@@ -110,11 +110,12 @@ const KitchenScreen = () => {
   useEffect(() => {
     const q = query(
       collection(db, 'orders'),
-      where('status', 'in', ['confirmed', 'preparing', 'ready']),
-      orderBy('createdAt', 'asc')
+      where('status', 'in', ['confirmed', 'preparing', 'ready'])
     );
     const unsub = onSnapshot(q, (snap) => {
       const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Sort by createdAt asc
+      data.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0));
       if (data.length > prevCount.current) {
         setAlert(true);
         setTimeout(() => setAlert(false), 3000);
