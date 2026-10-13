@@ -41,19 +41,16 @@ const AdminReports = () => {
     const load = async () => {
       setLoading(true);
       try {
-      const [oSnap, eSnap, pSnap] = await Promise.all([
+      const [oSnap, eSnap] = await Promise.all([
           getDocs(collection(db, 'orders')),
           getDocs(collection(db, 'expenses')),
-          getDocs(collection(db, 'supplierPayments')),
         ]);
         const oData = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const eData = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const pData = pSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        // Sort by date desc
         const sortDesc = (a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
         setOrders(oData.sort(sortDesc));
         setExpenses(eData.sort(sortDesc));
-        setPurchases(pData.sort(sortDesc));
+        setPurchases([]);
       } catch(e) { console.error(e); }
       setLoading(false);
     };
@@ -73,12 +70,10 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── EXPENSE calculations ──────────────────────────────────────────────
-  const dailyExp       = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
-  const supplierPaidExp= filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
-  const totalExp       = dailyExp + supplierPaidExp;
-  const stockExp       = filteredExpenses.filter(e => e.category === 'Supplier Payment').reduce((s,e) => s + Number(e.amount||0), 0);
-  const salaryExp      = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
-  const otherExp       = dailyExp - stockExp - salaryExp;
+  const totalExp    = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
+  const salaryExp   = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
+  const supplierPaidExp = filteredExpenses.filter(e => e.category === 'Supplier Payment').reduce((s,e) => s + Number(e.amount||0), 0);
+  const dailyExp    = totalExp - supplierPaidExp;
 
   // ── PROFIT ─────────────────────────────────────────────────────────────
   const profit        = totalRev - totalExp;
