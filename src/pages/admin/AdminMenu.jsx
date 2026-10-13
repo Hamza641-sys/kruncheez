@@ -146,13 +146,16 @@ const AdminMenu = () => {
         {showForm && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setShowForm(false)} className="fixed inset-0 bg-black/70 z-50" />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-lg bg-krunch-dark border border-krunch-border rounded-2xl z-50 flex flex-col max-h-[90vh] overflow-y-auto"
-            >
+              onClick={() => setShowForm(false)}
+              className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.2 }}
+                onClick={e => e.stopPropagation()}
+                className="w-full max-w-lg bg-krunch-dark border border-krunch-border rounded-2xl z-50 flex flex-col max-h-[90vh] overflow-y-auto"
+              >
               <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
                 <h3 className="font-heading font-bold text-white uppercase">{editItem ? 'Edit Item' : 'Add New Item'}</h3>
                 <button onClick={() => setShowForm(false)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
@@ -214,6 +217,7 @@ const AdminMenu = () => {
                     : <><Check size={16} /> {editItem ? 'Update Item' : 'Add Item'}</>}
                 </button>
               </div>
+            </motion.div>
             </motion.div>
           </>
         )}
