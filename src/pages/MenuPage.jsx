@@ -1,43 +1,58 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, SlidersHorizontal, X, QrCode } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { menuCategories, menuItems } from '../data/menuData';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import { menuCategories } from '../data/menuData';
 import FoodCard from '../components/FoodCard';
 import { useCart } from '../context/CartContext';
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState('burgers');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('popular');
+  const [search, setSearch]       = useState('');
+  const [sortBy, setSortBy]       = useState('popular');
+  const [allItems, setAllItems]   = useState([]);
+  const [loading, setLoading]     = useState(true);
   const { setIsCartOpen, cartCount } = useCart();
   const [searchParams] = useSearchParams();
   const tableNumber = searchParams.get('table');
 
+  // ── Load ALL menu items from Firestore (realtime) ─────────────────────
+  useEffect(() => {
+    const q = query(collection(db, 'menu'), where('available', '==', true));
+    const unsub = onSnapshot(q, (snap) => {
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setAllItems(data);
+      setLoading(false);
+    }, () => setLoading(false));
+    return () => unsub();
+  }, []);
+
+  // ── Filter + Sort ──────────────────────────────────────────────────────
   const items = useMemo(() => {
     let base = search.trim()
-      ? Object.values(menuItems).flat().filter(i =>
-          i.name.toLowerCase().includes(search.toLowerCase()) ||
-          i.description.toLowerCase().includes(search.toLowerCase())
+      ? allItems.filter(i =>
+          i.name?.toLowerCase().includes(search.toLowerCase()) ||
+          i.description?.toLowerCase().includes(search.toLowerCase())
         )
-      : (menuItems[activeCategory] || []);
+      : allItems.filter(i => i.category === activeCategory);
 
-    if (sortBy === 'price-asc') base = [...base].sort((a, b) => a.price - b.price);
+    if (sortBy === 'price-asc')  base = [...base].sort((a, b) => a.price - b.price);
     if (sortBy === 'price-desc') base = [...base].sort((a, b) => b.price - a.price);
-    if (sortBy === 'popular') base = [...base].sort((a, b) => (b.badge === 'POPULAR' ? 1 : 0) - (a.badge === 'POPULAR' ? 1 : 0));
-
+    if (sortBy === 'popular')    base = [...base].sort((a, b) =>
+      (b.badge === 'POPULAR' ? 1 : 0) - (a.badge === 'POPULAR' ? 1 : 0)
+    );
     return base;
-  }, [activeCategory, search, sortBy]);
+  }, [allItems, activeCategory, search, sortBy]);
 
   return (
     <div className="min-h-screen bg-krunch-black pt-24 pb-16">
-      {/* Table Banner — shows when QR scanned */}
+
+      {/* Table Banner */}
       {tableNumber && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-krunch-red text-white px-4 py-3 text-center"
-        >
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-krunch-red text-white px-4 py-3 text-center">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
             <QrCode size={18} />
             <span className="font-heading font-bold text-sm uppercase tracking-widest">
@@ -50,15 +65,9 @@ const MenuPage = () => {
       {/* Page Header */}
       <div className="bg-krunch-dark border-b border-krunch-border py-10">
         <div className="max-w-7xl mx-auto px-4">
-          <span className="text-krunch-red font-body font-semibold text-sm uppercase tracking-widest mb-2 block">
-            Our Menu
-          </span>
-          <h1 className="section-title text-white mb-2">
-            FULL <span className="text-krunch-red">MENU</span>
-          </h1>
-          <p className="text-krunch-gray font-body text-sm">
-            Fresh. Hot. Delicious. Every item made with premium ingredients.
-          </p>
+          <span className="text-krunch-red font-body font-semibold text-sm uppercase tracking-widest mb-2 block">Our Menu</span>
+          <h1 className="section-title text-white mb-2">FULL <span className="text-krunch-red">MENU</span></h1>
+          <p className="text-krunch-gray font-body text-sm">Fresh. Hot. Delicious. Every item made with premium ingredients.</p>
         </div>
       </div>
 
@@ -70,20 +79,25 @@ const MenuPage = () => {
             <div className="sticky top-28">
               <h3 className="font-heading font-bold text-white text-sm uppercase tracking-widest mb-3 px-1">Categories</h3>
               <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0" style={{ scrollbarWidth: 'none' }}>
-                {menuCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => { setActiveCategory(cat.id); setSearch(''); }}
-                    className={`flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-body font-semibold text-sm transition-all duration-200 text-left ${
-                      activeCategory === cat.id && !search
-                        ? 'bg-krunch-red text-white shadow-red-glow'
-                        : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
-                    }`}
-                  >
-                    <span className="text-lg">{cat.icon}</span>
-                    <span className="whitespace-nowrap">{cat.name}</span>
-                  </button>
-                ))}
+                {menuCategories.map((cat) => {
+                  const count = allItems.filter(i => i.category === cat.id).length;
+                  return (
+                    <button key={cat.id} onClick={() => { setActiveCategory(cat.id); setSearch(''); }}
+                      className={`flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-body font-semibold text-sm transition-all duration-200 text-left ${
+                        activeCategory === cat.id && !search
+                          ? 'bg-krunch-red text-white shadow-red-glow'
+                          : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
+                      }`}>
+                      <span className="text-lg">{cat.icon}</span>
+                      <span className="whitespace-nowrap flex-1">{cat.name}</span>
+                      {count > 0 && (
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${activeCategory === cat.id && !search ? 'bg-white/20' : 'bg-krunch-black'}`}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </aside>
@@ -94,13 +108,9 @@ const MenuPage = () => {
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <div className="relative flex-1">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
-                <input
-                  type="text"
-                  placeholder="Search menu items..."
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-10 py-3 text-white font-body text-sm placeholder-krunch-gray focus:outline-none focus:border-krunch-red transition-colors"
-                />
+                <input type="text" placeholder="Search menu items..."
+                  value={search} onChange={e => setSearch(e.target.value)}
+                  className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-10 py-3 text-white font-body text-sm placeholder-krunch-gray focus:outline-none focus:border-krunch-red transition-colors" />
                 {search && (
                   <button onClick={() => setSearch('')} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-krunch-gray hover:text-white">
                     <X size={15} />
@@ -109,11 +119,8 @@ const MenuPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={16} className="text-krunch-gray flex-shrink-0" />
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value)}
-                  className="bg-krunch-card border border-krunch-border rounded-xl px-4 py-3 text-krunch-gray font-body text-sm focus:outline-none focus:border-krunch-red transition-colors appearance-none cursor-pointer"
-                >
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)}
+                  className="bg-krunch-card border border-krunch-border rounded-xl px-4 py-3 text-krunch-gray font-body text-sm focus:outline-none focus:border-krunch-red transition-colors appearance-none cursor-pointer">
                   <option value="popular">Sort: Popular</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
@@ -144,28 +151,28 @@ const MenuPage = () => {
               </div>
             )}
 
-            {/* Items Grid */}
-            {items.length === 0 ? (
+            {/* Loading */}
+            {loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="h-64 bg-krunch-card rounded-xl animate-pulse" />
+                ))}
+              </div>
+            ) : items.length === 0 ? (
               <div className="text-center py-20">
                 <div className="text-5xl mb-4">🔍</div>
                 <p className="font-heading font-bold text-xl text-white">No items found</p>
-                <p className="text-krunch-gray font-body text-sm mt-1">Try a different search term</p>
+                <p className="text-krunch-gray font-body text-sm mt-1">Try a different search or category</p>
               </div>
             ) : (
-              <motion.div
-                key={activeCategory + search + sortBy}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"
-              >
+              <motion.div key={activeCategory + search + sortBy}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
+                className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {items.map((item, index) => (
-                  <motion.div
-                    key={item.id}
+                  <motion.div key={item.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25, delay: Math.min(index * 0.05, 0.4) }}
-                  >
+                    transition={{ duration: 0.25, delay: Math.min(index * 0.05, 0.4) }}>
                     <FoodCard item={item} />
                   </motion.div>
                 ))}
@@ -177,12 +184,9 @@ const MenuPage = () => {
 
       {/* Floating cart button (mobile) */}
       {cartCount > 0 && (
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+        <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }}
           onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-6 right-6 lg:hidden bg-krunch-red text-white font-heading font-bold px-5 py-3 rounded-full shadow-red-glow-lg flex items-center gap-2 z-40"
-        >
+          className="fixed bottom-6 right-6 lg:hidden bg-krunch-red text-white font-heading font-bold px-5 py-3 rounded-full shadow-red-glow-lg flex items-center gap-2 z-40">
           🛒 Cart ({cartCount})
         </motion.button>
       )}

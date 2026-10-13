@@ -1,18 +1,30 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
-import { menuCategories, menuItems } from '../data/menuData';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import { menuCategories } from '../data/menuData';
 import FoodCard from './FoodCard';
 
 const MenuCategories = () => {
   const [activeCategory, setActiveCategory] = useState('burgers');
+  const [allItems, setAllItems]             = useState([]);
   const scrollRef = useRef(null);
 
-  const scrollLeft = () => scrollRef.current?.scrollBy({ left: -200, behavior: 'smooth' });
+  // Load from Firestore realtime
+  useEffect(() => {
+    const q = query(collection(db, 'menu'), where('available', '==', true));
+    const unsub = onSnapshot(q, (snap) => {
+      setAllItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsub();
+  }, []);
+
+  const scrollLeft  = () => scrollRef.current?.scrollBy({ left: -200, behavior: 'smooth' });
   const scrollRight = () => scrollRef.current?.scrollBy({ left: 200, behavior: 'smooth' });
 
-  const items = menuItems[activeCategory] || [];
+  const items       = allItems.filter(i => i.category === activeCategory);
   const visibleItems = items.slice(0, 5);
 
   return (

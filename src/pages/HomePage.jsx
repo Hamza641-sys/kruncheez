@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Star, Truck, Shield } from 'lucide-react';
+import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import Hero from '../components/Hero';
 import MenuCategories from '../components/MenuCategories';
-import { menuItems } from '../data/menuData';
+import { menuItems as localMenuItems } from '../data/menuData';
 import FoodCard from '../components/FoodCard';
 
 const features = [
@@ -13,15 +16,35 @@ const features = [
   { icon: <Shield className="text-krunch-red" size={22} />, title: 'Halal Certified', desc: '100% halal. Eat with full trust & confidence.' },
 ];
 
-const topDeals = menuItems.deals.slice(0, 3);
-const popularItems = [
-  menuItems.burgers[0],
-  menuItems.pizza[0],
-  menuItems.wraps[1],
-  menuItems.bbq[2],
+const topDeals = localMenuItems.deals.slice(0, 3);
+const localPopular = [
+  localMenuItems.burgers[0],
+  localMenuItems.pizza[0],
+  localMenuItems.wraps[1],
+  localMenuItems.bbq[2],
 ];
 
 const HomePage = () => {
+  const [popularItems, setPopularItems] = useState(localPopular);
+  const [deals, setDeals] = useState(topDeals);
+
+  useEffect(() => {
+    // Load popular items from Firestore
+    const loadItems = async () => {
+      try {
+        const popSnap = await getDocs(
+          query(collection(db, 'menu'), where('available', '==', true), where('badge', '==', 'POPULAR'), limit(4))
+        );
+        if (!popSnap.empty) setPopularItems(popSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+        const dealSnap = await getDocs(
+          query(collection(db, 'menu'), where('available', '==', true), where('category', '==', 'deals'), limit(3))
+        );
+        if (!dealSnap.empty) setDeals(dealSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch { /* use local fallback */ }
+    };
+    loadItems();
+  }, []);
   return (
     <div className="bg-krunch-black">
 
