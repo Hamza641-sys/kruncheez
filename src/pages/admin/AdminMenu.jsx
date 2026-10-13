@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, Search, X, Check, ToggleLeft, ToggleRight } from 'lucide-react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
@@ -69,6 +69,7 @@ const AdminMenu = () => {
 
   return (
     <div>
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Menu Management</h2>
@@ -79,67 +80,133 @@ const AdminMenu = () => {
         </button>
       </div>
 
-      {/* Search + Category Filter */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <div className="relative flex-1">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
-          <input type="text" placeholder="Search menu items..." value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
-        </div>
-        <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
-          className="bg-krunch-card border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none cursor-pointer">
-          <option value="all">All Categories</option>
-          {menuCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
-      </div>
+      <div className="flex flex-col lg:flex-row gap-6">
 
-      {/* Items Grid */}
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, i) => <div key={i} className="h-48 bg-krunch-card rounded-xl animate-pulse" />)}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map((item, i) => (
-            <motion.div key={item.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className={`card-dark overflow-hidden group ${!item.available ? 'opacity-50' : ''}`}
-            >
-              <div className="h-32 bg-krunch-black overflow-hidden">
-                {item.img ? (
-                  <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">
-                    {menuCategories.find(c => c.id === item.category)?.icon || '🍴'}
+        {/* ── LEFT: Category Sidebar ── */}
+        <aside className="lg:w-52 flex-shrink-0">
+          <div className="sticky top-4">
+            <h3 className="font-heading font-bold text-white text-xs uppercase tracking-widest mb-3 px-1">Categories</h3>
+            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0" style={{ scrollbarWidth: 'none' }}>
+              {/* All button */}
+              <button
+                onClick={() => setCatFilter('all')}
+                className={`flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-body font-semibold text-sm transition-all text-left ${
+                  catFilter === 'all'
+                    ? 'bg-krunch-red text-white shadow-red-glow'
+                    : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
+                }`}>
+                <span className="text-lg">🍴</span>
+                <span className="whitespace-nowrap flex-1">All Items</span>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${catFilter === 'all' ? 'bg-white/20' : 'bg-krunch-black'}`}>
+                  {items.length}
+                </span>
+              </button>
+
+              {menuCategories.map((cat) => {
+                const count = items.filter(i => i.category === cat.id).length;
+                return (
+                  <button key={cat.id}
+                    onClick={() => setCatFilter(cat.id)}
+                    className={`flex-shrink-0 flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-body font-semibold text-sm transition-all text-left ${
+                      catFilter === cat.id
+                        ? 'bg-krunch-red text-white shadow-red-glow'
+                        : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
+                    }`}>
+                    <span className="text-lg">{cat.icon}</span>
+                    <span className="whitespace-nowrap flex-1">{cat.name}</span>
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${catFilter === cat.id ? 'bg-white/20' : 'bg-krunch-black'}`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
+
+        {/* ── RIGHT: Items Area ── */}
+        <div className="flex-1">
+          {/* Search bar */}
+          <div className="relative mb-4">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
+            <input type="text" placeholder="Search menu items..." value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+
+          {/* Category title */}
+          {catFilter !== 'all' && !search && (
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl">{menuCategories.find(c => c.id === catFilter)?.icon}</span>
+              <div>
+                <h3 className="font-heading font-bold text-xl text-white uppercase">
+                  {menuCategories.find(c => c.id === catFilter)?.name}
+                </h3>
+                <p className="text-krunch-gray font-body text-xs">
+                  {filtered.length} items
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Items Grid */}
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => <div key={i} className="h-48 bg-krunch-card rounded-xl animate-pulse" />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="text-5xl mb-3">🔍</div>
+              <p className="font-heading font-bold text-xl text-white uppercase">No items found</p>
+              <button onClick={openAdd} className="btn-primary mt-4 text-sm">+ Add Item</button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filtered.map((item, i) => (
+                <motion.div key={item.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  className={`card-dark overflow-hidden group ${!item.available ? 'opacity-50' : ''}`}
+                >
+                  <div className="h-32 bg-krunch-black overflow-hidden relative">
+                    {item.img ? (
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-4xl">
+                        {menuCategories.find(c => c.id === item.category)?.icon || '🍴'}
+                      </div>
+                    )}
+                    {/* Category badge */}
+                    <div className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                      {item.category}
+                    </div>
                   </div>
-                )}
-              </div>
-              <div className="p-3">
-                <p className="font-body font-bold text-white text-sm truncate">{item.name}</p>
-                <p className="text-krunch-red font-heading font-black text-lg">Rs.{Number(item.price).toLocaleString()}</p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <button onClick={() => toggleAvailable(item)}
-                    className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all ${item.available ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
-                    {item.available ? <ToggleRight size={12} /> : <ToggleLeft size={12} />}
-                    {item.available ? 'Live' : 'Off'}
-                  </button>
-                  <button onClick={() => openEdit(item)}
-                    className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all ml-auto">
-                    <Edit2 size={12} />
-                  </button>
-                  <button onClick={() => handleDelete(item.id)}
-                    className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-red-400 hover:border-red-400/50 transition-all">
-                    <Trash2 size={12} />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                  <div className="p-3">
+                    <p className="font-body font-bold text-white text-sm truncate">{item.name}</p>
+                    <p className="text-krunch-red font-heading font-black text-lg">Rs.{Number(item.price).toLocaleString()}</p>
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <button onClick={() => toggleAvailable(item)}
+                        className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all ${item.available ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                        {item.available ? <ToggleRight size={12} /> : <ToggleLeft size={12} />}
+                        {item.available ? 'Live' : 'Off'}
+                      </button>
+                      <button onClick={() => openEdit(item)}
+                        className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all ml-auto">
+                        <Edit2 size={12} />
+                      </button>
+                      <button onClick={() => handleDelete(item.id)}
+                        className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-red-400 hover:border-red-400/50 transition-all">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Add/Edit Form Modal */}
       <AnimatePresence>
