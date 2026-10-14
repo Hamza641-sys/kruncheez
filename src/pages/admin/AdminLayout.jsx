@@ -3,11 +3,12 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
-  BarChart3, Settings, LogOut, Menu, X, Bell, Tag,
+  BarChart3, Settings, LogOut, Menu, X, Tag,
   QrCode, CreditCard, ChefHat, Receipt,
   Truck, TrendingDown, UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import NotificationPanel from '../../components/admin/NotificationPanel';
 
 const navItems = [
   { path: '/admin',           label: 'Dashboard',        icon: <LayoutDashboard size={17} /> },
@@ -127,10 +128,7 @@ const AdminLayout = () => {
             </p>
           </div>
           <div className="flex items-center gap-3 ml-auto">
-            <button className="relative w-9 h-9 rounded-xl bg-krunch-card border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white transition-colors">
-              <Bell size={16} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-krunch-red rounded-full text-[9px] text-white font-bold flex items-center justify-center">!</span>
-            </button>
+            <NotificationPanel />
             <div className="w-9 h-9 rounded-xl bg-krunch-red flex items-center justify-center text-white font-heading font-black text-sm">
               {userData?.name?.[0]?.toUpperCase() || 'A'}
             </div>
