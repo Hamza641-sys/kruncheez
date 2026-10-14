@@ -101,6 +101,7 @@ const AdminStaff = () => {
       const netSalary = total + bonus - fine - deduction;
       const remaining = netSalary - paid;
 
+      // Save salary record
       await addDoc(collection(db, 'salaryRecords'), {
         staffId:      salaryForm.staffId,
         staffName:    salaryForm.staffName,
@@ -118,15 +119,8 @@ const AdminStaff = () => {
         createdAt:    serverTimestamp(),
       });
 
-      // Add to expenses
-      await addDoc(collection(db, 'expenses'), {
-        category:      'salary',
-        description:   `Salary — ${salaryForm.staffName} (${salaryForm.month})`,
-        amount:        paid,
-        paymentMethod: 'cash',
-        date:          new Date().toISOString().split('T')[0],
-        createdAt:     serverTimestamp(),
-      });
+      // NOTE: Salary is tracked in salaryRecords — NOT in expenses
+      // Reports will load salaryRecords separately
 
       toast.success('Salary recorded!', toastStyle);
       setShowSalaryForm(false); setSalaryForm(emptySalary);

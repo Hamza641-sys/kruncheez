@@ -35,24 +35,28 @@ const AdminReports = () => {
   const [orders, setOrders]   = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [purchases, setPurchases] = useState([]);
+  const [salaries, setSalaries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-      const [oSnap, eSnap, spSnap] = await Promise.all([
+      const [oSnap, eSnap, spSnap, salSnap] = await Promise.all([
           getDocs(collection(db, 'orders')),
           getDocs(collection(db, 'expenses')),
           getDocs(collection(db, 'supplierPayments')),
+          getDocs(collection(db, 'salaryRecords')),
         ]);
         const oData  = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const eData  = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const spData = spSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const salData= salSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const sortDesc = (a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
         setOrders(oData.sort(sortDesc));
         setExpenses(eData.sort(sortDesc));
         setPurchases(spData.sort(sortDesc));
+        setSalaries(salData.sort(sortDesc));
       } catch(e) { console.error(e); }
       setLoading(false);
     };
@@ -71,16 +75,19 @@ const AdminReports = () => {
   const pending    = filteredOrders.filter(o => o.status === 'pending').length;
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
+  // ── Filter salaries by period ─────────────────────────────────────────
+  const filteredSalaries = filterByPeriod(salaries, period);
+
   // ── EXPENSE calculations ──────────────────────────────────────────────
-  // Daily expenses ONLY (exclude any supplier payment category if exists)
-  const dailyExpenses   = filteredExpenses.filter(e => e.category !== 'Supplier Payment');
+  // Daily expenses ONLY (exclude salary category)
+  const dailyExpenses   = filteredExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary');
   const dailyExp        = dailyExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
-  // Supplier payments (separate collection — supplierPayments)
+  // Supplier payments (separate collection)
   const supplierExp     = filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
-  // Salary from daily expenses
-  const salaryExp       = dailyExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
-  // Total = daily + supplier
-  const totalExp        = dailyExp + supplierExp;
+  // Salary from salaryRecords collection
+  const salaryExp       = filteredSalaries.reduce((s,r) => s + Number(r.paid||0), 0);
+  // Total = daily + supplier + salary
+  const totalExp        = dailyExp + supplierExp + salaryExp;
 
   // ── PROFIT ─────────────────────────────────────────────────────────────
   const profit        = totalRev - totalExp;
@@ -233,8 +240,16 @@ const AdminReports = () => {
                   <p className="text-green-400 font-heading font-black text-xl">Rs.{totalRev.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-krunch-gray font-body text-xs uppercase">Expenses</p>
+                  <p className="text-krunch-gray font-body text-xs uppercase">Total Kharcha</p>
                   <p className="text-red-400 font-heading font-black text-xl">Rs.{totalExp.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase">Supplier</p>
+                  <p className="text-amber-400 font-heading font-black text-lg">Rs.{supplierExp.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase">Salary</p>
+                  <p className="text-blue-400 font-heading font-black text-lg">Rs.{salaryExp.toLocaleString()}</p>
                 </div>
               </div>
             </div>
@@ -243,10 +258,10 @@ const AdminReports = () => {
           {/* ══════════ MAIN STATS ══════════ */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
-              { icon: <TrendingUp size={20} className="text-green-400"/>,  label: 'Total Revenue (Sale)',  value: `Rs.${totalRev.toLocaleString()}`,  sub: `${delivered.length} orders delivered`,     bg: 'bg-green-400/10' },
-              { icon: <TrendingDown size={20} className="text-red-400"/>,  label: 'Total Kharcha',         value: `Rs.${totalExp.toLocaleString()}`,  sub: `Supplier + Daily expenses`,                bg: 'bg-red-400/10' },
-              { icon: <Truck size={20} className="text-amber-400"/>,       label: 'Supplier Ko Diya',      value: `Rs.${supplierExp.toLocaleString()}`,sub: `${filteredPurchases.length} payments`,     bg: 'bg-amber-400/10' },
-              { icon: <Users size={20} className="text-blue-400"/>,        label: 'Daily Expenses',        value: `Rs.${dailyExp.toLocaleString()}`,  sub: `Milk, roti, masala etc`,                   bg: 'bg-blue-400/10' },
+            { icon: <TrendingUp size={20} className="text-green-400"/>,  label: 'Total Revenue (Sale)',  value: `Rs.${totalRev.toLocaleString()}`,   sub: `${delivered.length} orders delivered`,      bg: 'bg-green-400/10' },
+              { icon: <TrendingDown size={20} className="text-red-400"/>,  label: 'Total Kharcha',         value: `Rs.${totalExp.toLocaleString()}`,   sub: `Supplier + Daily + Salary`,                 bg: 'bg-red-400/10' },
+              { icon: <Truck size={20} className="text-amber-400"/>,       label: 'Supplier Ko Diya',      value: `Rs.${supplierExp.toLocaleString()}`,sub: `${filteredPurchases.length} payments`,       bg: 'bg-amber-400/10' },
+              { icon: <Users size={20} className="text-blue-400"/>,        label: 'Staff Salary',          value: `Rs.${salaryExp.toLocaleString()}`,  sub: `${filteredSalaries.length} salary records`,  bg: 'bg-blue-400/10' },
             ].map((s,i) => (
               <div key={i} className="card-dark p-5">
                 <div className={`w-11 h-11 ${s.bg} rounded-xl flex items-center justify-center mb-3`}>{s.icon}</div>
@@ -385,12 +400,31 @@ const AdminReports = () => {
                     </tr>
                   ))}
 
-                  {/* Daily expenses by category */}
+                  {/* Staff Salary */}
                   <tr className="border-b border-krunch-border/50">
                     <td className="py-2.5 pl-4 text-blue-400 font-body font-semibold text-sm">
-                      📝 Daily Expenses ({filteredExpenses.length} entries)
+                      👥 Staff Salary ({filteredSalaries.length} records)
                     </td>
-                    <td className="py-2.5 text-right text-blue-400 font-heading font-black text-base">- Rs.{dailyExp.toLocaleString()}</td>
+                    <td className="py-2.5 text-right text-blue-400 font-heading font-black text-base">- Rs.{salaryExp.toLocaleString()}</td>
+                  </tr>
+                  {filteredSalaries.length > 0 && filteredSalaries.slice(0,5).map(s => (
+                    <tr key={s.id} className="border-b border-krunch-border/20">
+                      <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
+                        {s.staffName} — {s.month}
+                        {s.fine > 0 ? ` (Fine: -Rs.${s.fine})` : ''}
+                        {s.bonus > 0 ? ` (Bonus: +Rs.${s.bonus})` : ''}
+                        {s.remaining > 0 ? ` | Baqi: Rs.${s.remaining}` : ''}
+                      </td>
+                      <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(s.paid||0).toLocaleString()}</td>
+                    </tr>
+                  ))}
+
+                  {/* Daily expenses by category */}
+                  <tr className="border-b border-krunch-border/50">
+                    <td className="py-2.5 pl-4 text-purple-400 font-body font-semibold text-sm">
+                      📝 Daily Expenses ({dailyExpenses.length} entries)
+                    </td>
+                    <td className="py-2.5 text-right text-purple-400 font-heading font-black text-base">- Rs.{dailyExp.toLocaleString()}</td>
                   </tr>
                   {expCatData.map(([cat, amt]) => (
                     <tr key={cat} className="border-b border-krunch-border/20">
