@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Phone, MapPin, Clock, Instagram, Facebook, ArrowRight, Mail } from 'lucide-react';
+import { Phone, MapPin, Clock, Instagram, Facebook, ArrowRight } from 'lucide-react';
 
 const quickLinks = [
   { label: 'Home', path: '/' },
@@ -71,18 +71,17 @@ const Footer = () => {
             {/* Social */}
             <div className="flex gap-3">
               {[
-                { icon: <Instagram size={16} />, label: 'Instagram', hover: 'hover:bg-pink-600' },
-                { icon: <Facebook size={16} />, label: 'Facebook', hover: 'hover:bg-blue-600' },
-                { icon: <span className="text-xs font-black">TT</span>, label: 'TikTok', hover: 'hover:bg-neutral-800' },
-                { icon: <span className="text-xs font-black">YT</span>, label: 'YouTube', hover: 'hover:bg-red-700' },
+                { icon: <Instagram size={16} />, label: 'Instagram', hover: 'hover:bg-pink-600', url: 'https://www.instagram.com/thekruncheez' },
+                { icon: <Facebook size={16} />,  label: 'Facebook',  hover: 'hover:bg-blue-600', url: 'https://www.facebook.com/thekruncheez' },
+                { icon: <span className="text-xs font-black">TT</span>, label: 'TikTok',  hover: 'hover:bg-neutral-800', url: 'https://www.tiktok.com/@thekruncheez' },
+                { icon: <span className="text-xs font-black">YT</span>, label: 'YouTube', hover: 'hover:bg-red-700',     url: 'https://www.youtube.com/@thekruncheez' },
               ].map((s, i) => (
-                <button
-                  key={i}
+                <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
                   title={s.label}
                   className={`w-9 h-9 rounded-xl bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-transparent ${s.hover} transition-all duration-200`}
                 >
                   {s.icon}
-                </button>
+                </a>
               ))}
             </div>
           </div>

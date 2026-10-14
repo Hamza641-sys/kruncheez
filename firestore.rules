@@ -124,6 +124,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Contact Messages
+    match /contactMessages/{msgId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
     // Analytics
     match /analytics/{doc} {
       allow read, write: if isAdmin();

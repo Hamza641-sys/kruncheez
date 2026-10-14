@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 // Social links — admin can update from Firebase
@@ -26,11 +26,10 @@ const FollowPage = () => {
           const data = snap.data();
           setLinks({ ...DEFAULT_LINKS, ...data.links });
           setScans(data.scanCount || 0);
-          // Increment scan count
-          await updateDoc(ref, { scanCount: (data.scanCount || 0) + 1 });
+          // Atomic increment — no race condition
+          await updateDoc(ref, { scanCount: increment(1) });
         } else {
           // Create doc if doesn't exist
-          const { setDoc, serverTimestamp } = await import('firebase/firestore');
           await setDoc(ref, {
             links: DEFAULT_LINKS,
             scanCount: 1,

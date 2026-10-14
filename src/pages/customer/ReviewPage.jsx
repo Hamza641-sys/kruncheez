@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Send, ArrowLeft, CheckCircle } from 'lucide-react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -46,6 +46,15 @@ const ReviewPage = () => {
     if (rating === 0) { toast.error('Please give an overall rating', toastStyle); return; }
     setLoading(true);
     try {
+      // Duplicate prevention — check if review already exists for this order+user
+      const existing = await getDocs(
+        query(collection(db, 'reviews'), where('orderId', '==', orderId), where('userId', '==', user.uid))
+      );
+      if (!existing.empty) {
+        toast.error('You have already reviewed this order', toastStyle);
+        setLoading(false);
+        return;
+      }
       await addDoc(collection(db, 'reviews'), {
         orderId,
         userId: user.uid,

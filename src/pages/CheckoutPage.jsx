@@ -412,7 +412,7 @@ const CheckoutPage = () => {
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { value: 'cash', label: 'Cash on Delivery', icon: '💵', desc: 'Pay when you receive' },
-                    { value: 'card', label: 'Card / Online',    icon: '💳', desc: 'Visa, Mastercard, JCB' },
+                    { value: 'card', label: 'Card / Online',    icon: '💳', desc: 'Pay by card at door' },
                   ].map(opt => (
                     <button key={opt.value} type="button"
                       onClick={() => setForm({ ...form, paymentMethod: opt.value })}
@@ -429,6 +429,11 @@ const CheckoutPage = () => {
                     </button>
                   ))}
                 </div>
+                {form.paymentMethod === 'card' && (
+                  <p className="text-amber-400 font-body text-xs mt-2 bg-amber-400/10 border border-amber-400/20 rounded-xl px-3 py-2">
+                    💳 Card payment available at the door — our rider will carry a card machine.
+                  </p>
+                )}
               </div>
 
               {/* Loyalty Card */}

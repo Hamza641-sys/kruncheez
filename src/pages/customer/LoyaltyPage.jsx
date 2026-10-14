@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Gift, Star, ArrowRight, Zap } from 'lucide-react';
+import { doc, updateDoc, increment } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const rewards = [
   { points: 100,  reward: 'Free Regular Drink',        icon: '🥤', color: 'from-blue-900/30 to-krunch-card' },
@@ -21,10 +24,28 @@ const howItWorks = [
 ];
 
 const LoyaltyPage = () => {
-  const { userData } = useAuth();
+  const { userData, user, refreshUserData } = useAuth();
   const points = userData?.loyaltyPoints || 0;
   const nextReward = rewards.find(r => r.points > points);
   const progressPct = nextReward ? Math.min((points / nextReward.points) * 100, 100) : 100;
+  const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
+
+  const handleRedeem = async (r) => {
+    if (!user) { toast.error('Please login to redeem', toastStyle); return; }
+    if (points < r.points) return;
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        loyaltyPoints: increment(-r.points),
+      });
+      await refreshUserData();
+      toast.success(`🎉 "${r.reward}" redeemed! Show this to staff when ordering.`, {
+        duration: 6000,
+        style: { background: '#1A1A1A', color: '#fff', border: '1px solid #f59e0b' }
+      });
+    } catch {
+      toast.error('Redeem failed. Try again.', toastStyle);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-krunch-black pt-24 pb-16">
@@ -112,7 +133,9 @@ const LoyaltyPage = () => {
                   </div>
                   <div className="flex-shrink-0">
                     {unlocked ? (
-                      <button className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-body font-bold text-xs px-3 py-2 rounded-xl transition-all">
+                      <button
+                        onClick={() => handleRedeem(r)}
+                        className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-body font-bold text-xs px-3 py-2 rounded-xl transition-all">
                         <Zap size={12} /> Redeem
                       </button>
                     ) : (

@@ -120,10 +120,10 @@ const SignupPage = () => {
             </div>
             {/* Phone */}
             <div>
-              <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Phone Number</label>
+              <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Phone Number *</label>
               <div className="relative">
                 <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
-                <input type="tel" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
+                <input type="tel" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })}
                   placeholder="03XX-XXXXXXX"
                   className="w-full bg-krunch-black border border-krunch-border rounded-xl pl-10 pr-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
               </div>

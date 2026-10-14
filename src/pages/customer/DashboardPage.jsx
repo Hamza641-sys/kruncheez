@@ -39,7 +39,7 @@ const DashboardPage = () => {
     { icon: '📦', label: 'My Orders', path: '/my-orders', color: 'bg-blue-600' },
     { icon: '📍', label: 'Addresses', path: '/addresses', color: 'bg-green-600' },
     { icon: '🎁', label: 'Loyalty', path: '/loyalty', color: 'bg-amber-600' },
-    { icon: '⭐', label: 'Reviews', path: '/reviews', color: 'bg-purple-600' },
+    { icon: '⭐', label: 'Reviews', path: '/my-orders', color: 'bg-purple-600' },
     { icon: '👤', label: 'Profile', path: '/profile', color: 'bg-gray-600' },
   ];
 

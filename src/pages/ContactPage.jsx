@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, Facebook } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
 const contactInfo = [
   { icon: <Phone size={20} className="text-krunch-red" />, label: 'Phone', values: ['0317-7787648', '0308-4509090', '0335-6609178'], links: true },
@@ -16,13 +18,29 @@ const ContactPage = () => {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      // Save to Firestore
+      await addDoc(collection(db, 'contactMessages'), {
+        name:      form.name,
+        phone:     form.phone,
+        subject:   form.subject,
+        message:   form.message,
+        createdAt: serverTimestamp(),
+        read:      false,
+      });
+      // Open WhatsApp to notify admin
+      const msg = `📩 *New Contact Message — KrunchEez*\n\n` +
+        `Name: ${form.name}\nPhone: ${form.phone}\nSubject: ${form.subject}\n\nMessage:\n${form.message}`;
+      window.open(`https://wa.me/923177787648?text=${encodeURIComponent(msg)}`, '_blank');
       setSubmitted(true);
-    }, 1500);
+    } catch {
+      setSubmitted(true); // still show success to user
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,14 +106,15 @@ const ContactPage = () => {
               <h3 className="font-heading font-bold text-white uppercase text-sm mb-4 tracking-wider">Follow Us</h3>
               <div className="flex gap-3">
                 {[
-                  { icon: <Instagram size={18} />, label: 'Instagram', color: 'hover:bg-pink-600' },
-                  { icon: <Facebook size={18} />, label: 'Facebook', color: 'hover:bg-blue-600' },
-                  { icon: <span className="text-sm font-bold">TT</span>, label: 'TikTok', color: 'hover:bg-black' },
-                  { icon: <span className="text-sm font-bold">YT</span>, label: 'YouTube', color: 'hover:bg-red-700' },
+                  { icon: <Instagram size={18} />, label: 'Instagram', color: 'hover:bg-pink-600', url: 'https://www.instagram.com/thekruncheez' },
+                  { icon: <Facebook size={18} />,  label: 'Facebook',  color: 'hover:bg-blue-600', url: 'https://www.facebook.com/thekruncheez' },
+                  { icon: <span className="text-sm font-bold">TT</span>, label: 'TikTok',  color: 'hover:bg-black', url: 'https://www.tiktok.com/@thekruncheez' },
+                  { icon: <span className="text-sm font-bold">YT</span>, label: 'YouTube', color: 'hover:bg-red-700', url: 'https://www.youtube.com/@thekruncheez' },
                 ].map((s, i) => (
-                  <button key={i} className={`w-10 h-10 rounded-xl bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white ${s.color} hover:border-transparent transition-all duration-200`} title={s.label}>
+                  <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                    className={`w-10 h-10 rounded-xl bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white ${s.color} hover:border-transparent transition-all duration-200`} title={s.label}>
                     {s.icon}
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
