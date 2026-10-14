@@ -118,6 +118,12 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // App Settings (restaurant config, delivery fee, etc.)
+    match /appSettings/{doc} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Analytics
     match /analytics/{doc} {
       allow read, write: if isAdmin();
