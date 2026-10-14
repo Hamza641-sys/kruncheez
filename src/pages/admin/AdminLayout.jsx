@@ -5,7 +5,7 @@ import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
   BarChart3, Settings, LogOut, Menu, X, Bell, Tag,
   QrCode, CreditCard, ChefHat, Receipt,
-  TrendingDown, UserCheck
+  Truck, TrendingDown, UserCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -15,6 +15,7 @@ const navItems = [
   { path: '/admin/pos',       label: 'POS / Billing',    icon: <Receipt size={17} /> },
   { path: '/admin/menu',      label: 'Menu',             icon: <UtensilsCrossed size={17} /> },
   { path: '/admin/reports',   label: 'Sales + Reports',  icon: <BarChart3 size={17} /> },
+  { path: '/admin/suppliers', label: 'Suppliers',        icon: <Truck size={17} /> },
   { path: '/admin/expenses',  label: 'Daily Expenses',   icon: <TrendingDown size={17} /> },
   { path: '/admin/staff',     label: 'Staff',            icon: <UserCheck size={17} /> },
   { path: '/admin/qr',        label: 'QR Codes',         icon: <QrCode size={17} /> },

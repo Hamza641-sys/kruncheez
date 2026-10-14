@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Download, Calendar, Package, Users, Star, ArrowUp, ArrowDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Download, Calendar, Package, Users, Star, ArrowUp, ArrowDown, Truck } from 'lucide-react';
 
 const periods = [
   { key: 'today', label: 'Today' },
@@ -41,16 +41,18 @@ const AdminReports = () => {
     const load = async () => {
       setLoading(true);
       try {
-      const [oSnap, eSnap] = await Promise.all([
+      const [oSnap, eSnap, spSnap] = await Promise.all([
           getDocs(collection(db, 'orders')),
           getDocs(collection(db, 'expenses')),
+          getDocs(collection(db, 'supplierPayments')),
         ]);
-        const oData = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const eData = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const oData  = oSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const eData  = eSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const spData = spSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const sortDesc = (a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
         setOrders(oData.sort(sortDesc));
         setExpenses(eData.sort(sortDesc));
-        setPurchases([]);
+        setPurchases(spData.sort(sortDesc));
       } catch(e) { console.error(e); }
       setLoading(false);
     };
@@ -70,10 +72,14 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── EXPENSE calculations ──────────────────────────────────────────────
-  const totalExp    = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
-  const salaryExp   = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
-  const supplierPaidExp = filteredExpenses.filter(e => e.category === 'Supplier Payment').reduce((s,e) => s + Number(e.amount||0), 0);
-  const dailyExp    = totalExp - supplierPaidExp;
+  // Daily expenses (milk, roti, masala etc)
+  const dailyExp        = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
+  // Supplier payments (separate collection)
+  const supplierExp     = filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
+  // Salary from daily expenses
+  const salaryExp       = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
+  // Total all expenses
+  const totalExp        = dailyExp + supplierExp;
 
   // ── PROFIT ─────────────────────────────────────────────────────────────
   const profit        = totalRev - totalExp;
@@ -235,10 +241,10 @@ const AdminReports = () => {
           {/* ══════════ MAIN STATS ══════════ */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
-              { icon: <TrendingUp size={20} className="text-green-400"/>,   label: 'Total Revenue',    value: `Rs.${totalRev.toLocaleString()}`,   sub: `${delivered.length} orders delivered`,  bg: 'bg-green-400/10' },
-              { icon: <TrendingDown size={20} className="text-red-400"/>,   label: 'Total Expenses',   value: `Rs.${totalExp.toLocaleString()}`,   sub: `${filteredExpenses.length} entries`,     bg: 'bg-red-400/10' },
-              { icon: <Package size={20} className="text-amber-400"/>,      label: 'Stock Kharcha',    value: `Rs.${stockExp.toLocaleString()}`,   sub: `${filteredPurchases.length} purchases`,  bg: 'bg-amber-400/10' },
-              { icon: <Users size={20} className="text-blue-400"/>,         label: 'Salary Kharcha',   value: `Rs.${salaryExp.toLocaleString()}`,  sub: 'Staff salaries',                         bg: 'bg-blue-400/10' },
+              { icon: <TrendingUp size={20} className="text-green-400"/>,  label: 'Total Revenue (Sale)',  value: `Rs.${totalRev.toLocaleString()}`,  sub: `${delivered.length} orders delivered`,     bg: 'bg-green-400/10' },
+              { icon: <TrendingDown size={20} className="text-red-400"/>,  label: 'Total Kharcha',         value: `Rs.${totalExp.toLocaleString()}`,  sub: `Supplier + Daily expenses`,                bg: 'bg-red-400/10' },
+              { icon: <Truck size={20} className="text-amber-400"/>,       label: 'Supplier Ko Diya',      value: `Rs.${supplierExp.toLocaleString()}`,sub: `${filteredPurchases.length} payments`,     bg: 'bg-amber-400/10' },
+              { icon: <Users size={20} className="text-blue-400"/>,        label: 'Daily Expenses',        value: `Rs.${dailyExp.toLocaleString()}`,  sub: `Milk, roti, masala etc`,                   bg: 'bg-blue-400/10' },
             ].map((s,i) => (
               <div key={i} className="card-dark p-5">
                 <div className={`w-11 h-11 ${s.bg} rounded-xl flex items-center justify-center mb-3`}>{s.icon}</div>
@@ -358,22 +364,48 @@ const AdminReports = () => {
 
                   {/* Expense section */}
                   <tr className="border-b border-krunch-border mt-2">
-                    <td className="py-3 text-red-400 font-body font-bold text-sm uppercase tracking-wider" colSpan={2}>💸 EXPENSES (Kharcha)</td>
+                    <td className="py-3 text-red-400 font-body font-bold text-sm uppercase tracking-wider" colSpan={2}>💸 KHARCHA (Expenses)</td>
+                  </tr>
+
+                  {/* Supplier payments */}
+                  <tr className="border-b border-krunch-border/50">
+                    <td className="py-2.5 pl-4 text-amber-400 font-body font-semibold text-sm">
+                      🚚 Supplier Ko Diya ({filteredPurchases.length} payments)
+                    </td>
+                    <td className="py-2.5 text-right text-amber-400 font-heading font-black text-base">- Rs.{supplierExp.toLocaleString()}</td>
+                  </tr>
+                  {filteredPurchases.length > 0 && filteredPurchases.slice(0,5).map(p => (
+                    <tr key={p.id} className="border-b border-krunch-border/20">
+                      <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
+                        {p.supplierName} — {p.items || 'Payment'} ({p.date || '—'})
+                      </td>
+                      <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(p.amount||0).toLocaleString()}</td>
+                    </tr>
+                  ))}
+
+                  {/* Daily expenses by category */}
+                  <tr className="border-b border-krunch-border/50">
+                    <td className="py-2.5 pl-4 text-blue-400 font-body font-semibold text-sm">
+                      📝 Daily Expenses ({filteredExpenses.length} entries)
+                    </td>
+                    <td className="py-2.5 text-right text-blue-400 font-heading font-black text-base">- Rs.{dailyExp.toLocaleString()}</td>
                   </tr>
                   {expCatData.map(([cat, amt]) => (
-                    <tr key={cat} className="border-b border-krunch-border/30">
-                      <td className="py-2 pl-4 text-krunch-gray font-body text-sm">{cat}</td>
-                      <td className="py-2 text-right text-red-400 font-body font-bold text-sm">- Rs.{amt.toLocaleString()}</td>
+                    <tr key={cat} className="border-b border-krunch-border/20">
+                      <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">{cat}</td>
+                      <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{amt.toLocaleString()}</td>
                     </tr>
                   ))}
                   {expCatData.length === 0 && (
                     <tr className="border-b border-krunch-border/30">
-                      <td className="py-2 pl-4 text-krunch-gray font-body text-sm italic" colSpan={2}>Koi expense add nahi kiya</td>
+                      <td className="py-2 pl-8 text-krunch-gray font-body text-xs italic" colSpan={2}>Koi daily expense nahi</td>
                     </tr>
                   )}
+
+                  {/* Total kharcha */}
                   <tr className="border-b border-krunch-border">
-                    <td className="py-2.5 pl-4 text-white font-body font-bold text-sm">Total Expenses</td>
-                    <td className="py-2.5 text-right text-red-400 font-heading font-black text-base">- Rs.{totalExp.toLocaleString()}</td>
+                    <td className="py-3 pl-4 text-white font-body font-bold text-sm">Total Kharcha</td>
+                    <td className="py-3 text-right text-red-400 font-heading font-black text-lg">- Rs.{totalExp.toLocaleString()}</td>
                   </tr>
 
                   {/* Profit */}
