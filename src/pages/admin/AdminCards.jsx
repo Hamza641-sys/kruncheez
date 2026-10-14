@@ -17,7 +17,7 @@ const tierColors = {
   Gold:   'text-amber-400 bg-amber-500/20 border-amber-500/30',
 };
 
-const tierEmoji = { Bronze: 'ðŸ¥‰', Silver: 'ðŸ¥ˆ', Gold: 'ðŸ¥‡' };
+const tierEmoji = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' };
 
 const AdminCards = () => {
   const [cards, setCards]         = useState([]);
@@ -98,7 +98,7 @@ const AdminCards = () => {
     const cardsHTML = cards.map(card => {
       const visits     = card.visits || 0;
       const tier       = card.tier || 'Bronze';
-      const tierBadge  = { Bronze: 'ðŸ¥‰', Silver: 'ðŸ¥ˆ', Gold: 'ðŸ¥‡' }[tier] || 'ðŸ¥‰';
+      const tierBadge  = { Bronze: '🥉', Silver: '🥈', Gold: '🥇' }[tier] || '🥉';
       const isEligible = visits >= 10;
 
       const stampsRow = Array.from({ length: 10 }, (_, i) => `
