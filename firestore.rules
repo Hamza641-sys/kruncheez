@@ -97,6 +97,16 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // Salary Records
+    match /salaryRecords/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // Staff Reports
+    match /staffReports/{id} {
+      allow read, write: if isAdmin();
+    }
+
     // Attendance
     match /attendance/{attendanceId} {
       allow read, write: if isAdmin();
