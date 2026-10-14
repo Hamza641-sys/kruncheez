@@ -67,7 +67,7 @@ const AdminSuppliers = () => {
     try {
       const amt = Number(payForm.amount);
 
-      // Save payment record
+      // Save payment record ONLY in supplierPayments
       await addDoc(collection(db, 'supplierPayments'), {
         ...payForm, amount: amt, createdAt: serverTimestamp()
       });
@@ -77,17 +77,7 @@ const AdminSuppliers = () => {
         totalPaid: increment(amt)
       });
 
-      // Also save in expenses for profit report
-      await addDoc(collection(db, 'expenses'), {
-        category: 'Supplier Payment',
-        description: `${payForm.supplierName} — ${payForm.items || 'Payment'}`,
-        amount: amt,
-        paymentMethod: payForm.paymentMethod,
-        date: payForm.date,
-        supplierId: payForm.supplierId,
-        supplierName: payForm.supplierName,
-        createdAt: serverTimestamp(),
-      });
+      // NOTE: Do NOT add to expenses — supplier payments tracked separately
 
       toast.success('Payment recorded!', toastStyle);
       setShowPay(false);
