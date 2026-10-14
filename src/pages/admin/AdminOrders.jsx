@@ -21,6 +21,26 @@ const nextStatus = {
   out_for_delivery: 'delivered',
 };
 
+// ── Customer Badge ────────────────────────────────────────────────────────
+const getCustomerBadge = (phone, allOrders) => {
+  if (!phone) return { label: '🆕 New', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
+  const count = allOrders.filter(o =>
+    o.customer?.phone === phone && o.status !== 'rejected'
+  ).length;
+  if (count >= 10) return { label: '👑 VIP',     color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', count };
+  if (count >= 2)  return { label: '⭐ Regular', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20', count };
+  return               { label: '🆕 New',     color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', count: 1 };
+};
+
+const CustomerBadge = ({ phone, allOrders }) => {
+  const badge = getCustomerBadge(phone, allOrders);
+  return (
+    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${badge.color}`}>
+      {badge.label} {badge.count > 1 ? `(${badge.count} orders)` : ''}
+    </span>
+  );
+};
+
 // Order type badge
 const OrderTypeBadge = ({ orderType, tableNumber }) => {
   if (orderType === 'dine-in' || tableNumber) return (
@@ -180,6 +200,9 @@ const AdminOrders = () => {
                     <td className="px-4 py-3">
                       <p className="text-white font-body text-sm">{order.customer?.name || '—'}</p>
                       <p className="text-krunch-gray font-body text-xs">{order.customer?.phone || '—'}</p>
+                      <div className="mt-1">
+                        <CustomerBadge phone={order.customer?.phone} allOrders={orders} />
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-krunch-gray font-body text-sm">{order.items?.length || 0} items</td>
                     <td className="px-4 py-3 text-krunch-red font-heading font-black text-base whitespace-nowrap">Rs.{order.summary?.total?.toLocaleString()}</td>
@@ -248,7 +271,10 @@ const AdminOrders = () => {
                 {/* Customer */}
                 <div>
                   <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Customer</p>
-                  <p className="text-white font-body font-semibold">{selected.customer?.name}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-white font-body font-semibold">{selected.customer?.name}</p>
+                    <CustomerBadge phone={selected.customer?.phone} allOrders={orders} />
+                  </div>
                   <p className="text-krunch-gray font-body text-sm">{selected.customer?.phone}</p>
                   {selected.customer?.address && <p className="text-krunch-gray font-body text-sm">{selected.customer.address}</p>}
                   <div className="flex items-center gap-2 mt-2">
