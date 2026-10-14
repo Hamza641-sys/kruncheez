@@ -72,13 +72,14 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── EXPENSE calculations ──────────────────────────────────────────────
-  // Daily expenses (milk, roti, masala etc)
-  const dailyExp        = filteredExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
-  // Supplier payments (separate collection)
+  // Daily expenses ONLY (exclude any supplier payment category if exists)
+  const dailyExpenses   = filteredExpenses.filter(e => e.category !== 'Supplier Payment');
+  const dailyExp        = dailyExpenses.reduce((s,e) => s + Number(e.amount||0), 0);
+  // Supplier payments (separate collection — supplierPayments)
   const supplierExp     = filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
   // Salary from daily expenses
-  const salaryExp       = filteredExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
-  // Total all expenses
+  const salaryExp       = dailyExpenses.filter(e => e.category === 'salary').reduce((s,e) => s + Number(e.amount||0), 0);
+  // Total = daily + supplier
   const totalExp        = dailyExp + supplierExp;
 
   // ── PROFIT ─────────────────────────────────────────────────────────────
@@ -90,8 +91,9 @@ const AdminReports = () => {
   const totalStockPurchased = filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
 
   // ── Expense by category ───────────────────────────────────────────────
+  // By category — use dailyExpenses only (exclude Supplier Payment)
   const expByCat = {};
-  filteredExpenses.forEach(e => {
+  dailyExpenses.forEach(e => {
     expByCat[e.category] = (expByCat[e.category]||0) + Number(e.amount||0);
   });
   const expCatData = Object.entries(expByCat).sort((a,b) => b[1]-a[1]);
