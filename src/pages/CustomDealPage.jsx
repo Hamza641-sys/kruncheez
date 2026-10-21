@@ -1,37 +1,44 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, Trash2, Zap, Tag, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase/config';
 import { useCart } from '../context/CartContext';
-import { menuItems, menuCategories } from '../data/menuData';
+import { menuCategories } from '../data/menuData';
 import toast from 'react-hot-toast';
-
-// Categories to show (exclude deals)
-const ALLOWED_CATS = ['burgers', 'bbq', 'wraps', 'pizza', 'chinese', 'pasta', 'starters', 'sandwich', 'chicken', 'soup', 'platter'];
-
-// Flatten all items
-const getAllItems = () => {
-  return ALLOWED_CATS.flatMap(cat =>
-    (menuItems[cat] || []).map(item => ({ ...item, category: cat }))
-  );
-};
 
 const CustomDealPage = () => {
   const { addToCart } = useCart();
-  const [selectedCat, setSelectedCat] = useState('burgers');
-  const [dealItems, setDealItems] = useState([]); // { ...item, qty }
+  const [allItems, setAllItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCat, setSelectedCat] = useState('all');
+  const [dealItems, setDealItems] = useState([]);
   const [added, setAdded] = useState(false);
-  const allItems = getAllItems();
 
-  const DISCOUNT = 0.10; // 10%
-  const MIN_ITEMS = 2;   // minimum 2 items for deal
+  const DISCOUNT = 0.10;
+  const MIN_ITEMS = 2;
 
-  // ── Totals ──
+  // Load only customDeal items from Firestore
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const snap = await getDocs(query(collection(db, 'menu'), where('customDeal', '==', true), where('available', '==', true)));
+        setAllItems(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch { setAllItems([]); }
+      finally { setLoading(false); }
+    };
+    load();
+  }, []);
+
+  // Unique categories from loaded items
+  const activeCats = ['all', ...new Set(allItems.map(i => i.category))];
+  const filteredItems = selectedCat === 'all' ? allItems : allItems.filter(i => i.category === selectedCat);
+
   const subtotal = dealItems.reduce((s, i) => s + i.price * i.qty, 0);
   const discount = dealItems.length >= MIN_ITEMS ? Math.round(subtotal * DISCOUNT) : 0;
   const total = subtotal - discount;
   const totalQty = dealItems.reduce((s, i) => s + i.qty, 0);
 
-  // ── Add item to deal ──
   const addItem = (item) => {
     setDealItems(prev => {
       const ex = prev.find(i => i.id === item.id);
@@ -40,7 +47,6 @@ const CustomDealPage = () => {
     });
   };
 
-  // ── Remove one ──
   const removeOne = (id) => {
     setDealItems(prev => {
       const ex = prev.find(i => i.id === id);
@@ -50,12 +56,8 @@ const CustomDealPage = () => {
     });
   };
 
-  // ── Remove item fully ──
-  const removeItem = (id) => {
-    setDealItems(prev => prev.filter(i => i.id !== id));
-  };
+  const removeItem = (id) => setDealItems(prev => prev.filter(i => i.id !== id));
 
-  // ── Add whole deal to cart ──
   const addDealToCart = () => {
     if (dealItems.length < MIN_ITEMS) {
       toast.error('Add at least 2 items to unlock 10% discount!', {
@@ -63,8 +65,6 @@ const CustomDealPage = () => {
       });
       return;
     }
-
-    // Add as a single custom deal item
     const dealItem = {
       id: `custom-deal-${Date.now()}`,
       name: `My Custom Deal (${totalQty} items)`,
@@ -76,19 +76,14 @@ const CustomDealPage = () => {
       originalPrice: subtotal,
       dealDiscount: discount,
     };
-
     addToCart(dealItem);
     setAdded(true);
     toast.success(`Custom Deal added! You saved Rs. ${discount} 🎉`, {
       style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' },
       duration: 3000,
     });
-
     setTimeout(() => setAdded(false), 3000);
   };
-
-  const catItems = (menuItems[selectedCat] || []);
-  const categories = menuCategories.filter(c => ALLOWED_CATS.includes(c.id));
 
   return (
     <div className="min-h-screen bg-krunch-black pt-24 pb-16">
@@ -152,26 +147,47 @@ const CustomDealPage = () => {
 
             {/* Category Tabs */}
             <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide mb-6">
-              {categories.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCat(cat.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-body font-semibold text-sm whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
-                    selectedCat === cat.id
-                      ? 'bg-krunch-red text-white shadow-red-glow'
-                      : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white hover:border-krunch-red'
-                  }`}
-                >
-                  <span>{cat.icon}</span>
-                  {cat.name}
-                </button>
-              ))}
+              {activeCats.map(catId => {
+                const cat = menuCategories.find(c => c.id === catId);
+                const label = catId === 'all' ? 'All Items' : (cat?.name || catId);
+                const icon = catId === 'all' ? '🍴' : (cat?.icon || '');
+                return (
+                  <button
+                    key={catId}
+                    onClick={() => setSelectedCat(catId)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-body font-semibold text-sm whitespace-nowrap transition-all duration-200 flex-shrink-0 ${
+                      selectedCat === catId
+                        ? 'bg-krunch-red text-white shadow-red-glow'
+                        : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white hover:border-krunch-red'
+                    }`}
+                  >
+                    <span>{icon}</span>
+                    {label}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Items Grid */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-56 bg-krunch-card rounded-2xl animate-pulse" />
+                ))}
+              </div>
+            ) : filteredItems.length === 0 && !loading ? (
+              <div className="text-center py-20">
+                <div className="text-5xl mb-3">🍽️</div>
+                <p className="font-heading font-bold text-xl text-white uppercase">No items available</p>
+                <p className="text-krunch-gray font-body text-sm mt-2">
+                  Admin ne abhi koi item Custom Deal mein add nahi kiya.<br />
+                  Admin Panel → Menu → Item pe "Add to Custom Deal" click karo.
+                </p>
+              </div>
+            ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <AnimatePresence mode="wait">
-                {catItems.map((item, idx) => {
+                {filteredItems.map((item, idx) => {
                   const inDeal = dealItems.find(i => i.id === item.id);
                   return (
                     <motion.div
@@ -207,32 +223,23 @@ const CustomDealPage = () => {
                       <div className="p-3">
                         <h3 className="font-heading font-bold text-white text-sm leading-tight mb-1">{item.name}</h3>
                         <p className="text-krunch-gray text-xs font-body mb-3 line-clamp-1">{item.description}</p>
-
                         <div className="flex items-center justify-between">
-                          <span className="text-krunch-red font-heading font-black text-lg">Rs. {item.price.toLocaleString()}</span>
-
+                          <span className="text-krunch-red font-heading font-black text-lg">Rs. {Number(item.price).toLocaleString()}</span>
                           {inDeal ? (
-                            /* Qty controls */
                             <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => removeOne(item.id)}
-                                className="w-7 h-7 rounded-full bg-krunch-border hover:bg-krunch-red text-white flex items-center justify-center transition-colors"
-                              >
+                              <button onClick={() => removeOne(item.id)}
+                                className="w-7 h-7 rounded-full bg-krunch-border hover:bg-krunch-red text-white flex items-center justify-center transition-colors">
                                 <Minus size={12} />
                               </button>
                               <span className="text-white font-bold text-sm w-5 text-center">{inDeal.qty}</span>
-                              <button
-                                onClick={() => addItem(item)}
-                                className="w-7 h-7 rounded-full bg-krunch-red hover:bg-krunch-darkred text-white flex items-center justify-center transition-colors"
-                              >
+                              <button onClick={() => addItem(item)}
+                                className="w-7 h-7 rounded-full bg-krunch-red hover:bg-krunch-darkred text-white flex items-center justify-center transition-colors">
                                 <Plus size={12} />
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => addItem(item)}
-                              className="flex items-center gap-1.5 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-xs px-3 py-2 rounded-xl transition-all duration-200"
-                            >
+                            <button onClick={() => addItem(item)}
+                              className="flex items-center gap-1.5 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-xs px-3 py-2 rounded-xl transition-all duration-200">
                               <Plus size={13} />
                               Add
                             </button>
@@ -244,6 +251,7 @@ const CustomDealPage = () => {
                 })}
               </AnimatePresence>
             </div>
+            )}
           </div>
 
           {/* ── RIGHT: DEAL SUMMARY ── */}

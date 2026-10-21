@@ -67,6 +67,12 @@ const AdminMenu = () => {
     await fetchItems();
   };
 
+  const toggleCustomDeal = async (item) => {
+    await updateDoc(doc(db, 'menu', item.id), { customDeal: !item.customDeal });
+    await fetchItems();
+    toast.success(`${item.name} ${!item.customDeal ? 'added to' : 'removed from'} Custom Deal`, toastStyle);
+  };
+
   return (
     <div>
       {/* Header */}
@@ -200,6 +206,16 @@ const AdminMenu = () => {
                         <Trash2 size={12} />
                       </button>
                     </div>
+                    {/* Custom Deal Toggle */}
+                    <button
+                      onClick={() => toggleCustomDeal(item)}
+                      className={`w-full mt-2 flex items-center justify-center gap-1.5 text-[10px] font-bold px-2 py-1.5 rounded-lg transition-all border ${
+                        item.customDeal
+                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
+                          : 'bg-krunch-black border-krunch-border text-krunch-gray hover:border-amber-500/40 hover:text-amber-400'
+                      }`}>
+                      ✨ {item.customDeal ? 'In Custom Deal ✓' : 'Add to Custom Deal'}
+                    </button>
                   </div>
                 </motion.div>
               ))}
