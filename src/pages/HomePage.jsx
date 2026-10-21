@@ -156,6 +156,58 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* ── CUSTOM DEAL BANNER ───────────────────────────────── */}
+      <section className="py-14 bg-krunch-black">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-krunch-dark via-krunch-card to-krunch-dark border border-krunch-red/30"
+          >
+            {/* Background glow */}
+            <div className="absolute -top-20 -right-20 w-80 h-80 bg-krunch-red/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-krunch-red/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 px-8 py-10">
+              {/* Left content */}
+              <div className="text-center md:text-left">
+                <div className="inline-flex items-center gap-2 bg-krunch-red/20 border border-krunch-red/40 rounded-full px-4 py-1.5 mb-4">
+                  <span className="text-krunch-red text-xs font-body font-bold uppercase tracking-widest">✨ New Feature</span>
+                </div>
+                <h2 className="font-heading font-black text-3xl md:text-4xl text-white uppercase leading-tight mb-3">
+                  Build Your <span className="text-krunch-red">Own Deal</span>
+                </h2>
+                <p className="text-krunch-gray font-body text-sm md:text-base max-w-md leading-relaxed mb-2">
+                  Pick any items you want from our full menu and get <span className="text-krunch-red font-bold">10% OFF</span> automatically when you add 2 or more items!
+                </p>
+                <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+                  {['Any Items', 'Any Category', '10% Auto Discount', 'No Code Needed'].map((tag, i) => (
+                    <span key={i} className="flex items-center gap-1 bg-krunch-black border border-krunch-border text-krunch-gray text-xs font-body px-3 py-1.5 rounded-full">
+                      <span className="text-krunch-red">✓</span> {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right CTA */}
+              <div className="flex flex-col items-center gap-3 flex-shrink-0">
+                <div className="text-6xl select-none">🍔🍕🌯</div>
+                <Link
+                  to="/custom-deal"
+                  className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-black text-sm uppercase tracking-wider px-8 py-4 rounded-2xl transition-all duration-200 shadow-red-glow whitespace-nowrap"
+                >
+                  ✨ Build My Deal
+                  <ArrowRight size={16} />
+                </Link>
+                <p className="text-krunch-gray text-xs font-body">Save money your way!</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── POPULAR PICKS ────────────────────────────────────── */}
       <section className="py-20 bg-krunch-black">
         <div className="max-w-7xl mx-auto px-4">

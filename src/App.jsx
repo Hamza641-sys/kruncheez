@@ -32,6 +32,7 @@ import LoyaltyPage from './pages/customer/LoyaltyPage';
 import ReviewPage from './pages/customer/ReviewPage';
 import ProfilePage from './pages/customer/ProfilePage';
 import FollowPage from './pages/FollowPage';
+import CustomDealPage from './pages/CustomDealPage';
 
 // Admin Pages
 import AdminLayout from './pages/admin/AdminLayout';
@@ -84,6 +85,7 @@ const AppLayout = () => {
         <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
         <Route path="/locations" element={<PublicLayout><LocationsPage /></PublicLayout>} />
         <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+        <Route path="/custom-deal" element={<PublicLayout><CustomDealPage /></PublicLayout>} />
 
         {/* Checkout — needs login */}
         <Route path="/checkout" element={

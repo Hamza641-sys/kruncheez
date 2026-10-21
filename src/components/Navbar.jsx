@@ -10,12 +10,13 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
 const navLinks = [
-  { name: 'Home',      path: '/' },
-  { name: 'Menu',      path: '/menu' },
-  { name: 'Offers',    path: '/offers' },
-  { name: 'Locations', path: '/locations' },
-  { name: 'About Us',  path: '/about' },
-  { name: 'Contact',   path: '/contact' },
+  { name: 'Home',        path: '/' },
+  { name: 'Menu',        path: '/menu' },
+  { name: 'Offers',      path: '/offers' },
+  { name: 'Custom Deal', path: '/custom-deal' },
+  { name: 'Locations',   path: '/locations' },
+  { name: 'About Us',    path: '/about' },
+  { name: 'Contact',     path: '/contact' },
 ];
 
 const Navbar = () => {
@@ -75,14 +76,25 @@ const Navbar = () => {
         {/* Desktop Nav Links */}
         <div className="hidden lg:flex items-center gap-6">
           {navLinks.map(link => (
-            <Link key={link.path} to={link.path}
-              className={`text-sm font-body font-semibold uppercase tracking-wider transition-colors duration-200 animated-underline ${
-                location.pathname === link.path
-                  ? 'text-krunch-red'
-                  : 'text-krunch-light hover:text-krunch-red'
-              }`}>
-              {link.name}
-            </Link>
+            link.path === '/custom-deal' ? (
+              <Link key={link.path} to={link.path}
+                className={`flex items-center gap-1.5 text-sm font-body font-semibold uppercase tracking-wider transition-all duration-200 px-3 py-1.5 rounded-full border ${
+                  location.pathname === link.path
+                    ? 'bg-krunch-red text-white border-krunch-red'
+                    : 'text-krunch-red border-krunch-red/50 hover:bg-krunch-red hover:text-white'
+                }`}>
+                ✨ {link.name}
+              </Link>
+            ) : (
+              <Link key={link.path} to={link.path}
+                className={`text-sm font-body font-semibold uppercase tracking-wider transition-colors duration-200 animated-underline ${
+                  location.pathname === link.path
+                    ? 'text-krunch-red'
+                    : 'text-krunch-light hover:text-krunch-red'
+                }`}>
+                {link.name}
+              </Link>
+            )
           ))}
         </div>
 
@@ -239,14 +251,25 @@ const Navbar = () => {
           >
             <div className="px-4 py-4 flex flex-col gap-1">
               {navLinks.map(link => (
-                <Link key={link.path} to={link.path}
-                  className={`py-3 px-4 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${
-                    location.pathname === link.path
-                      ? 'bg-krunch-red text-white'
-                      : 'text-krunch-light hover:bg-krunch-card hover:text-white'
-                  }`}>
-                  {link.name}
-                </Link>
+                link.path === '/custom-deal' ? (
+                  <Link key={link.path} to={link.path}
+                    className={`py-3 px-4 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all duration-200 flex items-center gap-2 border ${
+                      location.pathname === link.path
+                        ? 'bg-krunch-red text-white border-krunch-red'
+                        : 'text-krunch-red border-krunch-red/40 hover:bg-krunch-red hover:text-white'
+                    }`}>
+                    ✨ {link.name}
+                  </Link>
+                ) : (
+                  <Link key={link.path} to={link.path}
+                    className={`py-3 px-4 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${
+                      location.pathname === link.path
+                        ? 'bg-krunch-red text-white'
+                        : 'text-krunch-light hover:bg-krunch-card hover:text-white'
+                    }`}>
+                    {link.name}
+                  </Link>
+                )
               ))}
 
               <div className="h-px bg-krunch-border my-2" />
