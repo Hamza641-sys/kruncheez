@@ -13,6 +13,7 @@ import { validatePromoCode, usePromoCode } from '../firebase/promoService';
 import { sendWhatsAppOrderNotification } from '../firebase/whatsappService';
 import { getCardByCardId, addVisitAndPoints, applyCardDiscount, getCardByUserId } from '../firebase/cardService';
 import toast from 'react-hot-toast';
+import OrderAssistant from '../components/OrderAssistant';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
@@ -403,6 +404,9 @@ const CheckoutPage = () => {
                   </div>
                 </motion.div>
               )}
+
+              {/* AI Order Assistant */}
+              <OrderAssistant cartItems={cartItems} />
 
               {/* Payment */}
               <div className="card-dark p-6">

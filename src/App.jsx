@@ -9,6 +9,7 @@ import { ProtectedRoute, AdminRoute, PublicRoute } from './components/auth/Prote
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
+import CustomerChatbot from './components/CustomerChatbot';
 
 // Public Pages
 import HomePage from './pages/HomePage';
@@ -69,6 +70,7 @@ const PublicLayout = ({ children }) => (
     <CartSidebar />
     {children}
     <Footer />
+    <CustomerChatbot />
   </>
 );
 

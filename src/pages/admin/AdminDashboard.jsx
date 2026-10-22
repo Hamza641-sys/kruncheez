@@ -4,6 +4,7 @@ import { ShoppingBag, TrendingUp, Users, Clock, CheckCircle, ChefHat, Truck, XCi
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import AdminAIAssistant from '../../components/admin/AdminAIAssistant';
 
 const statusConfig = {
   pending:          { label: 'Pending',         color: 'text-yellow-400', bg: 'bg-yellow-400/10 border-yellow-400/20', icon: <Clock size={13} /> },
@@ -70,6 +71,9 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((s, i) => <StatCard key={i} {...s} />)}
       </div>
+
+      {/* AI Assistant */}
+      <AdminAIAssistant />
 
       {/* Status Overview */}
       <div className="grid grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
