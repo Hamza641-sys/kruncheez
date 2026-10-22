@@ -11,13 +11,14 @@ import {
   User, ChevronDown, ChevronUp
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import StaffIDCard from '../../components/admin/StaffIDCard';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
 const roles = ['Manager', 'Cashier', 'Chef', 'Kitchen Staff', 'Waiter', 'Delivery Rider', 'Cleaner', 'Guard', 'Other'];
 
 // ── EMPTY FORMS ──────────────────────────────────────────────────────────────
-const emptyStaff   = { name: '', role: 'Cashier', phone: '', salary: '', joiningDate: '', address: '', active: true };
+const emptyStaff   = { name: '', role: 'Cashier', phone: '', salary: '', joiningDate: '', address: '', photo: '', empId: '', active: true };
 const emptySalary  = { staffId: '', staffName: '', month: new Date().toISOString().slice(0,7), totalSalary: '', paid: '', deduction: 0, fine: 0, fineReason: '', bonus: 0, bonusReason: '', notes: '' };
 const emptyReport  = { staffId: '', staffName: '', type: 'misconduct', description: '', date: new Date().toISOString().split('T')[0], action: '', severity: 'minor' };
 
@@ -33,6 +34,8 @@ const AdminStaff = () => {
   const [showStaffForm,  setShowStaffForm]  = useState(false);
   const [showSalaryForm, setShowSalaryForm] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
+  const [showIDCard,     setShowIDCard]     = useState(false);
+  const [idCardStaff,    setIdCardStaff]    = useState(null);
   const [editStaff,      setEditStaff]      = useState(null);
   const [saving,         setSaving]         = useState(false);
 
@@ -281,6 +284,10 @@ const AdminStaff = () => {
                   </div>
                   {/* Actions */}
                   <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button onClick={() => { setIdCardStaff(s); setShowIDCard(true); }}
+                      className="flex items-center gap-1 text-[10px] bg-blue-900/20 text-blue-400 border border-blue-700/30 hover:bg-blue-600 hover:text-white font-bold px-2.5 py-1.5 rounded-xl transition-all whitespace-nowrap">
+                      🪪 ID Card
+                    </button>
                     <button onClick={() => openSalaryFor(s)}
                       className="flex items-center gap-1 text-[10px] bg-green-900/20 text-green-400 border border-green-700/30 hover:bg-green-600 hover:text-white font-bold px-2.5 py-1.5 rounded-xl transition-all whitespace-nowrap">
                       <DollarSign size={11} /> Salary
@@ -492,6 +499,11 @@ const AdminStaff = () => {
                     </select>
                   </div>
                   <div>
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Employee ID</label>
+                    <input type="text" value={staffForm.empId} onChange={e => setStaffForm({...staffForm,empId:e.target.value})} placeholder="KRZ-001"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                  </div>
+                  <div>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Monthly Salary (Rs.)</label>
                     <input type="number" value={staffForm.salary} onChange={e => setStaffForm({...staffForm,salary:e.target.value})} placeholder="25000"
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
@@ -505,6 +517,18 @@ const AdminStaff = () => {
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Joining Date</label>
                     <input type="date" value={staffForm.joiningDate} onChange={e => setStaffForm({...staffForm,joiningDate:e.target.value})}
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
+                  </div>
+                  <div className="col-span-2">
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Photo URL (ID Card ke liye)</label>
+                    <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})} placeholder="https://i.ibb.co/... staff ki photo ka URL"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                    {staffForm.photo && (
+                      <div className="mt-2 flex items-center gap-3">
+                        <img src={staffForm.photo} alt="preview" className="w-14 h-14 rounded-full object-cover border-2 border-krunch-red"
+                          onError={e => e.target.style.display='none'} />
+                        <span className="text-green-400 font-body text-xs">✅ Photo preview</span>
+                      </div>
+                    )}
                   </div>
                   <div className="col-span-2 flex items-center gap-3">
                     <label className="text-krunch-gray font-body text-sm">Active Employee</label>
@@ -751,6 +775,14 @@ const AdminStaff = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ══════ ID CARD MODAL ══════ */}
+      {showIDCard && idCardStaff && (
+        <StaffIDCard
+          staff={idCardStaff}
+          onClose={() => { setShowIDCard(false); setIdCardStaff(null); }}
+        />
+      )}
     </div>
   );
 };
