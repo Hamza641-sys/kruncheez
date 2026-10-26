@@ -1,9 +1,7 @@
 // ── Groq AI Service ─────────────────────────────────────────────────────────
-// Uses Groq API with LLaMA 3 model for fast AI responses
-
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const MODEL = 'llama-3.1-8b-instant'; // Fast + free
+const MODEL = 'qwen/qwen3.8-27b'; // Working model
 
 // ── Restaurant Context ───────────────────────────────────────────────────────
 export const getRestaurantContext = (menuItems = [], orders = [], expenses = [], salaries = []) => {
@@ -98,6 +96,7 @@ export const askGroq = async (messages, systemPrompt) => {
 
   const response = await fetch(GROQ_API_URL, {
     method: 'POST',
+    mode: 'cors',
     headers: {
       'Authorization': `Bearer ${GROQ_API_KEY}`,
       'Content-Type': 'application/json',
@@ -108,18 +107,19 @@ export const askGroq = async (messages, systemPrompt) => {
         { role: 'system', content: systemPrompt },
         ...messages,
       ],
-      max_tokens: 300,
+      max_tokens: 512,
       temperature: 0.7,
+      stream: false,
     }),
   });
 
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error?.message || 'Groq API error');
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
   }
 
   const data = await response.json();
-  return data.choices[0]?.message?.content || 'Sorry, could not get response.';
+  return data.choices?.[0]?.message?.content || 'Sorry, koi jawab nahi mila.';
 };
 
 // ── Order Assistant (Rule-based + AI) ───────────────────────────────────────
