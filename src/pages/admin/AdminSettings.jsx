@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Save, Phone, Clock, MapPin, Bell, Shield,
-  Lock, Mail, Eye, EyeOff, RefreshCw, CheckCircle
+  Lock, Mail, Eye, EyeOff, RefreshCw, CheckCircle, Image
 } from 'lucide-react';
 import {
   doc, getDoc, setDoc, serverTimestamp
@@ -30,6 +30,12 @@ const DEFAULT_SETTINGS = {
   whatsappNotify: true,
   emailNotify: false,
   acceptingOrders: true,
+  heroSlides: [
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=90&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1544025162-d76694265947?w=1920&q=90&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1920&q=90&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1920&q=90&auto=format&fit=crop',
+  ],
 };
 
 const AdminSettings = () => {
@@ -270,6 +276,59 @@ const AdminSettings = () => {
             value={settings.whatsappNotify} onChange={v => setSettings({ ...settings, whatsappNotify: v })} />
           <Toggle label="Email Notifications" desc="Get order summaries via email"
             value={settings.emailNotify} onChange={v => setSettings({ ...settings, emailNotify: v })} />
+        </Section>
+
+        {/* ── Hero Slides ── */}
+        <Section icon={<Image size={18} />} title="Hero Slideshow Images">
+          <p className="text-krunch-gray font-body text-xs mb-4">
+            Change the background images of the 4 homepage hero slides. Paste any image URL — website updates instantly after saving.
+          </p>
+          <div className="flex flex-col gap-5">
+            {[
+              { index: 0, label: 'Slide 1 — Pizza Zone' },
+              { index: 1, label: 'Slide 2 — BBQ Platters' },
+              { index: 2, label: 'Slide 3 — Burgers' },
+              { index: 3, label: 'Slide 4 — Chinese' },
+            ].map(({ index, label }) => (
+              <div key={index}>
+                <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+                  {label}
+                </label>
+                <div className="flex gap-3 items-start">
+                  {/* Image preview */}
+                  <div className="w-20 h-14 rounded-xl overflow-hidden flex-shrink-0 border border-krunch-border bg-krunch-black">
+                    {settings.heroSlides?.[index] ? (
+                      <img
+                        src={settings.heroSlides[index]}
+                        alt={label}
+                        className="w-full h-full object-cover"
+                        onError={e => { e.target.style.display = 'none'; }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image size={20} className="text-krunch-gray/30" />
+                      </div>
+                    )}
+                  </div>
+                  {/* URL input */}
+                  <input
+                    type="text"
+                    value={settings.heroSlides?.[index] || ''}
+                    onChange={e => {
+                      const updated = [...(settings.heroSlides || ['', '', '', ''])];
+                      updated[index] = e.target.value;
+                      setSettings({ ...settings, heroSlides: updated });
+                    }}
+                    placeholder="https://i.ibb.co/... or any image URL"
+                    className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-krunch-gray/50 font-body text-xs mt-3">
+            💡 Tip: Click "Save Changes" above to apply. Recommended: landscape images (1920×1080 or wider).
+          </p>
         </Section>
 
         {/* ── System ── */}

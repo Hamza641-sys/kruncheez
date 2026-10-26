@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
 
-const slides = [
+const DEFAULT_SLIDES = [
   {
     id: 1,
     badge: 'PIZZA ZONE',
@@ -14,7 +16,6 @@ const slides = [
     tag1: 'Cheesy',
     tag2: 'Fresh',
     tag3: 'Loaded',
-    // Outstanding loaded pizza image
     bgImg: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=90&auto=format&fit=crop',
   },
   {
@@ -27,7 +28,6 @@ const slides = [
     tag1: 'Smoky',
     tag2: 'Grilled',
     tag3: 'Fresh',
-    // BBQ platter spread image
     bgImg: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1920&q=90&auto=format&fit=crop',
   },
   {
@@ -40,7 +40,6 @@ const slides = [
     tag1: 'Crispy',
     tag2: 'Hot',
     tag3: 'Juicy',
-    // Crispy chicken zinger burger — NOT beef
     bgImg: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1920&q=90&auto=format&fit=crop',
   },
   {
@@ -53,7 +52,6 @@ const slides = [
     tag1: 'Wok Fired',
     tag2: 'Fresh',
     tag3: 'Spicy',
-    // Chinese noodles / chowmein dish image
     bgImg: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1920&q=90&auto=format&fit=crop',
   },
 ];
@@ -61,7 +59,28 @@ const slides = [
 const Hero = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [slides, setSlides] = useState(DEFAULT_SLIDES);
 
+  // Load hero images from Firestore settings
+  useEffect(() => {
+    const loadHeroImages = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'appSettings', 'restaurant'));
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.heroSlides && Array.isArray(data.heroSlides)) {
+            setSlides(DEFAULT_SLIDES.map((slide, i) => ({
+              ...slide,
+              bgImg: data.heroSlides[i] || slide.bgImg,
+            })));
+          }
+        }
+      } catch { /* use default slides */ }
+    };
+    loadHeroImages();
+  }, []);
+
+  // Auto-advance timer
   useEffect(() => {
     const timer = setInterval(() => {
       setDirection(1);
