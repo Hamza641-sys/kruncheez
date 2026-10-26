@@ -9,26 +9,26 @@ const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px
 
 // Daily expense categories
 const categories = [
-  { id: 'milk',       label: '🥛 Milk / Dairy',          placeholder: 'e.g. 5 liter doodh' },
-  { id: 'bread',      label: '🍞 Roti / Bread',           placeholder: 'e.g. 50 rotiyan' },
-  { id: 'vegetables', label: '🥬 Sabziyan',               placeholder: 'e.g. tamatar, pyaz' },
-  { id: 'masala',     label: '🌶️ Masala / Spices',        placeholder: 'e.g. garam masala, namak' },
+  { id: 'milk',       label: '🥛 Milk / Dairy',          placeholder: 'e.g. 5 liters of milk' },
+  { id: 'bread',      label: '🍞 Bread',                  placeholder: 'e.g. 50 bread loaves' },
+  { id: 'vegetables', label: '🥬 Vegetables',             placeholder: 'e.g. tomatoes, onions' },
+  { id: 'masala',     label: '🌶️ Spices / Masala',        placeholder: 'e.g. garam masala, salt' },
   { id: 'oil',        label: '🛢️ Oil / Ghee',             placeholder: 'e.g. 5kg cooking oil' },
   { id: 'gas',        label: '🔥 Gas',                    placeholder: 'e.g. gas cylinder' },
-  { id: 'electricity',label: '💡 Electricity / Bijli',   placeholder: 'e.g. bijli ka bill' },
+  { id: 'electricity',label: '💡 Electricity',            placeholder: 'e.g. electricity bill' },
   { id: 'packaging',  label: '📦 Packaging',              placeholder: 'e.g. boxes, bags' },
-  { id: 'salary',     label: '👨‍💼 Staff Salary',           placeholder: 'e.g. Ali ka salary' },
-  { id: 'rent',       label: '🏠 Rent / Kiraya',          placeholder: 'e.g. monthly kiraya' },
+  { id: 'salary',     label: '👨‍💼 Staff Salary',           placeholder: 'e.g. Ali salary' },
+  { id: 'rent',       label: '🏠 Rent',                   placeholder: 'e.g. monthly rent' },
   { id: 'transport',  label: '🚗 Transport',              placeholder: 'e.g. delivery cost' },
   { id: 'repair',     label: '🔧 Repair / Maintenance',  placeholder: 'e.g. AC repair' },
-  { id: 'other',      label: '📝 Other Kharcha',          placeholder: 'koi bhi kharcha' },
+  { id: 'other',      label: '📝 Other Expense',          placeholder: 'Any other expense' },
 ];
 
 const periods = [
-  { k: 'today', l: 'Aaj' },
-  { k: 'week',  l: 'Is Hafte' },
-  { k: 'month', l: 'Is Mahine' },
-  { k: 'all',   l: 'Sab' },
+  { k: 'today', l: 'Today' },
+  { k: 'week',  l: 'This Week' },
+  { k: 'month', l: 'This Month' },
+  { k: 'all',   l: 'All Time' },
 ];
 
 const AdminExpenses = () => {
@@ -101,7 +101,7 @@ const AdminExpenses = () => {
 
   const handleSave = async () => {
     if (!form.description || !form.amount) {
-      toast.error('Description aur amount required!', toastStyle); return;
+      toast.error('Description and amount are required!', toastStyle); return;
     }
     setSaving(true);
     try {
@@ -110,7 +110,7 @@ const AdminExpenses = () => {
         amount: Number(form.amount),
         createdAt: serverTimestamp(),
       });
-      toast.success('Kharcha add ho gaya! ✅', toastStyle);
+      toast.success('Expense added successfully! ✅', toastStyle);
       setShowForm(false);
       setForm({
         category: 'other', description: '', amount: '',
@@ -154,7 +154,7 @@ const AdminExpenses = () => {
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Daily Expenses</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">
-            Milk, roti, sabzi, masala — sab kharcha yahan
+            Track all daily operational expenses
           </p>
         </div>
         <div className="flex gap-2">
@@ -164,7 +164,7 @@ const AdminExpenses = () => {
           </button>
           <button onClick={() => setShowForm(true)}
             className="flex items-center gap-2 btn-primary text-sm">
-            <Plus size={16} /> Add Kharcha
+            <Plus size={16} /> Add Expense
           </button>
         </div>
       </div>
@@ -188,7 +188,7 @@ const AdminExpenses = () => {
           <div className="flex items-center gap-2 mb-2">
             <TrendingDown size={18} className="text-red-400" />
             <span className="text-krunch-gray font-body text-xs uppercase tracking-wider">
-              {period === 'today' ? 'Aaj Ka' : period === 'week' ? 'Is Hafte Ka' : period === 'month' ? 'Is Mahine Ka' : 'Total'} Kharcha
+            {period === 'today' ? "Today's" : period === 'week' ? "This Week's" : period === 'month' ? "This Month's" : 'Total'} Expenses
             </span>
           </div>
           <p className="font-heading font-black text-3xl text-red-400">Rs.{totalExp.toLocaleString()}</p>
@@ -197,9 +197,9 @@ const AdminExpenses = () => {
 
         {/* Category breakdown */}
         <div className="card-dark p-5 lg:col-span-2">
-          <h3 className="font-heading font-bold text-white text-sm uppercase tracking-wider mb-3">Category-wise Kharcha</h3>
+          <h3 className="font-heading font-bold text-white text-sm uppercase tracking-wider mb-3">Expenses by Category</h3>
           {catData.length === 0 ? (
-            <p className="text-krunch-gray font-body text-sm">Koi kharcha nahi is period mein</p>
+            <p className="text-krunch-gray font-body text-sm">No expenses found for this period</p>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               {catData.slice(0, 6).map(([cat, amt]) => (
@@ -217,7 +217,7 @@ const AdminExpenses = () => {
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />
-          <input type="text" placeholder="Search kharcha..." value={search}
+          <input type="text" placeholder="Search expenses..." value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
         </div>
@@ -246,7 +246,7 @@ const AdminExpenses = () => {
                 </td></tr>
               ) : manualExpenses.length === 0 ? (
                 <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">
-                  Koi kharcha nahi — "Add Kharcha" karo
+                  No expenses recorded — click "Add Expense" to get started
                 </td></tr>
               ) : manualExpenses.map(exp => (
                 <tr key={exp.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
@@ -286,14 +286,14 @@ const AdminExpenses = () => {
               onClick={e => e.stopPropagation()}
               className="w-full max-w-md bg-krunch-dark border border-krunch-border rounded-2xl overflow-y-auto max-h-[90vh]">
               <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
-                <h3 className="font-heading font-bold text-white uppercase">Add Kharcha</h3>
+                <h3 className="font-heading font-bold text-white uppercase">Add Expense</h3>
                 <button onClick={() => setShowForm(false)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
               </div>
               <div className="p-6 flex flex-col gap-4">
 
                 {/* Category select — with icons */}
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2 block">Kharcha Category</label>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2 block">Expense Category</label>
                   <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
                     {categories.map(cat => (
                       <button key={cat.id} type="button"
@@ -314,7 +314,7 @@ const AdminExpenses = () => {
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Description *</label>
                   <input type="text" value={form.description}
                     onChange={e => setForm({ ...form, description: e.target.value })}
-                    placeholder={categories.find(c => c.id === form.category)?.placeholder || 'Kharcha ki detail...'}
+                    placeholder={categories.find(c => c.id === form.category)?.placeholder || 'Expense details...'}
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                 </div>
 
@@ -342,7 +342,7 @@ const AdminExpenses = () => {
                     {[
                       { k: 'cash',  l: '💵 Cash' },
                       { k: 'bank',  l: '🏦 Bank' },
-                      { k: 'credit',l: '📋 Udhar' },
+                      { k: 'credit',l: '📋 Credit' },
                     ].map(m => (
                       <button key={m.k} type="button"
                         onClick={() => setForm({ ...form, paymentMethod: m.k })}
@@ -357,7 +357,7 @@ const AdminExpenses = () => {
 
                 <button onClick={handleSave} disabled={saving}
                   className="w-full bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-black py-4 rounded-xl transition-all uppercase tracking-wider disabled:opacity-70 text-base">
-                  {saving ? 'Saving...' : '✅ Kharcha Add Karo'}
+                  {saving ? 'Saving...' : '✅ Add Expense'}
                 </button>
               </div>
             </motion.div>

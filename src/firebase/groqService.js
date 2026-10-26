@@ -119,7 +119,7 @@ export const askGroq = async (messages, systemPrompt) => {
   }
 
   const data = await response.json();
-  return data.choices?.[0]?.message?.content || 'Sorry, koi jawab nahi mila.';
+  return data.choices?.[0]?.message?.content || 'Sorry, no response received. Please try again.';
 };
 
 // ── Order Assistant (Rule-based + AI) ───────────────────────────────────────
@@ -137,7 +137,7 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
     if (drinks.length === 0) {
       suggestions.push({
         type: 'combo',
-        message: '🥤 Burger ke saath drink nahi li? Combo banta hai!',
+        message: '🥤 Having a burger? Add a drink to complete your meal!',
         icon: '🥤',
       });
     }
@@ -150,7 +150,7 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
     if (!hasRaita && !hasSalad) {
       suggestions.push({
         type: 'addon',
-        message: '🥗 BBQ ke saath Raita + Salad perfect combo hai! (Rs. 200)',
+        message: '🥗 BBQ pairs perfectly with Raita + Salad! (Rs. 200)',
         icon: '🥗',
       });
     }
@@ -162,7 +162,7 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
     const remaining = deliveryThreshold - cartTotal;
     suggestions.push({
       type: 'delivery',
-      message: `🚚 Sirf Rs. ${remaining} aur add karo — free delivery milegi!`,
+      message: `🚚 Add just Rs. ${remaining} more to get FREE delivery!`,
       icon: '🚚',
     });
   }
@@ -171,7 +171,7 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
   if (cartItems.length === 1) {
     suggestions.push({
       type: 'deal',
-      message: '✨ Ek aur item add karo — Custom Deal mein 10% OFF milega!',
+      message: '✨ Add one more item — unlock 10% OFF with Custom Deal!',
       icon: '✨',
     });
   }
@@ -181,7 +181,7 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
   if (totalQty >= 3 && !cartCategories.includes('platter')) {
     suggestions.push({
       type: 'platter',
-      message: '🥘 3+ items hain — Platter option bhi dekho, zyada value milti hai!',
+      message: '🥘 Ordering for a group? Check out our Platters for better value!',
       icon: '🥘',
     });
   }

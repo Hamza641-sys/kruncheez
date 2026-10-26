@@ -61,7 +61,7 @@ const AdminSuppliers = () => {
   // Record payment
   const handlePayment = async () => {
     if (!payForm.supplierId || !payForm.amount) {
-      toast.error('Supplier aur amount required', toastStyle); return;
+      toast.error('Please select a supplier and enter the amount', toastStyle); return;
     }
     setSaving(true);
     try {
@@ -235,7 +235,7 @@ const AdminSuppliers = () => {
               </thead>
               <tbody>
                 {payments.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">Koi payment record nahi</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No payment records found</td></tr>
                 ) : payments.map(p => (
                   <tr key={p.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{p.date || '—'}</td>
@@ -271,7 +271,7 @@ const AdminSuppliers = () => {
                 {[
                   { k: 'name',    l: 'Supplier Name *', p: 'e.g. Hamza Chicken wala' },
                   { k: 'phone',   l: 'Phone',            p: '03XX-XXXXXXX' },
-                  { k: 'items',   l: 'Kya supply karta hai', p: 'e.g. Chicken, Beef, Dough' },
+                  { k: 'items',   l: 'Items Supplied',    p: 'e.g. Chicken, Beef, Dough' },
                   { k: 'address', l: 'Address',           p: 'Area, City' },
                 ].map(f => (
                   <div key={f.k}>
@@ -322,7 +322,7 @@ const AdminSuppliers = () => {
 
                 {/* Items */}
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Items (kya liya)</label>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Items (what was purchased)</label>
                   <input type="text" value={payForm.items}
                     onChange={e => setPayForm({ ...payForm, items: e.target.value })}
                     placeholder="e.g. 20kg Chicken, 5kg Beef"
@@ -367,7 +367,7 @@ const AdminSuppliers = () => {
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Notes (optional)</label>
                   <input type="text" value={payForm.notes}
                     onChange={e => setPayForm({ ...payForm, notes: e.target.value })}
-                    placeholder="koi note..."
+                    placeholder="Additional notes..."
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                 </div>
 

@@ -160,7 +160,7 @@ const NotificationPanel = () => {
               {orders.length === 0 ? (
                 <div className="px-4 py-10 text-center">
                   <ShoppingBag size={28} className="text-krunch-gray/30 mx-auto mb-2" />
-                  <p className="text-krunch-gray font-body text-sm">Koi order nahi abhi tak</p>
+                  <p className="text-krunch-gray font-body text-sm">No orders yet</p>
                 </div>
               ) : (
                 orders.map((order) => {
@@ -222,7 +222,7 @@ const NotificationPanel = () => {
                 onClick={() => { setOpen(false); navigate('/admin/orders'); }}
                 className="w-full text-center text-xs font-body font-semibold text-krunch-red hover:text-white transition-colors py-1"
               >
-                Saare Orders dekho →
+                View All Orders →
               </button>
             </div>
           </motion.div>

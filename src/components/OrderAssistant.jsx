@@ -84,7 +84,7 @@ const OrderAssistant = ({ cartItems = [] }) => {
                 )}
                 {s.type === 'platter' && (
                   <Link to="/menu" className="text-krunch-red font-semibold ml-1 hover:underline">
-                    Menu dekho →
+                    View Menu →
                   </Link>
                 )}
               </p>

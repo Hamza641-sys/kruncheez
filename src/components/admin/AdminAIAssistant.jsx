@@ -6,14 +6,14 @@ import { db } from '../../firebase/config';
 import { askGroq, getAdminContext } from '../../firebase/groqService';
 
 const QUICK_PROMPTS = [
-  { icon: '📊', text: 'Aaj ki sale report do' },
-  { icon: '🍔', text: 'Sabse zyada bikne wala item?' },
-  { icon: '💰', text: 'Is month ka profit kitna hai?' },
-  { icon: '👥', text: 'Staff salary status batao' },
-  { icon: '📦', text: 'Pending orders kitne hain?' },
-  { icon: '💡', text: 'Sale badhane ke suggestions do' },
+  { icon: '📊', text: 'Give me today\'s sales report' },
+  { icon: '🍔', text: 'What is the best-selling item?' },
+  { icon: '💰', text: 'What is this month\'s profit?' },
+  { icon: '👥', text: 'Show staff salary status' },
+  { icon: '📦', text: 'How many orders are pending?' },
+  { icon: '💡', text: 'Suggestions to increase sales' },
   { icon: '🚚', text: 'Supplier payments status' },
-  { icon: '⚠️', text: 'Koi issue ya warning hai?' },
+  { icon: '⚠️', text: 'Any issues or warnings?' },
 ];
 
 const AdminAIAssistant = () => {
@@ -52,7 +52,7 @@ const AdminAIAssistant = () => {
     loadBizData();
     setMessages([{
       role: 'assistant',
-      content: `Salam! 👋 Main aapka **KrunchAdmin AI** hun!\n\nMujhe business ke bare mein kuch bhi poochein:\n• Sale reports\n• Profit analysis\n• Staff status\n• Supplier payments\n• Business suggestions\n\nKya jaanna chahte hain? 📊`,
+      content: `Hello! 👋 I'm **KrunchAdmin AI** — your intelligent business assistant!\n\nAsk me anything about your business:\n• Sales reports\n• Profit analysis\n• Staff status\n• Supplier payments\n• Business suggestions\n\nWhat would you like to know? 📊`,
       time: new Date(),
     }]);
   }, []);
@@ -93,7 +93,7 @@ const AdminAIAssistant = () => {
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: '⚠️ AI se connect nahi ho saka. Internet check karein ya dobara try karein.',
+        content: '⚠️ Could not connect to AI. Please check your internet connection and try again.',
         time: new Date(),
         error: true,
       }]);
@@ -129,7 +129,7 @@ const AdminAIAssistant = () => {
           <div className="text-left">
             <p className="font-heading font-black text-sm uppercase tracking-wide">KrunchAdmin AI</p>
             <p className={`font-body text-xs ${open ? 'text-red-200' : 'text-krunch-gray'}`}>
-              {dataLoading ? 'Data load ho raha hai...' : `Business data ready — ${(bizData.orders||[]).length} orders, ${(bizData.staff||[]).length} staff`}
+              {dataLoading ? 'Loading business data...' : `Business data ready — ${(bizData.orders||[]).length} orders, ${(bizData.staff||[]).length} staff`}
             </p>
           </div>
         </div>
@@ -153,8 +153,8 @@ const AdminAIAssistant = () => {
               {/* Quick Stats Bar */}
               <div className="grid grid-cols-4 gap-px bg-krunch-border">
                 {[
-                  { label: "Aaj Orders", value: todayOrders.length, icon: <ShoppingBag size={13}/>, color: 'text-white' },
-                  { label: "Aaj Revenue", value: `Rs.${todayRevenue.toLocaleString()}`, icon: <DollarSign size={13}/>, color: 'text-green-400' },
+                  { label: "Today's Orders", value: todayOrders.length, icon: <ShoppingBag size={13}/>, color: 'text-white' },
+                  { label: "Today's Revenue", value: `Rs.${todayRevenue.toLocaleString()}`, icon: <DollarSign size={13}/>, color: 'text-green-400' },
                   { label: "Pending", value: pendingCount, icon: <TrendingUp size={13}/>, color: 'text-amber-400' },
                   { label: "Total Revenue", value: `Rs.${(totalRevenue/1000).toFixed(0)}K`, icon: <TrendingUp size={13}/>, color: 'text-krunch-red' },
                 ].map((s, i) => (
@@ -233,7 +233,7 @@ const AdminAIAssistant = () => {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                    placeholder="Kuch bhi poochein — sale, profit, staff..."
+                    placeholder="Ask anything — sales, profit, staff..."
                     disabled={loading}
                     className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors disabled:opacity-50"
                   />

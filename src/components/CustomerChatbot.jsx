@@ -6,12 +6,12 @@ import { db } from '../firebase/config';
 import { askGroq, getRestaurantContext } from '../firebase/groqService';
 
 const QUICK_QUESTIONS = [
-  '🍔 Menu kya hai?',
-  '🚚 Delivery kitni der mein?',
-  '💰 Deals batao',
-  '📍 Location kahan hai?',
-  '✨ Custom Deal kya hai?',
-  '🎁 Loyalty card kya hai?',
+  '🍔 What\'s on the menu?',
+  '🚚 How long does delivery take?',
+  '💰 Show me today\'s deals',
+  '📍 Where are you located?',
+  '✨ What is the Custom Deal?',
+  '🎁 How does the Loyalty Card work?',
 ];
 
 const CustomerChatbot = () => {
@@ -37,7 +37,7 @@ const CustomerChatbot = () => {
     // Welcome message
     setMessages([{
       role: 'assistant',
-      content: 'Assalam o Alaikum! 👋 Main KrunchBot hun — The KrunchEez ka AI assistant!\n\nKya main aapki help kar sakta hun? Menu, deals, delivery ya koi bhi sawaal poochein! 🍔',
+      content: 'Hello! 👋 I\'m KrunchBot — The KrunchEez official AI assistant!\n\nHow can I help you today? Ask me anything about our menu, deals, delivery or anything else! 🍔',
       time: new Date(),
     }]);
   }, []);
@@ -77,7 +77,7 @@ const CustomerChatbot = () => {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Sorry, abhi connection issue hai. Please dobara try karein ya directly call karein! 📞',
+        content: 'Sorry, there seems to be a connection issue. Please try again or call us directly! 📞',
         time: new Date(),
         error: true,
       }]);
@@ -201,7 +201,7 @@ const CustomerChatbot = () => {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                    placeholder="Kuch poochein..."
+                    placeholder="Ask me anything..."
                     disabled={loading}
                     className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors disabled:opacity-50"
                   />

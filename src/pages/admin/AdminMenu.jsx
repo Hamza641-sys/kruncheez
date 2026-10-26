@@ -248,7 +248,7 @@ const AdminMenu = () => {
                   { key: 'name',        label: 'Item Name *',   placeholder: 'e.g. Zinger Burger' },
                   { key: 'price',       label: 'Price (Rs.) *', placeholder: 'e.g. 390', type: 'number' },
                   { key: 'description', label: 'Description',   placeholder: 'Short description...' },
-                  { key: 'img',         label: 'Image URL',     placeholder: 'https://i.ibb.co/... ya koi bhi image URL' },
+                  { key: 'img',         label: 'Image URL',     placeholder: 'https://i.ibb.co/... or any image URL' },
                 ].map(f => (
                   <div key={f.key}>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{f.label}</label>

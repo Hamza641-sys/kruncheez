@@ -183,7 +183,7 @@ const AdminReports = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Business Report</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit — complete hisaab</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit — complete financial summary</p>
         </div>
         <button onClick={downloadCSV}
           className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
@@ -240,7 +240,7 @@ const AdminReports = () => {
                   <p className="text-green-400 font-heading font-black text-xl">Rs.{totalRev.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-krunch-gray font-body text-xs uppercase">Total Kharcha</p>
+                  <p className="text-krunch-gray font-body text-xs uppercase">Total Expenses</p>
                   <p className="text-red-400 font-heading font-black text-xl">Rs.{totalExp.toLocaleString()}</p>
                 </div>
                 <div>
@@ -259,8 +259,8 @@ const AdminReports = () => {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
             { icon: <TrendingUp size={20} className="text-green-400"/>,  label: 'Total Revenue (Sale)',  value: `Rs.${totalRev.toLocaleString()}`,   sub: `${delivered.length} orders delivered`,      bg: 'bg-green-400/10' },
-              { icon: <TrendingDown size={20} className="text-red-400"/>,  label: 'Total Kharcha',         value: `Rs.${totalExp.toLocaleString()}`,   sub: `Supplier + Daily + Salary`,                 bg: 'bg-red-400/10' },
-              { icon: <Truck size={20} className="text-amber-400"/>,       label: 'Supplier Ko Diya',      value: `Rs.${supplierExp.toLocaleString()}`,sub: `${filteredPurchases.length} payments`,       bg: 'bg-amber-400/10' },
+              { icon: <TrendingDown size={20} className="text-red-400"/>,  label: 'Total Expenses',        value: `Rs.${totalExp.toLocaleString()}`,   sub: `Supplier + Daily + Salary`,                 bg: 'bg-red-400/10' },
+              { icon: <Truck size={20} className="text-amber-400"/>,       label: 'Supplier Payments',     value: `Rs.${supplierExp.toLocaleString()}`,sub: `${filteredPurchases.length} payments`,       bg: 'bg-amber-400/10' },
               { icon: <Users size={20} className="text-blue-400"/>,        label: 'Staff Salary',          value: `Rs.${salaryExp.toLocaleString()}`,  sub: `${filteredSalaries.length} salary records`,  bg: 'bg-blue-400/10' },
             ].map((s,i) => (
               <div key={i} className="card-dark p-5">
@@ -306,7 +306,7 @@ const AdminReports = () => {
                 Expense Breakdown
               </h3>
               {expCatData.length === 0 ? (
-                <p className="text-krunch-gray font-body text-sm text-center py-6">Koi expense record nahi hai</p>
+                <p className="text-krunch-gray font-body text-sm text-center py-6">No expense records found</p>
               ) : (
                 <div className="flex flex-col gap-3">
                   {expCatData.map(([cat, amt], i) => (
@@ -337,7 +337,7 @@ const AdminReports = () => {
                 Top Selling Items
               </h3>
               {topItems.length === 0 ? (
-                <p className="text-krunch-gray font-body text-sm text-center py-6">Koi order nahi hai</p>
+                <p className="text-krunch-gray font-body text-sm text-center py-6">No orders found</p>
               ) : (
                 <div className="flex flex-col gap-2.5">
                   {topItems.map(([name, count], i) => {
@@ -365,7 +365,7 @@ const AdminReports = () => {
           {/* ══════════ PROFIT SUMMARY TABLE ══════════ */}
           <div className="card-dark p-5 mb-6">
             <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">
-              Complete Hisaab — {period === 'today' ? 'Aaj Ka' : period === 'week' ? 'Is Hafte Ka' : period === 'month' ? 'Is Mahine Ka' : 'Poora'}
+            Complete Summary — {period === 'today' ? "Today" : period === 'week' ? "This Week" : period === 'month' ? "This Month" : "All Time"}
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -381,13 +381,13 @@ const AdminReports = () => {
 
                   {/* Expense section */}
                   <tr className="border-b border-krunch-border mt-2">
-                    <td className="py-3 text-red-400 font-body font-bold text-sm uppercase tracking-wider" colSpan={2}>💸 KHARCHA (Expenses)</td>
+                    <td className="py-3 text-red-400 font-body font-bold text-sm uppercase tracking-wider" colSpan={2}>💸 EXPENSES</td>
                   </tr>
 
                   {/* Supplier payments */}
                   <tr className="border-b border-krunch-border/50">
                     <td className="py-2.5 pl-4 text-amber-400 font-body font-semibold text-sm">
-                      🚚 Supplier Ko Diya ({filteredPurchases.length} payments)
+                      🚚 Supplier Payments ({filteredPurchases.length} payments)
                     </td>
                     <td className="py-2.5 text-right text-amber-400 font-heading font-black text-base">- Rs.{supplierExp.toLocaleString()}</td>
                   </tr>
@@ -413,7 +413,7 @@ const AdminReports = () => {
                         {s.staffName} — {s.month}
                         {s.fine > 0 ? ` (Fine: -Rs.${s.fine})` : ''}
                         {s.bonus > 0 ? ` (Bonus: +Rs.${s.bonus})` : ''}
-                        {s.remaining > 0 ? ` | Baqi: Rs.${s.remaining}` : ''}
+                        {s.remaining > 0 ? ` | Remaining: Rs.${s.remaining}` : ''}
                       </td>
                       <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(s.paid||0).toLocaleString()}</td>
                     </tr>
@@ -434,13 +434,13 @@ const AdminReports = () => {
                   ))}
                   {expCatData.length === 0 && (
                     <tr className="border-b border-krunch-border/30">
-                      <td className="py-2 pl-8 text-krunch-gray font-body text-xs italic" colSpan={2}>Koi daily expense nahi</td>
+                      <td className="py-2 pl-8 text-krunch-gray font-body text-xs italic" colSpan={2}>No daily expenses recorded</td>
                     </tr>
                   )}
 
                   {/* Total kharcha */}
                   <tr className="border-b border-krunch-border">
-                    <td className="py-3 pl-4 text-white font-body font-bold text-sm">Total Kharcha</td>
+                    <td className="py-3 pl-4 text-white font-body font-bold text-sm">Total Expenses</td>
                     <td className="py-3 text-right text-red-400 font-heading font-black text-lg">- Rs.{totalExp.toLocaleString()}</td>
                   </tr>
 

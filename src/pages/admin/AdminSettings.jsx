@@ -90,20 +90,20 @@ const AdminSettings = () => {
   // ── Change Password ──
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (!pwForm.current)        return toast.error('Current password daalo', toastStyle);
-    if (!pwForm.newPw)          return toast.error('Naya password daalo', toastStyle);
-    if (pwForm.newPw.length < 6) return toast.error('Password kam se kam 6 characters ka hona chahiye', toastStyle);
-    if (pwForm.newPw !== pwForm.confirm) return toast.error('Naya password match nahi kiya', toastStyle);
+    if (!pwForm.current)        return toast.error('Please enter your current password', toastStyle);
+    if (!pwForm.newPw)          return toast.error('Please enter a new password', toastStyle);
+    if (pwForm.newPw.length < 6) return toast.error('Password must be at least 6 characters', toastStyle);
+    if (pwForm.newPw !== pwForm.confirm) return toast.error('New passwords do not match', toastStyle);
 
     setPwLoading(true);
     try {
       await reauth(pwForm.current);
       await updatePassword(auth.currentUser, pwForm.newPw);
-      toast.success('✅ Password successfully change ho gaya!', toastStyle);
+      toast.success('✅ Password updated successfully!', toastStyle);
       setPwForm({ current: '', newPw: '', confirm: '' });
     } catch (e) {
       if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-        toast.error('Current password galat hai', toastStyle);
+        toast.error('Incorrect current password', toastStyle);
       } else {
         toast.error('Error: ' + e.message, toastStyle);
       }
@@ -114,21 +114,21 @@ const AdminSettings = () => {
   // ── Change Email ──
   const handleChangeEmail = async (e) => {
     e.preventDefault();
-    if (!emailForm.newEmail)  return toast.error('Naya email daalo', toastStyle);
-    if (!emailForm.password)  return toast.error('Password confirm karo', toastStyle);
-    if (!/\S+@\S+\.\S+/.test(emailForm.newEmail)) return toast.error('Valid email format daalo', toastStyle);
+    if (!emailForm.newEmail)  return toast.error('Please enter a new email address', toastStyle);
+    if (!emailForm.password)  return toast.error('Please confirm with your current password', toastStyle);
+    if (!/\S+@\S+\.\S+/.test(emailForm.newEmail)) return toast.error('Please enter a valid email format', toastStyle);
 
     setEmailLoading(true);
     try {
       await reauth(emailForm.password);
       await updateEmail(auth.currentUser, emailForm.newEmail);
-      toast.success('✅ Email successfully change ho gaya!', toastStyle);
+      toast.success('✅ Email updated successfully!', toastStyle);
       setEmailForm({ newEmail: '', password: '' });
     } catch (e) {
       if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-        toast.error('Password galat hai', toastStyle);
+        toast.error('Incorrect password', toastStyle);
       } else if (e.code === 'auth/email-already-in-use') {
-        toast.error('Yeh email pehle se use ho rahi hai', toastStyle);
+        toast.error('This email is already in use', toastStyle);
       } else {
         toast.error('Error: ' + e.message, toastStyle);
       }
@@ -210,7 +210,7 @@ const AdminSettings = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Settings</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">Restaurant configuration — Firestore mein save hota hai</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">Restaurant configuration — changes are saved to Firestore</p>
         </div>
         <button
           onClick={handleSave}
@@ -299,7 +299,7 @@ const AdminSettings = () => {
               onChange={v => setPwForm({ ...pwForm, current: v })}
               show={showPw.current}
               onToggle={() => setShowPw({ ...showPw, current: !showPw.current })}
-              placeholder="Apna current password"
+              placeholder="Enter your current password"
             />
             <PasswordField
               label="New Password"
@@ -307,7 +307,7 @@ const AdminSettings = () => {
               onChange={v => setPwForm({ ...pwForm, newPw: v })}
               show={showPw.newPw}
               onToggle={() => setShowPw({ ...showPw, newPw: !showPw.newPw })}
-              placeholder="Naya password (min 6 characters)"
+              placeholder="New password (min 6 characters)"
             />
             <PasswordField
               label="Confirm New Password"
@@ -315,7 +315,7 @@ const AdminSettings = () => {
               onChange={v => setPwForm({ ...pwForm, confirm: v })}
               show={showPw.confirm}
               onToggle={() => setShowPw({ ...showPw, confirm: !showPw.confirm })}
-              placeholder="Dobara naya password"
+              placeholder="Confirm new password"
             />
 
             {/* Password strength hint */}
@@ -373,7 +373,7 @@ const AdminSettings = () => {
               onChange={v => setEmailForm({ ...emailForm, password: v })}
               show={showEmailPw}
               onToggle={() => setShowEmailPw(!showEmailPw)}
-              placeholder="Apna current password"
+              placeholder="Enter your current password"
             />
             <button
               type="submit"

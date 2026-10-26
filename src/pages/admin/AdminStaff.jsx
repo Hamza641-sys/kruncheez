@@ -92,7 +92,7 @@ const AdminStaff = () => {
   // ── Record Salary ───────────────────────────────────────────────────────
   const handleSalary = async () => {
     if (!salaryForm.staffId || !salaryForm.paid) {
-      toast.error('Staff aur paid amount required', toastStyle); return;
+      toast.error('Staff member and paid amount are required', toastStyle); return;
     }
     setSaving(true);
     try {
@@ -135,7 +135,7 @@ const AdminStaff = () => {
   // ── Record Report (misconduct/fine/warning) ─────────────────────────────
   const handleReport = async () => {
     if (!reportForm.staffId || !reportForm.description) {
-      toast.error('Staff aur description required', toastStyle); return;
+      toast.error('Staff member and description are required', toastStyle); return;
     }
     setSaving(true);
     try {
@@ -321,7 +321,7 @@ const AdminStaff = () => {
                         <div>
                           <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Salary History</h4>
                           {sSalaries.length === 0 ? (
-                            <p className="text-krunch-gray font-body text-xs">Koi record nahi</p>
+                            <p className="text-krunch-gray font-body text-xs">No records found</p>
                           ) : (
                             <div className="flex flex-col gap-2">
                               {sSalaries.slice(0,5).map(sal => (
@@ -334,8 +334,8 @@ const AdminStaff = () => {
                                     <span className="text-krunch-gray">Total: Rs.{(sal.totalSalary||0).toLocaleString()}</span>
                                     {sal.fine > 0 && <span className="text-red-400">Fine: -Rs.{sal.fine.toLocaleString()} {sal.fineReason ? `(${sal.fineReason})` : ''}</span>}
                                     {sal.bonus > 0 && <span className="text-amber-400">Bonus: +Rs.{sal.bonus.toLocaleString()} {sal.bonusReason ? `(${sal.bonusReason})` : ''}</span>}
-                                    {sal.remaining > 0 && <span className="text-orange-400">Baqi: Rs.{sal.remaining.toLocaleString()}</span>}
-                                    {sal.remaining < 0 && <span className="text-blue-400">Extra diya: Rs.{Math.abs(sal.remaining).toLocaleString()}</span>}
+                                    {sal.remaining > 0 && <span className="text-orange-400">Remaining: Rs.{sal.remaining.toLocaleString()}</span>}
+                                    {sal.remaining < 0 && <span className="text-blue-400">Overpaid: Rs.{Math.abs(sal.remaining).toLocaleString()}</span>}
                                   </div>
                                   {sal.notes && <p className="text-krunch-gray text-[10px] mt-1">📝 {sal.notes}</p>}
                                 </div>
@@ -347,7 +347,7 @@ const AdminStaff = () => {
                         <div>
                           <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Reports / Issues</h4>
                           {sReports.length === 0 ? (
-                            <p className="text-krunch-gray font-body text-xs">Koi report nahi — acha hai! ✅</p>
+                            <p className="text-krunch-gray font-body text-xs">No reports — all good! ✅</p>
                           ) : (
                             <div className="flex flex-col gap-2">
                               {sReports.slice(0,5).map(r => (
@@ -385,14 +385,14 @@ const AdminStaff = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-krunch-border">
-                  {['Month','Staff','Total Salary','Fine','Bonus','Net','Paid','Baqi','Notes'].map(h => (
+                  {['Month','Staff','Total Salary','Fine','Bonus','Net','Paid','Remaining','Notes'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-krunch-gray font-body text-xs uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {salaries.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">Koi salary record nahi</td></tr>
+                  <tr><td colSpan={9} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No salary records found</td></tr>
                 ) : salaries.map(s => (
                   <tr key={s.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{s.month}</td>
@@ -418,11 +418,11 @@ const AdminStaff = () => {
                     <td className="px-4 py-3 text-green-400 font-body font-bold text-sm">Rs.{(s.paid||0).toLocaleString()}</td>
                     <td className="px-4 py-3">
                       {(s.remaining||0) > 0 ? (
-                        <span className="text-orange-400 font-body font-bold text-xs">Rs.{s.remaining.toLocaleString()} baqi</span>
+                        <span className="text-orange-400 font-body font-bold text-xs">Rs.{s.remaining.toLocaleString()} remaining</span>
                       ) : (s.remaining||0) < 0 ? (
-                        <span className="text-blue-400 font-body text-xs">Extra</span>
+                        <span className="text-blue-400 font-body text-xs">Overpaid</span>
                       ) : (
-                        <span className="text-green-400 font-body text-xs">✅ Clear</span>
+                        <span className="text-green-400 font-body text-xs">✅ Cleared</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs">{s.notes || '—'}</td>
@@ -448,7 +448,7 @@ const AdminStaff = () => {
               </thead>
               <tbody>
                 {reports.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">Koi report nahi — sab theek hai! ✅</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No reports found — all good! ✅</td></tr>
                 ) : reports.map(r => (
                   <tr key={r.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{r.date}</td>
@@ -519,8 +519,8 @@ const AdminStaff = () => {
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
                   </div>
                   <div className="col-span-2">
-                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Photo URL (ID Card ke liye)</label>
-                    <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})} placeholder="https://i.ibb.co/... staff ki photo ka URL"
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Photo URL (for ID Card)</label>
+                    <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})} placeholder="https://i.ibb.co/... staff photo URL"
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
                     {staffForm.photo && (
                       <div className="mt-2 flex items-center gap-3">
@@ -600,7 +600,7 @@ const AdminStaff = () => {
                     </div>
                     <div>
                       <label className="text-krunch-gray font-body text-xs mb-1 block">Fine Reason</label>
-                      <input type="text" value={salaryForm.fineReason} onChange={e => setSalaryForm({...salaryForm,fineReason:e.target.value})} placeholder="e.g. Miss behave, late"
+                      <input type="text" value={salaryForm.fineReason} onChange={e => setSalaryForm({...salaryForm,fineReason:e.target.value})} placeholder="e.g. Late arrival, misconduct"
                         className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-red-500 transition-colors"/>
                     </div>
                   </div>
@@ -617,7 +617,7 @@ const AdminStaff = () => {
                     </div>
                     <div>
                       <label className="text-krunch-gray font-body text-xs mb-1 block">Bonus Reason</label>
-                      <input type="text" value={salaryForm.bonusReason} onChange={e => setSalaryForm({...salaryForm,bonusReason:e.target.value})} placeholder="e.g. Eid bonus, performance"
+                      <input type="text" value={salaryForm.bonusReason} onChange={e => setSalaryForm({...salaryForm,bonusReason:e.target.value})} placeholder="e.g. Eid bonus, performance award"
                         className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-amber-500 transition-colors"/>
                     </div>
                   </div>
@@ -651,10 +651,10 @@ const AdminStaff = () => {
                         const rem = net - Number(salaryForm.paid||0);
                         return rem !== 0 ? (
                           <div className="flex justify-between">
-                            <span className={rem>0?'text-orange-400':'text-blue-400'}>{rem>0?'Baqi':'Extra diya'}</span>
+                            <span className={rem>0?'text-orange-400':'text-blue-400'}>{rem>0?'Remaining':'Overpaid'}</span>
                             <span className={rem>0?'text-orange-400':'text-blue-400'}>Rs.{Math.abs(rem).toLocaleString()}</span>
                           </div>
-                        ) : <div className="text-green-400 text-center text-xs">✅ Full salary clear!</div>;
+                        ) : <div className="text-green-400 text-center text-xs">✅ Salary fully cleared!</div>;
                       })()}
                     </div>
                   </div>
@@ -662,7 +662,7 @@ const AdminStaff = () => {
 
                 <div>
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Notes (optional)</label>
-                  <input type="text" value={salaryForm.notes} onChange={e => setSalaryForm({...salaryForm,notes:e.target.value})} placeholder="koi note..."
+                  <input type="text" value={salaryForm.notes} onChange={e => setSalaryForm({...salaryForm,notes:e.target.value})} placeholder="Additional notes..."
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
                 </div>
 
@@ -709,7 +709,7 @@ const AdminStaff = () => {
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2 block">Report Type</label>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { k:'misconduct', l:'⚠️ Miss Behave' },
+                      { k:'misconduct', l:'⚠️ Misconduct' },
                       { k:'fine',       l:'💸 Fine' },
                       { k:'warning',    l:'📋 Warning' },
                       { k:'absent',     l:'❌ Absent' },
@@ -752,9 +752,9 @@ const AdminStaff = () => {
 
                 {/* Description */}
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Description * (kya hua)</label>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Description * (what happened)</label>
                   <textarea value={reportForm.description} onChange={e => setReportForm({...reportForm,description:e.target.value})}
-                    rows={3} placeholder="Puri baat likhein — kya hua, kaise hua..."
+                    rows={3} placeholder="Describe the incident in detail..."
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors resize-none"/>
                 </div>
 
@@ -762,7 +762,7 @@ const AdminStaff = () => {
                 <div>
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Action Taken (optional)</label>
                   <input type="text" value={reportForm.action} onChange={e => setReportForm({...reportForm,action:e.target.value})}
-                    placeholder="e.g. Warning di, fine kata, suspend kiya"
+                    placeholder="e.g. Warning issued, fine deducted, suspended"
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
                 </div>
 
