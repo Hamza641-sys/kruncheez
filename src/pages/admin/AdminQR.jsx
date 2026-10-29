@@ -259,26 +259,21 @@ const AdminQR = () => {
         ))}
       </div>
 
-      {/* Controls */}
-      <div className="card-dark p-5 mb-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <label className="text-krunch-gray font-body text-sm">Generate</label>
-            <input type="number" min={1} max={50} value={count}
-              onChange={e => setCount(Math.max(1, Math.min(50, Number(e.target.value))))}
-              className="w-20 bg-krunch-black border border-krunch-border rounded-xl px-3 py-2 text-white font-body text-sm text-center focus:outline-none focus:border-krunch-red transition-colors" />
-            <label className="text-krunch-gray font-body text-sm">table(s)</label>
+      {/* Info Banner */}
+      <div className="card-dark p-4 mb-6 border border-amber-500/30 bg-amber-500/5">
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🪑</span>
+          <div>
+            <p className="text-white font-body font-semibold text-sm">7 Tables — Fixed Layout</p>
+            <p className="text-krunch-gray font-body text-xs mt-0.5">
+              <span className="text-amber-400 font-semibold">Family Hall:</span> Table 1, 2, 3 &nbsp;|&nbsp;
+              <span className="text-blue-400 font-semibold">Outside:</span> Table 4, 5, 6, 7
+            </p>
           </div>
-          <button onClick={handleGenerate} disabled={generating}
-            className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-sm px-5 py-2.5 rounded-xl transition-all shadow-red-glow disabled:opacity-70">
-            {generating
-              ? <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-              : <><Plus size={16} /> Generate QR Codes</>}
-          </button>
           {tables.length > 0 && (
             <button onClick={printAll}
-              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-5 py-2.5 rounded-xl transition-all ml-auto">
-              <Printer size={16} /> Print All
+              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all ml-auto">
+              <Printer size={15} /> Print All 7
             </button>
           )}
         </div>
@@ -296,8 +291,15 @@ const AdminQR = () => {
           <p className="text-krunch-gray font-body text-sm mb-5">Generate QR codes for your tables</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {tables.map((table, i) => (
+        <div className="flex flex-col gap-6">
+          {/* Family Hall */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-amber-400 font-heading font-bold text-sm uppercase tracking-widest">🏠 Family Hall</span>
+              <span className="text-krunch-gray text-xs">(3 tables)</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {tables.filter(t => t.section === 'Family Hall' || t.tableNumber <= 3).map((table, i) => (
             <motion.div key={table.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -348,6 +350,63 @@ const AdminQR = () => {
               </div>
             </motion.div>
           ))}
+            </div>
+          </div>
+
+          {/* Outside */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-blue-400 font-heading font-bold text-sm uppercase tracking-widest">🌿 Outside</span>
+              <span className="text-krunch-gray text-xs">(4 tables)</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {tables.filter(t => t.section === 'Outside' || t.tableNumber > 3).map((table, i) => (
+            <motion.div key={table.id + '_out'}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.05 }}
+              className="card-dark overflow-hidden group"
+            >
+              <div className={`h-1.5 w-full ${table.status === 'occupied' ? 'bg-krunch-red' : 'bg-green-500'}`} />
+              <div className="p-4 flex flex-col items-center">
+                <div className="bg-white p-2 rounded-xl mb-3 shadow-lg">
+                  {qrDataURLs[table.id]
+                    ? <img src={qrDataURLs[table.id]} alt={`Table ${table.tableNumber}`} className="w-24 h-24" />
+                    : <div className="w-24 h-24 bg-gray-100 animate-pulse rounded" />
+                  }
+                </div>
+                <p className="font-heading font-black text-2xl text-white">TABLE {table.tableNumber}</p>
+                <button onClick={() => toggleStatus(table)}
+                  className={`mt-1 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-all ${
+                    table.status === 'occupied'
+                      ? 'bg-krunch-red/20 text-krunch-red border border-krunch-red/30'
+                      : 'bg-green-500/20 text-green-400 border border-green-500/30'
+                  }`}>
+                  {table.status === 'occupied' ? '● Occupied' : '● Free'}
+                </button>
+              </div>
+              <div className="flex border-t border-krunch-border">
+                <button onClick={() => setPreview(table)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all text-xs font-body border-r border-krunch-border">
+                  <Eye size={12} /> Preview
+                </button>
+                <button onClick={() => printSingle(table)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all text-xs font-body border-r border-krunch-border">
+                  <Printer size={12} /> Print
+                </button>
+                <button onClick={() => downloadQR(table)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all text-xs font-body border-r border-krunch-border">
+                  <Download size={12} /> Save
+                </button>
+                <button onClick={() => handleDelete(table.id)}
+                  className="flex items-center justify-center py-2.5 px-3 text-krunch-gray hover:text-red-400 hover:bg-red-400/5 transition-all">
+                  <Trash2 size={12} />
+                </button>
+              </div>
+            </motion.div>
+          ))}
+            </div>
+          </div>
         </div>
       )}
 
