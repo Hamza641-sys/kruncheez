@@ -5,7 +5,142 @@ import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
 import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
 
-// ── Print Bill (Customer Receipt) ─────────────────────────────────────────
+// ── Print Both (Bill + Kitchen) ───────────────────────────────────────────
+const printBoth = (order) => {
+  const date = order.createdAt?.toDate?.() || new Date();
+  const dateStr = date.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
+  const timeStr = date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' });
+
+  const billItemsHtml = (order.items || []).map(item => `
+    <tr>
+      <td style="padding:5px 0;font-size:13px;">${item.name}</td>
+      <td style="padding:5px 0;font-size:13px;text-align:center;">x${item.quantity}</td>
+      <td style="padding:5px 0;font-size:13px;text-align:right;">Rs.${(item.price * item.quantity).toLocaleString()}</td>
+    </tr>
+  `).join('');
+
+  const kitchenItemsHtml = (order.items || []).map(item => `
+    <tr>
+      <td style="padding:6px 0;font-size:16px;font-weight:bold;">${item.name}</td>
+      <td style="padding:6px 0;font-size:18px;font-weight:bold;text-align:right;">x${item.quantity}</td>
+    </tr>
+  `).join('');
+
+  const discount = (order.summary?.discount || 0) + (order.summary?.cardDiscount || 0);
+
+  const win = window.open('', '_blank', 'width=420,height=700');
+  win.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Print - #${order.id.slice(0,8).toUpperCase()}</title>
+      <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Courier New', monospace; width: 300px; margin: 0 auto; padding: 10px; font-size: 12px; }
+        .center { text-align: center; }
+        .bold { font-weight: bold; }
+        .line { border-top: 1px dashed #000; margin: 8px 0; }
+        .thick-line { border-top: 3px solid #000; margin: 8px 0; }
+        .page-break { page-break-after: always; }
+        .logo { font-size: 20px; font-weight: bold; letter-spacing: 2px; }
+        .tagline { font-size: 10px; margin-top: 2px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
+        .total-row td { font-weight: bold; font-size: 14px; padding-top: 6px; }
+        .footer { font-size: 10px; margin-top: 4px; }
+        @media print {
+          body { margin: 0; }
+          .page-break { page-break-after: always; }
+        }
+      </style>
+    </head>
+    <body>
+
+      <!-- ====== SLIP 1: CUSTOMER BILL ====== -->
+      <div class="center">
+        <div class="logo">THE KRUNCHEEZ</div>
+        <div class="tagline">Fast Food • Chinese • BBQ</div>
+        <div class="tagline">Peshawar, Pakistan</div>
+      </div>
+      <div class="line"></div>
+      <div class="center bold" style="font-size:11px;">CUSTOMER RECEIPT</div>
+      <div class="line"></div>
+      <table>
+        <tr><td style="font-size:11px;">Order ID</td><td style="text-align:right;font-size:11px;">#${order.id.slice(0,8).toUpperCase()}</td></tr>
+        <tr><td style="font-size:11px;">Date</td><td style="text-align:right;font-size:11px;">${dateStr}</td></tr>
+        <tr><td style="font-size:11px;">Time</td><td style="text-align:right;font-size:11px;">${timeStr}</td></tr>
+        <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || '—'}</td></tr>
+        <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || '—'}</td></tr>
+        <tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">${order.tableNumber ? `Dine-In (Table ${order.tableNumber})` : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery'}</td></tr>
+        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}</td></tr>
+      </table>
+      <div class="line"></div>
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Item</th>
+            <th style="text-align:center;">Qty</th>
+            <th style="text-align:right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>${billItemsHtml}</tbody>
+      </table>
+      <div class="line"></div>
+      <table>
+        <tr><td style="font-size:12px;">Subtotal</td><td style="text-align:right;font-size:12px;">Rs.${(order.summary?.subtotal || 0).toLocaleString()}</td></tr>
+        ${discount > 0 ? `<tr><td style="font-size:12px;">Discount</td><td style="text-align:right;font-size:12px;">- Rs.${discount.toLocaleString()}</td></tr>` : ''}
+        ${(order.summary?.deliveryFee || 0) > 0 ? `<tr><td style="font-size:12px;">Delivery</td><td style="text-align:right;font-size:12px;">Rs.${order.summary.deliveryFee.toLocaleString()}</td></tr>` : ''}
+        <tr class="total-row"><td>TOTAL</td><td style="text-align:right;">Rs.${(order.summary?.total || 0).toLocaleString()}</td></tr>
+      </table>
+      <div class="line"></div>
+      ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div>` : ''}
+      <div class="center footer">
+        <div class="bold">Thank you for dining with us!</div>
+        <div>Visit again soon 🍔</div>
+        <div>kruncheez-pos.web.app</div>
+      </div>
+
+      <!-- PAGE BREAK between 2 slips -->
+      <div class="page-break"></div>
+
+      <!-- ====== SLIP 2: KITCHEN ORDER ====== -->
+      <div class="center">
+        <div style="font-size:13px;font-weight:bold;">⭐ KITCHEN ORDER SLIP ⭐</div>
+      </div>
+      <div class="line"></div>
+      <div class="center">
+        <div style="font-size:22px;font-weight:bold;letter-spacing:2px;">#${order.id.slice(0,8).toUpperCase()}</div>
+        <div style="font-size:13px;margin-top:4px;">Time: ${timeStr}</div>
+      </div>
+      <div class="line"></div>
+      <table>
+        <tr>
+          <td style="font-size:13px;font-weight:bold;">ORDER TYPE</td>
+          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `🪑 TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? '🏃 PICKUP' : '🛵 DELIVERY'}</td>
+        </tr>
+        ${order.customer?.name ? `<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">${order.customer.name}</td></tr>` : ''}
+      </table>
+      <div class="line"></div>
+      <div style="font-size:13px;font-weight:bold;margin-bottom:6px;">ITEMS TO PREPARE:</div>
+      <table>
+        <tbody>${kitchenItemsHtml}</tbody>
+      </table>
+      <div class="line"></div>
+      ${order.notes ? `
+        <div style="font-size:13px;font-weight:bold;">⚠️ SPECIAL INSTRUCTIONS:</div>
+        <div style="font-size:13px;margin-top:4px;padding:6px;border:2px solid #000;">${order.notes}</div>
+        <div class="line"></div>
+      ` : ''}
+      <div class="center" style="font-size:11px;">
+        Total Items: ${(order.items || []).reduce((s, i) => s + i.quantity, 0)}
+      </div>
+
+    </body>
+    </html>
+  `);
+  win.document.close();
+  setTimeout(() => { win.print(); win.close(); }, 400);
+};
 const printBill = (order) => {
   const date = order.createdAt?.toDate?.() || new Date();
   const dateStr = date.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -382,15 +517,10 @@ const AdminOrders = () => {
                           className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all">
                           <Eye size={12} />
                         </button>
-                        <button onClick={() => printBill(order)}
-                          title="Print Customer Bill"
-                          className="w-7 h-7 rounded-lg bg-green-900/20 border border-green-700/30 flex items-center justify-center text-green-400 hover:bg-green-600 hover:text-white transition-all">
-                          <Printer size={12} />
-                        </button>
-                        <button onClick={() => printKitchen(order)}
-                          title="Print Kitchen Slip"
-                          className="w-7 h-7 rounded-lg bg-orange-900/20 border border-orange-700/30 flex items-center justify-center text-orange-400 hover:bg-orange-600 hover:text-white transition-all">
-                          <UtensilsCrossed size={12} />
+                        <button onClick={() => printBoth(order)}
+                          title="Print Bill + Kitchen Slip"
+                          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-900/20 border border-green-700/30 text-green-400 hover:bg-green-600 hover:text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
+                          <Printer size={11} /> Print
                         </button>
                         {next && (
                           <button onClick={() => handleStatus(order.id, next, order)}
@@ -430,13 +560,9 @@ const AdminOrders = () => {
               <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
                 <h3 className="font-heading font-bold text-white uppercase">Order #{selected.id.slice(0,8).toUpperCase()}</h3>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => printBill(selected)}
+                  <button onClick={() => printBoth(selected)}
                     className="flex items-center gap-1.5 bg-green-900/20 border border-green-700/30 hover:bg-green-600 text-green-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
-                    <Printer size={13} /> Print Bill
-                  </button>
-                  <button onClick={() => printKitchen(selected)}
-                    className="flex items-center gap-1.5 bg-orange-900/20 border border-orange-700/30 hover:bg-orange-600 text-orange-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
-                    <UtensilsCrossed size={13} /> Kitchen Slip
+                    <Printer size={13} /> Print Bill + Kitchen
                   </button>
                   <button onClick={() => setSelected(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
                 </div>
