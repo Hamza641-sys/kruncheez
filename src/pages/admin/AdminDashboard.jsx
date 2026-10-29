@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, TrendingUp, Users, Clock, CheckCircle, ChefHat, Truck, XCircle } from 'lucide-react';
+import { ShoppingBag, TrendingUp, Users, Clock, CheckCircle, ChefHat, Truck, XCircle, Wifi } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import AdminAIAssistant from '../../components/admin/AdminAIAssistant';
+import { useAuth } from '../../context/AuthContext';
 
 const statusConfig = {
   pending:          { label: 'Pending',         color: 'text-yellow-400', bg: 'bg-yellow-400/10 border-yellow-400/20', icon: <Clock size={13} /> },
@@ -30,6 +31,7 @@ const StatCard = ({ icon, label, value, sub, color, delay }) => (
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
   const [customerCount, setCustomerCount] = useState(0);
+  const { onlineStaff, userData } = useAuth();
 
   useEffect(() => {
     const unsub = getAllOrders(setOrders);
@@ -71,6 +73,41 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((s, i) => <StatCard key={i} {...s} />)}
       </div>
+
+      {/* Online Staff Indicator — visible to admin only */}
+      {userData?.role === 'admin' && onlineStaff.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 bg-green-900/20 border border-green-700/30 rounded-2xl px-5 py-4"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Wifi size={15} className="text-green-400" />
+            <h3 className="font-heading font-bold text-white text-sm uppercase tracking-wide">
+              Staff Online Now
+            </h3>
+            <span className="ml-auto bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+              {onlineStaff.length} online
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {onlineStaff.map(staff => (
+              <div key={staff.id} className="flex items-center gap-2 bg-krunch-black border border-green-700/20 rounded-xl px-3 py-2">
+                <div className="relative">
+                  <div className="w-7 h-7 rounded-full bg-green-900/50 border border-green-600/30 flex items-center justify-center text-green-400 font-bold text-xs">
+                    {staff.name?.[0]?.toUpperCase() || 'S'}
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-krunch-black animate-pulse" />
+                </div>
+                <div>
+                  <p className="text-white font-body font-semibold text-xs">{staff.name}</p>
+                  <p className="text-green-400 text-[10px] font-body capitalize">{staff.role} • Online</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       {/* AI Assistant */}
       <AdminAIAssistant />
