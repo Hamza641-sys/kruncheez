@@ -8,6 +8,14 @@ import toast from 'react-hot-toast';
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 const emptyForm = { code: '', type: 'percent', discount: '', minOrder: '', maxUses: '', expiryDate: '', description: '' };
 
+// Auto-generate promo code
+const generatePromoCode = () => {
+  const prefixes = ['SAVE', 'KRZ', 'DEAL', 'OFF', 'FEAST', 'EAT'];
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const num = Math.floor(10 + Math.random() * 90);
+  return `${prefix}${num}`;
+};
+
 const AdminPromos = () => {
   const [promos, setPromos] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -63,7 +71,7 @@ const AdminPromos = () => {
           <h2 className="font-heading font-black text-2xl text-white uppercase">Promo Codes</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">{promos.length} active codes</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 btn-primary text-sm">
+        <button onClick={() => { setForm({ ...emptyForm, code: generatePromoCode() }); setShowForm(true); }} className="flex items-center gap-2 btn-primary text-sm">
           <Plus size={16} /> Create Code
         </button>
       </div>
@@ -75,7 +83,7 @@ const AdminPromos = () => {
             <div className="text-6xl mb-3">🏷️</div>
             <p className="font-heading font-bold text-xl text-white uppercase mb-2">No Promo Codes</p>
             <p className="text-krunch-gray font-body text-sm mb-5">Create your first promo code!</p>
-            <button onClick={() => setShowForm(true)} className="btn-primary text-sm">Create Code</button>
+            <button onClick={() => { setForm({ ...emptyForm, code: generatePromoCode() }); setShowForm(true); }} className="btn-primary text-sm">Create Code</button>
           </div>
         ) : promos.map((promo, i) => {
           const expired = isExpired(promo.expiryDate);
@@ -159,10 +167,20 @@ const AdminPromos = () => {
               </div>
               <div className="p-6 flex flex-col gap-4">
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Promo Code *</label>
-                  <input type="text" value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                    placeholder="e.g. SAVE20"
-                    className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-heading font-black text-lg tracking-widest placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors uppercase" />
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+                    Promo Code * <span className="text-green-400 text-[10px] normal-case">(auto-generated, editable)</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input type="text" value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })}
+                      placeholder="e.g. SAVE20"
+                      className="flex-1 bg-krunch-black border border-green-700/30 rounded-xl px-4 py-3 text-green-400 font-heading font-black text-lg tracking-widest placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors uppercase" />
+                    <button type="button"
+                      onClick={() => setForm({ ...form, code: generatePromoCode() })}
+                      className="px-3 py-2 bg-krunch-card border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white rounded-xl transition-all text-xs font-bold"
+                      title="Generate new code">
+                      🔄 New
+                    </button>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>

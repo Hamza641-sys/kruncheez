@@ -28,6 +28,17 @@ const AdminCards = () => {
   const [issueForm, setIssueForm] = useState({ name: '', phone: '', cardId: '' });
   const [issuing, setIssuing]     = useState(false);
 
+  // Auto-generate card ID
+  const generateCardId = () => {
+    const num = Math.floor(10000 + Math.random() * 90000);
+    return `KC-${num}`;
+  };
+
+  const openIssue = () => {
+    setIssueForm({ name: '', phone: '', cardId: generateCardId() });
+    setShowIssue(true);
+  };
+
   const fetchCards = async () => {
     setLoading(true);
     const data = await getAllCards();
@@ -156,7 +167,7 @@ const AdminCards = () => {
 
   // â”€â”€ ISSUE CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleIssue = async () => {
-    if (!issueForm.name || !issueForm.cardId) { toast.error('Name and Card ID required', toastStyle); return; }
+    if (!issueForm.name || !issueForm.cardId) { toast.error('Customer name is required', toastStyle); return; }
     const cardId = issueForm.cardId.toUpperCase().startsWith('KC-')
       ? issueForm.cardId.toUpperCase()
       : `KC-${issueForm.cardId.toUpperCase()}`;
@@ -204,7 +215,7 @@ const AdminCards = () => {
               <Printer size={15} /> Print All
             </button>
           )}
-          <button onClick={() => setShowIssue(true)}
+          <button onClick={openIssue}
             className="flex items-center gap-2 btn-primary text-sm">
             <Plus size={16} /> Issue Card
           </button>
@@ -352,7 +363,6 @@ const AdminCards = () => {
                 {[
                   { key: 'name',   label: 'Customer Name *', placeholder: 'Muhammad Ahmed' },
                   { key: 'phone',  label: 'Phone Number',    placeholder: '03XX-XXXXXXX' },
-                  { key: 'cardId', label: 'Card Number *',   placeholder: 'e.g. 12345 (KC- auto added)' },
                 ].map(f => (
                   <div key={f.key}>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{f.label}</label>
@@ -362,6 +372,26 @@ const AdminCards = () => {
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                   </div>
                 ))}
+
+                {/* Auto Card ID */}
+                <div>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+                    Card ID <span className="text-green-400 text-[10px] normal-case">(auto-generated)</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 bg-krunch-black border border-green-700/30 rounded-xl px-4 py-3 text-green-400 font-heading font-black text-lg tracking-widest">
+                      {issueForm.cardId}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIssueForm({ ...issueForm, cardId: generateCardId() })}
+                      className="px-3 py-2 bg-krunch-card border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white rounded-xl transition-all text-xs font-bold"
+                      title="Generate new ID"
+                    >
+                      🔄 New
+                    </button>
+                  </div>
+                </div>
                 <div className="bg-krunch-black border border-krunch-border rounded-xl p-3">
                   <p className="text-krunch-gray font-body text-xs">
                     Card: <span className="text-white">0/10 visits</span> â€¢ <span className="text-white">Bronze tier</span> â€¢ <span className="text-white">10% after 10 visits</span>
