@@ -51,7 +51,6 @@ import AdminPOS from './pages/admin/AdminPOS';
 import AdminExpenses from './pages/admin/AdminExpenses';
 import AdminSuppliers from './pages/admin/AdminSuppliers';
 import AdminStaff from './pages/admin/AdminStaff';
-import KitchenScreen from './pages/KitchenScreen';
 
 // New Customer Pages
 import MyCardPage from './pages/customer/MyCardPage';
@@ -112,9 +111,6 @@ const AppLayout = () => {
         <Route path="/review/:orderId" element={<ProtectedRoute><PublicLayout><ReviewPage /></PublicLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><ProfilePage /></PublicLayout></ProtectedRoute>} />
         <Route path="/my-card" element={<ProtectedRoute><PublicLayout><MyCardPage /></PublicLayout></ProtectedRoute>} />
-
-        {/* ── KITCHEN SCREEN (open, fullscreen for kitchen TV) ── */}
-        <Route path="/kitchen" element={<KitchenScreen />} />
 
         {/* ── ADMIN ROUTES (admin only) ── */}
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

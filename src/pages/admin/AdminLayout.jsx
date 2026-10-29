@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
   BarChart3, Settings, LogOut, Menu, X, Tag,
-  QrCode, CreditCard, ChefHat, Receipt,
+  QrCode, CreditCard, Receipt,
   Truck, TrendingDown, UserCheck, LineChart
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -16,7 +16,7 @@ const navItems = [
   { path: '/admin/pos',       label: 'POS / Billing',    icon: <Receipt size={17} /> },
   { path: '/admin/menu',      label: 'Menu',             icon: <UtensilsCrossed size={17} /> },
   { path: '/admin/reports',   label: 'Sales + Reports',  icon: <BarChart3 size={17} /> },
-  { path: '/admin/analytics', label: 'Analytics',         icon: <LineChart size={17} /> },
+  { path: '/admin/analytics', label: 'Analytics',        icon: <LineChart size={17} /> },
   { path: '/admin/suppliers', label: 'Suppliers',        icon: <Truck size={17} /> },
   { path: '/admin/expenses',  label: 'Daily Expenses',   icon: <TrendingDown size={17} /> },
   { path: '/admin/staff',     label: 'Staff',            icon: <UserCheck size={17} /> },
@@ -25,7 +25,6 @@ const navItems = [
   { path: '/admin/customers', label: 'Customers',        icon: <Users size={17} /> },
   { path: '/admin/promos',    label: 'Promo Codes',      icon: <Tag size={17} /> },
   { path: '/admin/settings',  label: 'Settings',         icon: <Settings size={17} /> },
-  { path: '/kitchen',         label: '🍳 Kitchen Screen', icon: <ChefHat size={17} />, external: true },
 ];
 
 const AdminLayout = () => {
