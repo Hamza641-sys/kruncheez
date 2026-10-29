@@ -194,7 +194,13 @@ const AdminStaff = () => {
             className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
             <DollarSign size={15} /> Pay Salary
           </button>
-          <button onClick={() => { setStaffForm(emptyStaff); setEditStaff(null); setShowStaffForm(true); }}
+          <button onClick={() => {
+              const nextNum = staff.length + 1;
+              const autoId = `KRZ-${String(nextNum).padStart(3, '0')}`;
+              setStaffForm({ ...emptyStaff, empId: autoId });
+              setEditStaff(null);
+              setShowStaffForm(true);
+            }}
             className="flex items-center gap-2 btn-primary text-sm">
             <Plus size={16} /> Add Staff
           </button>
@@ -499,9 +505,14 @@ const AdminStaff = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Employee ID</label>
-                    <input type="text" value={staffForm.empId} onChange={e => setStaffForm({...staffForm,empId:e.target.value})} placeholder="KRZ-001"
-                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+                      Employee ID <span className="text-green-400 text-[10px] normal-case">(auto-generated)</span>
+                    </label>
+                    <div className="relative">
+                      <input type="text" value={staffForm.empId} onChange={e => setStaffForm({...staffForm,empId:e.target.value})} placeholder="KRZ-001"
+                        className="w-full bg-krunch-black border border-green-700/30 rounded-xl px-4 py-3 text-green-400 font-body font-bold text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-krunch-gray">editable</span>
+                    </div>
                   </div>
                   <div>
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Monthly Salary (Rs.)</label>
