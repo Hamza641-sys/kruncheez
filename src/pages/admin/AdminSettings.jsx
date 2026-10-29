@@ -345,7 +345,13 @@ const AdminSettings = () => {
               <p className="text-white font-body font-semibold text-sm">{userData?.name}</p>
               <p className="text-krunch-gray font-body text-xs truncate">{auth.currentUser?.email}</p>
             </div>
-            <span className="ml-auto text-[10px] bg-krunch-red/20 text-krunch-red border border-krunch-red/30 px-2 py-0.5 rounded font-bold uppercase flex-shrink-0">Admin</span>
+            <span className="ml-auto text-[10px] px-2 py-0.5 rounded font-bold uppercase flex-shrink-0 border ${
+              userData?.role === 'admin'
+                ? 'bg-krunch-red/20 text-krunch-red border-krunch-red/30'
+                : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+            }">
+              {userData?.role || 'admin'}
+            </span>
           </div>
         </Section>
 
@@ -411,7 +417,8 @@ const AdminSettings = () => {
           </form>
         </Section>
 
-        {/* ── Change Email ── */}
+        {/* ── Change Email — Admin only ── */}
+        {userData?.role === 'admin' && (
         <Section icon={<Mail size={18} />} title="Change Email">
           <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl px-4 py-3 mb-4">
             <p className="text-amber-400 font-body text-xs font-semibold">
@@ -444,6 +451,7 @@ const AdminSettings = () => {
             </button>
           </form>
         </Section>
+        )}
 
       </div>
     </div>
