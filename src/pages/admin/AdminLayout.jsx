@@ -101,10 +101,23 @@ const AdminLayout = () => {
               </div>
               <div className="min-w-0">
                 <p className="text-white font-body font-semibold text-xs truncate">{userData?.name || 'Admin'}</p>
-                <p className="text-krunch-gray font-body text-[10px] truncate">{userData?.email || ''}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                    userData?.role === 'admin'
+                      ? 'bg-krunch-red/20 text-krunch-red border border-krunch-red/30'
+                      : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                  }`}>
+                    {userData?.role || 'admin'}
+                  </span>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
-            <button onClick={logout}
+            <button onClick={async () => {
+                if (window.confirm(`Logout ${userData?.name || 'Admin'}? Are you sure?`)) {
+                  await logout();
+                }
+              }}
               className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-krunch-gray hover:text-red-400 hover:bg-red-400/10 transition-all font-body text-sm">
               <LogOut size={16} /> Logout
             </button>
