@@ -18,7 +18,7 @@ const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px
 const roles = ['Manager', 'Cashier', 'Chef', 'Kitchen Staff', 'Waiter', 'Delivery Rider', 'Cleaner', 'Guard', 'Other'];
 
 // ── EMPTY FORMS ──────────────────────────────────────────────────────────────
-const emptyStaff   = { name: '', role: 'Cashier', phone: '', salary: '', joiningDate: '', address: '', photo: '', empId: '', active: true };
+const emptyStaff = { name: '', role: 'Cashier', phone: '', salary: '', joiningDate: '', address: '', photo: '', empId: '', cnic: '', emergencyContact: '', bloodGroup: '', active: true };
 const emptySalary  = { staffId: '', staffName: '', month: new Date().toISOString().slice(0,7), totalSalary: '', paid: '', deduction: 0, fine: 0, fineReason: '', bonus: 0, bonusReason: '', notes: '' };
 const emptyReport  = { staffId: '', staffName: '', type: 'misconduct', description: '', date: new Date().toISOString().split('T')[0], action: '', severity: 'minor' };
 
@@ -274,6 +274,7 @@ const AdminStaff = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-heading font-bold text-white text-base">{s.name}</h3>
                       <span className="text-[10px] bg-krunch-red/20 text-krunch-red border border-krunch-red/30 px-2 py-0.5 rounded font-bold uppercase">{s.role}</span>
+                      {s.empId && <span className="text-[10px] bg-green-900/20 text-green-400 border border-green-700/30 px-2 py-0.5 rounded font-bold">{s.empId}</span>}
                       {sReports.length > 0 && (
                         <span className="text-[10px] bg-orange-400/10 text-orange-400 border border-orange-400/20 px-2 py-0.5 rounded font-bold">
                           ⚠️ {sReports.length} reports
@@ -282,6 +283,8 @@ const AdminStaff = () => {
                     </div>
                     <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                       {s.phone && <span className="text-krunch-gray font-body text-xs">📞 {s.phone}</span>}
+                      {s.cnic && <span className="text-krunch-gray font-body text-xs">🪪 {s.cnic}</span>}
+                      {s.bloodGroup && <span className="text-red-400 font-body text-xs font-bold">🩸 {s.bloodGroup}</span>}
                       <span className="text-amber-400 font-body text-xs font-semibold">💰 Rs.{(s.salary||0).toLocaleString()}/month</span>
                       {lastSal && (
                         <span className="text-green-400 font-body text-xs">Last paid: Rs.{(lastSal.paid||0).toLocaleString()} ({lastSal.month})</span>
@@ -323,6 +326,19 @@ const AdminStaff = () => {
                     <motion.div initial={{ height:0, opacity:0 }} animate={{ height:'auto', opacity:1 }} exit={{ height:0, opacity:0 }}
                       className="border-t border-krunch-border overflow-hidden">
                       <div className="p-4 grid sm:grid-cols-2 gap-4">
+                        {/* Staff extra info */}
+                        {(s.address || s.cnic || s.emergencyContact || s.bloodGroup) && (
+                          <div className="sm:col-span-2 bg-krunch-black border border-krunch-border rounded-xl p-3 mb-1">
+                            <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider mb-2">Personal Info</h4>
+                            <div className="grid grid-cols-2 gap-2 text-xs font-body">
+                              {s.address && <div><span className="text-krunch-gray">📍 Address: </span><span className="text-white">{s.address}</span></div>}
+                              {s.cnic && <div><span className="text-krunch-gray">🪪 CNIC: </span><span className="text-white">{s.cnic}</span></div>}
+                              {s.bloodGroup && <div><span className="text-krunch-gray">🩸 Blood: </span><span className="text-red-400 font-bold">{s.bloodGroup}</span></div>}
+                              {s.emergencyContact && <div><span className="text-krunch-gray">🚨 Emergency: </span><span className="text-white">{s.emergencyContact}</span></div>}
+                              {s.joiningDate && <div><span className="text-krunch-gray">📅 Joined: </span><span className="text-white">{s.joiningDate}</span></div>}
+                            </div>
+                          </div>
+                        )}
                         {/* Salary history */}
                         <div>
                           <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Salary History</h4>
@@ -540,6 +556,37 @@ const AdminStaff = () => {
                         <span className="text-green-400 font-body text-xs">✅ Photo preview</span>
                       </div>
                     )}
+                  </div>
+
+                  {/* Address */}
+                  <div className="col-span-2">
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Home Address</label>
+                    <input type="text" value={staffForm.address} onChange={e => setStaffForm({...staffForm,address:e.target.value})} placeholder="e.g. House 12, Street 5, Peshawar"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                  </div>
+
+                  {/* CNIC */}
+                  <div>
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">CNIC Number</label>
+                    <input type="text" value={staffForm.cnic} onChange={e => setStaffForm({...staffForm,cnic:e.target.value})} placeholder="35202-XXXXXXX-X"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                  </div>
+
+                  {/* Blood Group */}
+                  <div>
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Blood Group</label>
+                    <select value={staffForm.bloodGroup} onChange={e => setStaffForm({...staffForm,bloodGroup:e.target.value})}
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none">
+                      <option value="">Select Blood Group</option>
+                      {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                  </div>
+
+                  {/* Emergency Contact */}
+                  <div className="col-span-2">
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Emergency Contact (Name & Phone)</label>
+                    <input type="text" value={staffForm.emergencyContact} onChange={e => setStaffForm({...staffForm,emergencyContact:e.target.value})} placeholder="e.g. Father - 03XX-XXXXXXX"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
                   </div>
                   <div className="col-span-2 flex items-center gap-3">
                     <label className="text-krunch-gray font-body text-sm">Active Employee</label>

@@ -360,29 +360,36 @@ const StaffIDCard = ({ staff, onClose }) => {
                     <div style={{ flex: 1, padding: '10px 14px', display: 'flex', gap: '14px' }}>
                       {/* Left: Info */}
                       <div style={{ flex: 1 }}>
-                        <div style={{ marginBottom: '7px' }}>
+                        <div style={{ marginBottom: '5px' }}>
                           <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Employee</div>
                           <div style={{ fontSize: '10px', color: 'white', fontWeight: 700 }}>{staff.name}</div>
                         </div>
-                        <div style={{ marginBottom: '7px' }}>
+                        <div style={{ marginBottom: '5px' }}>
                           <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Designation</div>
                           <div style={{ fontSize: '9px', color: '#ccc', fontWeight: 600 }}>{staff.role}</div>
                         </div>
-                        <div style={{ marginBottom: '7px' }}>
+                        <div style={{ marginBottom: '5px' }}>
                           <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Employee ID</div>
                           <div style={{ fontSize: '10px', color: 'white', fontWeight: 700, letterSpacing: '1px' }}>{empId}</div>
                         </div>
-
-                        {/* Rules */}
-                        <div>
-                          <div style={{ fontSize: '7px', color: '#555', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '3px' }}>Card Rules</div>
-                          {['If found, please return to restaurant', 'Not transferable', 'Valid while employed'].map((r, i) => (
-                            <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '3px', marginBottom: '2px' }}>
-                              <span style={{ color: '#E31E24', fontWeight: 900, fontSize: '8px' }}>•</span>
-                              <span style={{ fontSize: '7px', color: '#666', lineHeight: 1.3 }}>{r}</span>
-                            </div>
-                          ))}
-                        </div>
+                        {staff.cnic && (
+                          <div style={{ marginBottom: '5px' }}>
+                            <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>CNIC</div>
+                            <div style={{ fontSize: '8px', color: '#ccc', fontWeight: 600 }}>{staff.cnic}</div>
+                          </div>
+                        )}
+                        {staff.bloodGroup && (
+                          <div style={{ marginBottom: '5px' }}>
+                            <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Blood Group</div>
+                            <div style={{ fontSize: '10px', color: '#ff6b6b', fontWeight: 900 }}>{staff.bloodGroup}</div>
+                          </div>
+                        )}
+                        {staff.emergencyContact && (
+                          <div style={{ marginBottom: '5px' }}>
+                            <div style={{ fontSize: '7px', color: '#E31E24', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>Emergency</div>
+                            <div style={{ fontSize: '7px', color: '#ccc', fontWeight: 600 }}>{staff.emergencyContact}</div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Right: QR / Logo */}
