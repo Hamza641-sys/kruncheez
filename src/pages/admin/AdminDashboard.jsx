@@ -74,8 +74,8 @@ const AdminDashboard = () => {
         {stats.map((s, i) => <StatCard key={i} {...s} />)}
       </div>
 
-      {/* Online Staff Indicator — visible to admin only */}
-      {userData?.role === 'admin' && onlineStaff.length > 0 && (
+      {/* Online Staff Indicator — visible to admin only, shows when manager is online */}
+      {userData?.role === 'admin' && onlineStaff.filter(s => s.role === 'manager').length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
-            {onlineStaff.map(staff => (
+            {onlineStaff.filter(s => s.role === 'manager').map(staff => (
               <div key={staff.id} className="flex items-center gap-2 bg-krunch-black border border-green-700/20 rounded-xl px-3 py-2">
                 <div className="relative">
                   <div className="w-7 h-7 rounded-full bg-green-900/50 border border-green-600/30 flex items-center justify-center text-green-400 font-bold text-xs">
