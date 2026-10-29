@@ -508,6 +508,39 @@ const AdminStaff = () => {
               </div>
               <div className="p-6 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
+
+                  {/* Photo — top pe taake pehle dikhay */}
+                  <div className="col-span-2">
+                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+                      Staff Photo URL <span className="text-krunch-red text-[10px] normal-case">(ID Card pe lagegi)</span>
+                    </label>
+                    <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})}
+                      placeholder="https://i.ibb.co/... — ImgBB pe photo upload karo aur URL paste karo"
+                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
+                    {staffForm.photo ? (
+                      <div className="mt-3 flex items-center gap-4 bg-krunch-black border border-green-700/30 rounded-xl p-3">
+                        <img src={staffForm.photo} alt="preview"
+                          className="w-16 h-16 rounded-full object-cover border-2 border-krunch-red flex-shrink-0"
+                          onError={e => { e.target.style.display='none'; }}
+                        />
+                        <div>
+                          <p className="text-green-400 font-body text-xs font-semibold">✅ Photo ready for ID Card</p>
+                          <p className="text-krunch-gray font-body text-[10px] mt-0.5">This photo will appear on the printed ID card</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-2 bg-krunch-black border border-krunch-border/50 rounded-xl p-3 flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full bg-krunch-card border border-krunch-border flex items-center justify-center text-krunch-gray text-xl flex-shrink-0">👤</div>
+                        <div>
+                          <p className="text-krunch-gray font-body text-xs">No photo added</p>
+                          <p className="text-krunch-gray/60 font-body text-[10px] mt-0.5">
+                            Upload on <span className="text-blue-400">imgbb.com</span> → copy URL → paste above
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="col-span-2">
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Full Name *</label>
                     <input type="text" value={staffForm.name} onChange={e => setStaffForm({...staffForm,name:e.target.value})} placeholder="Muhammad Ali"
@@ -545,19 +578,6 @@ const AdminStaff = () => {
                     <input type="date" value={staffForm.joiningDate} onChange={e => setStaffForm({...staffForm,joiningDate:e.target.value})}
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
                   </div>
-                  <div className="col-span-2">
-                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Photo URL (for ID Card)</label>
-                    <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})} placeholder="https://i.ibb.co/... staff photo URL"
-                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
-                    {staffForm.photo && (
-                      <div className="mt-2 flex items-center gap-3">
-                        <img src={staffForm.photo} alt="preview" className="w-14 h-14 rounded-full object-cover border-2 border-krunch-red"
-                          onError={e => e.target.style.display='none'} />
-                        <span className="text-green-400 font-body text-xs">✅ Photo preview</span>
-                      </div>
-                    )}
-                  </div>
-
                   {/* Address */}
                   <div className="col-span-2">
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Home Address</label>
