@@ -87,7 +87,7 @@ const CheckoutPage = () => {
 
   const removePromo = () => { setPromoResult(null); setPromoCode(''); };
 
-  // Apply loyalty card
+  // Apply loyalty card — Simple: card ID valid ho + Custom Deal ho = 10% off
   const handleCard = async () => {
     if (!cardNumber.trim()) { toast.error('Enter your card number', toastStyle); return; }
     setCardLoading(true);
@@ -96,31 +96,22 @@ const CheckoutPage = () => {
       if (!card) { toast.error('Card not found', toastStyle); setCardLoading(false); return; }
       if (!card.active) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
 
-      const visitsLeft = card.visitsForDiscount - card.visits;
-
       // Check if cart has Custom Deal item
-      const hasCustomDeal = cartItems.some(i => i.isCustomDeal === true || i.category === 'deals' && i.id?.startsWith('custom-deal'));
+      const hasCustomDeal = cartItems.some(i => i.isCustomDeal === true);
 
-      if (card.visits >= card.visitsForDiscount) {
-        if (hasCustomDeal) {
-          // Discount only on custom deal items
-          const customDealTotal = cartItems
-            .filter(i => i.isCustomDeal === true || (i.category === 'deals' && i.id?.startsWith('custom-deal')))
-            .reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
-          const disc = Math.floor((customDealTotal * card.discountPercent) / 100);
-          setCardResult(card);
-          setCardDiscount(disc);
-          toast.success(`🎉 ${card.discountPercent}% loyalty discount on Custom Deal! (Rs.${disc} off)`, toastStyle);
-        } else {
-          // Eligible but no Custom Deal in cart
-          setCardResult(card);
-          setCardDiscount(0);
-          toast(`✅ Card verified! Discount applies on Custom Deal orders only.`, { icon: '🃏', ...toastStyle });
-        }
+      if (hasCustomDeal) {
+        // Apply 10% on custom deal total
+        const customDealTotal = cartItems
+          .filter(i => i.isCustomDeal === true)
+          .reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
+        const disc = Math.floor(customDealTotal * 0.10);
+        setCardResult(card);
+        setCardDiscount(disc);
+        toast.success(`🎉 10% loyalty discount on Custom Deal! Rs.${disc} off`, toastStyle);
       } else {
         setCardResult(card);
         setCardDiscount(0);
-        toast(`Card found! ${visitsLeft} more visit(s) for ${card.discountPercent}% discount on Custom Deal`, { icon: '🃏', ...toastStyle });
+        toast(`✅ Card verified! Add a Custom Deal to get 10% off.`, { icon: '🃏', ...toastStyle });
       }
     } catch { toast.error('Could not verify card', toastStyle); }
     finally { setCardLoading(false); }
@@ -170,19 +161,9 @@ const CheckoutPage = () => {
         await usePromoCode(promoResult.promo.id);
       }
 
-      // Process loyalty card
-      if (cardResult?.id) {
-        if (cardDiscount > 0) {
-          // Applied 10% — reset visits
-          await applyCardDiscount(cardResult.id, cartSubtotal);
-        } else {
-          // Just add visit + points
-          await addVisitAndPoints(cardResult.id, finalTotal);
-        }
-      } else if (user?.uid) {
-        // Auto-add visit to user's card if they have one
-        const userCard = await getCardByUserId(user.uid);
-        if (userCard?.id) await addVisitAndPoints(userCard.id, finalTotal);
+      // Process loyalty card — just record card used, no visit tracking
+      if (cardResult?.id && cardDiscount > 0) {
+        try { await addVisitAndPoints(cardResult.id, finalTotal); } catch {}
       }
 
       // WhatsApp notification to admin
@@ -461,7 +442,7 @@ const CheckoutPage = () => {
                   <span className="text-2xl">🃏</span> Loyalty Card
                 </h3>
                 <p className="text-krunch-gray font-body text-xs mb-4">
-                  ✨ 10% discount applies on <span className="text-krunch-red font-semibold">Custom Deal</span> orders after 10 visits
+                  Have a loyalty card? Enter your card ID to get <span className="text-krunch-red font-semibold">10% OFF</span> on Custom Deal orders
                 </p>
                 {cardResult ? (
                   <div className={`flex items-center justify-between rounded-xl px-4 py-3 border ${
