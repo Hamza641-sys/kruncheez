@@ -38,8 +38,69 @@ const DEFAULT_SETTINGS = {
   ],
 };
 
-const AdminSettings = () => {
-  const { userData } = useAuth();
+// ── UI Helpers — OUTSIDE component to prevent re-render focus loss ──
+const Section = ({ icon, title, children }) => (
+  <div className="card-dark p-6 mb-5">
+    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-krunch-border">
+      <div className="text-krunch-red">{icon}</div>
+      <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">{title}</h3>
+    </div>
+    {children}
+  </div>
+);
+
+const Field = ({ label, value, onChange, type = 'text', placeholder = '', disabled = false }) => (
+  <div>
+    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{label}</label>
+    <input
+      type={type} value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      disabled={disabled}
+      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    />
+  </div>
+);
+
+const PasswordField = ({ label, value, onChange, show, onToggle, placeholder = '••••••••' }) => (
+  <div>
+    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{label}</label>
+    <div className="relative">
+      <input
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 pr-11 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"
+      />
+      <button
+        type="button"
+        onClick={onToggle}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-krunch-gray hover:text-white transition-colors"
+      >
+        {show ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  </div>
+);
+
+const Toggle = ({ label, desc, value, onChange }) => (
+  <div className="flex items-center justify-between py-3 border-b border-krunch-border last:border-0">
+    <div>
+      <p className="text-white font-body font-semibold text-sm">{label}</p>
+      {desc && <p className="text-krunch-gray font-body text-xs mt-0.5">{desc}</p>}
+    </div>
+    <button
+      type="button"
+      onClick={() => onChange(!value)}
+      className={`w-12 h-6 rounded-full transition-all relative flex-shrink-0 ${value ? 'bg-krunch-red' : 'bg-krunch-border'}`}
+    >
+      <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${value ? 'left-6' : 'left-0.5'}`} />
+    </button>
+  </div>
+);
+
+const AdminSettings = () => {  const { userData } = useAuth();
   const [settings, setSettings]   = useState(DEFAULT_SETTINGS);
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
@@ -142,67 +203,7 @@ const AdminSettings = () => {
     setEmailLoading(false);
   };
 
-  // ── UI Helpers ──
-  const Section = ({ icon, title, children }) => (
-    <div className="card-dark p-6 mb-5">
-      <div className="flex items-center gap-2 mb-5 pb-3 border-b border-krunch-border">
-        <div className="text-krunch-red">{icon}</div>
-        <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">{title}</h3>
-      </div>
-      {children}
-    </div>
-  );
-
-  const Field = ({ label, value, onChange, type = 'text', placeholder = '', disabled = false }) => (
-    <div>
-      <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{label}</label>
-      <input
-        type={type} value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        disabled={disabled}
-        className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      />
-    </div>
-  );
-
-  const PasswordField = ({ label, value, onChange, show, onToggle, placeholder = '••••••••' }) => (
-    <div>
-      <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">{label}</label>
-      <div className="relative">
-        <input
-          type={show ? 'text' : 'password'}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 pr-11 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"
-        />
-        <button
-          type="button"
-          onClick={onToggle}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-krunch-gray hover:text-white transition-colors"
-        >
-          {show ? <EyeOff size={16} /> : <Eye size={16} />}
-        </button>
-      </div>
-    </div>
-  );
-
-  const Toggle = ({ label, desc, value, onChange }) => (
-    <div className="flex items-center justify-between py-3 border-b border-krunch-border last:border-0">
-      <div>
-        <p className="text-white font-body font-semibold text-sm">{label}</p>
-        {desc && <p className="text-krunch-gray font-body text-xs mt-0.5">{desc}</p>}
-      </div>
-      <button
-        type="button"
-        onClick={() => onChange(!value)}
-        className={`w-12 h-6 rounded-full transition-all relative flex-shrink-0 ${value ? 'bg-krunch-red' : 'bg-krunch-border'}`}
-      >
-        <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${value ? 'left-6' : 'left-0.5'}`} />
-      </button>
-    </div>
-  );
+  // ── UI Helpers moved outside component ──
 
   if (loading) return (
     <div className="flex flex-col gap-4 max-w-2xl">
