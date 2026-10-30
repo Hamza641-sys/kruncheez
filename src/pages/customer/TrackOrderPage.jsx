@@ -78,7 +78,7 @@ const TrackOrderPage = () => {
             </div>
             <div>
               <p className="text-krunch-gray font-body text-[10px] uppercase tracking-wider">Payment</p>
-              <p className="text-white font-body font-semibold text-sm mt-0.5 capitalize">{order.paymentMethod === 'cash' ? 'COD' : 'Card'}</p>
+              <p className="text-white font-body font-semibold text-sm mt-0.5 capitalize">{order.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}</p>
             </div>
           </div>
         </div>
@@ -166,6 +166,38 @@ const TrackOrderPage = () => {
                   <p className="text-krunch-gray font-body text-xs">30–45 minutes from order placement</p>
                 </div>
               </div>
+            )}
+
+            {/* Easypaisa payment button — visible anytime if easypaisa selected */}
+            {order.paymentMethod === 'easypaisa' && !['rejected'].includes(order.status) && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 bg-green-900/20 border border-green-700/30 rounded-xl p-4"
+              >
+                <p className="text-green-400 font-body text-sm font-semibold mb-1">📱 Easypaisa Payment</p>
+                <p className="text-krunch-gray font-body text-xs mb-3">
+                  {order.status === 'out_for_delivery'
+                    ? '🛵 Rider is on the way! Pay now before delivery:'
+                    : 'You can pay anytime — before or after delivery:'}
+                </p>
+                <a
+                  href="tel:03125060186"
+                  className="flex items-center justify-between w-full bg-green-700 hover:bg-green-600 text-white font-heading font-bold text-sm px-4 py-3 rounded-xl transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">📱</span>
+                    <div className="text-left">
+                      <div className="font-bold">0312-5060186</div>
+                      <div className="text-xs text-green-200 font-body font-normal">Tap to open Easypaisa — Rs. {order.summary?.total?.toLocaleString()}</div>
+                    </div>
+                  </div>
+                  <span className="text-green-200 text-sm">→</span>
+                </a>
+                <p className="text-krunch-gray font-body text-[10px] text-center mt-2">
+                  After payment, send screenshot on WhatsApp to confirm.
+                </p>
+              </motion.div>
             )}
           </div>
         )}
