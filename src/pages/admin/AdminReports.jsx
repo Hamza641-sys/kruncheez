@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -94,8 +94,19 @@ const AdminReports = () => {
   const profitMargin  = totalRev > 0 ? Math.round((profit/totalRev)*100) : 0;
   const isProfit      = profit >= 0;
 
-  // ── Stock purchases ───────────────────────────────────────────────────
-  const totalStockPurchased = filteredPurchases.reduce((s,p) => s + Number(p.amount||0), 0);
+  // ── Helper: Format date+time ─────────────────────────────────────────
+  const fmtDate = (item, field = 'createdAt') => {
+    const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
+    if (!d) return '—';
+    return d.toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' });
+  };
+
+  const fmtDateTime = (item, field = 'createdAt') => {
+    const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
+    if (!d) return '—';
+    return d.toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' }) +
+      ' ' + d.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
+  };
 
   // ── Expense by category ───────────────────────────────────────────────
   // By category — use dailyExpenses only (exclude Supplier Payment)
@@ -135,42 +146,70 @@ const AdminReports = () => {
 
   // ── CSV Export ────────────────────────────────────────────────────────
   const downloadCSV = () => {
+    const fmt = (item, field = 'createdAt') => {
+      const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
+      if (!d) return '—';
+      return d.toLocaleDateString('en-PK') + ' ' + d.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
+    };
+
     const rows = [
-      ['=== REVENUE ==='],
-      ['Period', period, '', 'Total Revenue', `Rs.${totalRev}`],
-      ['Orders', filteredOrders.length, '', 'Delivered', delivered.length],
-      ['Avg Order', `Rs.${avgOrder}`, '', 'Pending', pending],
+      ['=== KRUNCHEEZ BUSINESS REPORT ==='],
+      ['Period', period, 'Generated', new Date().toLocaleDateString('en-PK')],
       [],
-      ['=== EXPENSES ==='],
+      ['=== REVENUE SUMMARY ==='],
+      ['Total Revenue', `Rs.${totalRev}`, 'Delivered Orders', delivered.length],
+      ['Avg Order Value', `Rs.${avgOrder}`, 'Pending', pending, 'Rejected', rejected],
+      [],
+      ['=== EXPENSE SUMMARY ==='],
       ['Total Expenses', `Rs.${totalExp}`],
       ['Supplier Payments', `Rs.${supplierExp}`],
       ['Staff Salaries', `Rs.${salaryExp}`],
       ['Daily Expenses', `Rs.${dailyExp}`],
       [],
-      ['=== PROFIT ==='],
-      ['NET PROFIT', `Rs.${profit}`, '', 'Margin', `${profitMargin}%`],
+      ['=== NET PROFIT ==='],
+      ['NET PROFIT', `Rs.${profit}`, 'Margin', `${profitMargin}%`],
       [],
-      ['=== ORDER DETAILS ==='],
-      ['Order ID','Date','Customer','Items','Total','Status','Payment'],
-      ...filteredOrders.map(o => [
+      ['=== ALL ORDERS — COMPLETE DETAILS ==='],
+      ['#','Order ID','Date & Time','Customer','Phone','Items','Subtotal','Delivery Fee','Total','Type','Status','Payment'],
+      ...filteredOrders.map((o, i) => [
+        i+1,
         o.id.slice(0,8).toUpperCase(),
-        o.createdAt?.toDate?.()?.toLocaleDateString('en-PK')||'',
-        o.customer?.name||'',
-        o.items?.map(i=>`${i.name}x${i.quantity}`).join(' | ')||'',
-        o.summary?.total||0,
+        fmt(o),
+        o.customer?.name || '—',
+        o.customer?.phone || '—',
+        o.items?.map(i => `${i.name} x${i.quantity}`).join(' | ') || '—',
+        o.summary?.subtotal || 0,
+        o.summary?.deliveryFee || 0,
+        o.summary?.total || 0,
+        o.tableNumber ? `Dine-In Table ${o.tableNumber}` : o.orderType || 'delivery',
         o.status,
-        o.paymentMethod,
+        o.paymentMethod || 'cash',
       ]),
       [],
-      ['=== EXPENSE DETAILS ==='],
-      ['Date','Category','Description','Amount','Payment'],
-      ...filteredExpenses.map(e => [
-        e.createdAt?.toDate?.()?.toLocaleDateString('en-PK')||e.date||'',
-        e.category, e.description, e.amount, e.paymentMethod,
+      ['=== SUPPLIER PAYMENTS — COMPLETE DETAILS ==='],
+      ['#','Date','Supplier','Items','Amount','Notes'],
+      ...filteredPurchases.map((p, i) => [
+        i+1, fmt(p), p.supplierName || '—', p.items || '—', p.amount || 0, p.notes || '—',
+      ]),
+      [],
+      ['=== STAFF SALARY — COMPLETE DETAILS ==='],
+      ['#','Date','Staff Name','Month','Total Salary','Fine','Fine Reason','Bonus','Bonus Reason','Paid','Remaining'],
+      ...filteredSalaries.map((s, i) => [
+        i+1, fmt(s), s.staffName || '—', s.month || '—',
+        s.totalSalary || 0, s.fine || 0, s.fineReason || '—',
+        s.bonus || 0, s.bonusReason || '—', s.paid || 0, s.remaining || 0,
+      ]),
+      [],
+      ['=== DAILY EXPENSES — COMPLETE DETAILS ==='],
+      ['#','Date','Category','Description','Amount','Payment Method'],
+      ...filteredExpenses.map((e, i) => [
+        i+1,
+        fmt(e) || e.date || '—',
+        e.category || '—', e.description || '—', e.amount || 0, e.paymentMethod || '—',
       ]),
     ];
-    const csv = rows.map(r => Array.isArray(r) ? r.join(',') : r).join('\n');
-    const blob = new Blob([csv], { type:'text/csv' });
+    const csv = rows.map(r => Array.isArray(r) ? r.map(c => `"${c}"`).join(',') : r).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `kruncheez-full-report-${period}-${new Date().toLocaleDateString('en-PK').replace(/\//g,'-')}.csv`;
@@ -391,10 +430,10 @@ const AdminReports = () => {
                     </td>
                     <td className="py-2.5 text-right text-amber-400 font-heading font-black text-base">- Rs.{supplierExp.toLocaleString()}</td>
                   </tr>
-                  {filteredPurchases.length > 0 && filteredPurchases.slice(0,5).map(p => (
+                  {filteredPurchases.length > 0 && filteredPurchases.map(p => (
                     <tr key={p.id} className="border-b border-krunch-border/20">
                       <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
-                        {p.supplierName} — {p.items || 'Payment'} ({p.date || '—'})
+                        📅 {fmtDate(p)} — {p.supplierName} — {p.items || 'Payment'}
                       </td>
                       <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(p.amount||0).toLocaleString()}</td>
                     </tr>
@@ -407,12 +446,12 @@ const AdminReports = () => {
                     </td>
                     <td className="py-2.5 text-right text-blue-400 font-heading font-black text-base">- Rs.{salaryExp.toLocaleString()}</td>
                   </tr>
-                  {filteredSalaries.length > 0 && filteredSalaries.slice(0,5).map(s => (
+                  {filteredSalaries.length > 0 && filteredSalaries.map(s => (
                     <tr key={s.id} className="border-b border-krunch-border/20">
                       <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
-                        {s.staffName} — {s.month}
-                        {s.fine > 0 ? ` (Fine: -Rs.${s.fine})` : ''}
-                        {s.bonus > 0 ? ` (Bonus: +Rs.${s.bonus})` : ''}
+                        📅 {fmtDate(s)} — {s.staffName} — {s.month}
+                        {s.fine > 0 ? ` | Fine: -Rs.${s.fine}` : ''}
+                        {s.bonus > 0 ? ` | Bonus: +Rs.${s.bonus}` : ''}
                         {s.remaining > 0 ? ` | Remaining: Rs.${s.remaining}` : ''}
                       </td>
                       <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(s.paid||0).toLocaleString()}</td>
@@ -426,12 +465,25 @@ const AdminReports = () => {
                     </td>
                     <td className="py-2.5 text-right text-purple-400 font-heading font-black text-base">- Rs.{dailyExp.toLocaleString()}</td>
                   </tr>
-                  {expCatData.map(([cat, amt]) => (
-                    <tr key={cat} className="border-b border-krunch-border/20">
-                      <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">{cat}</td>
-                      <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{amt.toLocaleString()}</td>
-                    </tr>
-                  ))}
+                  {expCatData.map(([cat, amt]) => {
+                    const catItems = dailyExpenses.filter(e => e.category === cat);
+                    return (
+                      <React.Fragment key={cat}>
+                        <tr className="border-b border-krunch-border/20">
+                          <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs font-semibold">{cat} ({catItems.length} entries)</td>
+                          <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{amt.toLocaleString()}</td>
+                        </tr>
+                        {catItems.map(e => (
+                          <tr key={e.id} className="border-b border-krunch-border/10">
+                            <td className="py-1 pl-12 text-krunch-gray/60 font-body text-[11px]">
+                              📅 {fmtDate(e)} — {e.description || '—'}
+                            </td>
+                            <td className="py-1 text-right text-krunch-gray/60 font-body text-[11px]">Rs.{Number(e.amount||0).toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </React.Fragment>
+                    );
+                  })}
                   {expCatData.length === 0 && (
                     <tr className="border-b border-krunch-border/30">
                       <td className="py-2 pl-8 text-krunch-gray font-body text-xs italic" colSpan={2}>No daily expenses recorded</td>
@@ -529,44 +581,58 @@ const AdminReports = () => {
             </div>
           </div>
 
-          {/* Recent Orders */}
-          <div className="card-dark overflow-hidden">
+          {/* Recent Orders — All with full details */}
+          <div className="card-dark overflow-hidden mt-6">
             <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border">
-              <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">Recent Orders</h3>
+              <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">All Orders — Complete Details</h3>
               <span className="text-krunch-gray font-body text-xs">{filteredOrders.length} total</span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-krunch-border">
-                    {['Order ID','Date','Customer','Items','Total','Status','Payment'].map(h => (
+                    {['#','Order ID','Date & Time','Customer','Phone','Items','Subtotal','Delivery','Total','Type','Status','Payment'].map(h => (
                       <th key={h} className="px-4 py-3 text-left text-krunch-gray font-body text-xs uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredOrders.slice(0,15).map(o => (
-                    <tr key={o.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
-                      <td className="px-4 py-2.5 text-krunch-red font-body font-bold text-xs">#{o.id.slice(0,8).toUpperCase()}</td>
-                      <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">
-                        {o.createdAt?.toDate?.()?.toLocaleDateString('en-PK')||'—'}
-                      </td>
-                      <td className="px-4 py-2.5 text-white font-body text-xs">{o.customer?.name||'—'}</td>
-                      <td className="px-4 py-2.5 text-krunch-gray font-body text-xs">{o.items?.length||0} items</td>
-                      <td className="px-4 py-2.5 text-krunch-red font-heading font-black text-sm whitespace-nowrap">Rs.{(o.summary?.total||0).toLocaleString()}</td>
-                      <td className="px-4 py-2.5">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
-                          o.status==='delivered'?'bg-green-500/20 text-green-400':
-                          o.status==='rejected' ?'bg-red-500/20 text-red-400':
-                          'bg-yellow-500/20 text-yellow-400'
-                        }`}>{o.status}</span>
-                      </td>
-                      <td className="px-4 py-2.5 font-body text-xs">
-                        {o.paymentMethod === 'easypaisa'
-                          ? <span className="text-green-400">📱 Easypaisa</span>
-                          : <span className="text-krunch-gray">💵 Cash</span>}
-                      </td>
-                    </tr>
+                  {filteredOrders.length === 0 ? (
+                    <tr><td colSpan={12} className="px-4 py-8 text-center text-krunch-gray font-body text-sm">No orders found</td></tr>
+                  ) : filteredOrders.map((o, idx) => (
+                    <React.Fragment key={o.id}>
+                      <tr className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs">{idx + 1}</td>
+                        <td className="px-4 py-2.5 text-krunch-red font-body font-bold text-xs">#{o.id.slice(0,8).toUpperCase()}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">
+                          {fmtDateTime(o)}
+                        </td>
+                        <td className="px-4 py-2.5 text-white font-body text-xs whitespace-nowrap">{o.customer?.name || '—'}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">{o.customer?.phone || '—'}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs max-w-xs">
+                          {o.items?.map(i => `${i.name} x${i.quantity}`).join(', ') || '—'}
+                        </td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">Rs.{(o.summary?.subtotal||0).toLocaleString()}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">Rs.{(o.summary?.deliveryFee||0).toLocaleString()}</td>
+                        <td className="px-4 py-2.5 text-krunch-red font-heading font-black text-sm whitespace-nowrap">Rs.{(o.summary?.total||0).toLocaleString()}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">
+                          {o.tableNumber ? `🪑 Table ${o.tableNumber}` : o.orderType === 'pickup' ? '🏃 Pickup' : '🛵 Delivery'}
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                            o.status==='delivered'?'bg-green-500/20 text-green-400':
+                            o.status==='rejected' ?'bg-red-500/20 text-red-400':
+                            o.status==='pending'  ?'bg-yellow-500/20 text-yellow-400':
+                            'bg-blue-500/20 text-blue-400'
+                          }`}>{o.status}</span>
+                        </td>
+                        <td className="px-4 py-2.5 font-body text-xs whitespace-nowrap">
+                          {o.paymentMethod === 'easypaisa'
+                            ? <span className="text-green-400">📱 Easypaisa</span>
+                            : <span className="text-krunch-gray">💵 Cash</span>}
+                        </td>
+                      </tr>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
