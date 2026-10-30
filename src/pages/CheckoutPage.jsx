@@ -97,15 +97,30 @@ const CheckoutPage = () => {
       if (!card.active) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
 
       const visitsLeft = card.visitsForDiscount - card.visits;
+
+      // Check if cart has Custom Deal item
+      const hasCustomDeal = cartItems.some(i => i.isCustomDeal === true || i.category === 'deals' && i.id?.startsWith('custom-deal'));
+
       if (card.visits >= card.visitsForDiscount) {
-        const disc = Math.floor((cartSubtotal * card.discountPercent) / 100);
-        setCardResult(card);
-        setCardDiscount(disc);
-        toast.success(`🎉 ${card.discountPercent}% loyalty discount applied! (Rs.${disc} off)`, toastStyle);
+        if (hasCustomDeal) {
+          // Discount only on custom deal items
+          const customDealTotal = cartItems
+            .filter(i => i.isCustomDeal === true || (i.category === 'deals' && i.id?.startsWith('custom-deal')))
+            .reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
+          const disc = Math.floor((customDealTotal * card.discountPercent) / 100);
+          setCardResult(card);
+          setCardDiscount(disc);
+          toast.success(`🎉 ${card.discountPercent}% loyalty discount on Custom Deal! (Rs.${disc} off)`, toastStyle);
+        } else {
+          // Eligible but no Custom Deal in cart
+          setCardResult(card);
+          setCardDiscount(0);
+          toast(`✅ Card verified! Discount applies on Custom Deal orders only.`, { icon: '🃏', ...toastStyle });
+        }
       } else {
         setCardResult(card);
         setCardDiscount(0);
-        toast(`Card found! ${visitsLeft} more visit(s) for ${card.discountPercent}% discount`, { icon: '🃏', ...toastStyle });
+        toast(`Card found! ${visitsLeft} more visit(s) for ${card.discountPercent}% discount on Custom Deal`, { icon: '🃏', ...toastStyle });
       }
     } catch { toast.error('Could not verify card', toastStyle); }
     finally { setCardLoading(false); }
@@ -442,9 +457,12 @@ const CheckoutPage = () => {
 
               {/* Loyalty Card */}
               <div className="card-dark p-6">
-                <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
+                <h3 className="font-heading font-bold text-lg text-white uppercase mb-1 flex items-center gap-2">
                   <span className="text-2xl">🃏</span> Loyalty Card
                 </h3>
+                <p className="text-krunch-gray font-body text-xs mb-4">
+                  ✨ 10% discount applies on <span className="text-krunch-red font-semibold">Custom Deal</span> orders after 10 visits
+                </p>
                 {cardResult ? (
                   <div className={`flex items-center justify-between rounded-xl px-4 py-3 border ${
                     cardDiscount > 0
