@@ -216,7 +216,7 @@ const CheckoutPage = () => {
             </div>
             <div className="flex justify-between items-center mb-3">
               <span className="text-krunch-gray font-body text-xs uppercase tracking-wider">Payment</span>
-              <span className="text-white font-body text-sm font-semibold">{form.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}</span>
+              <span className="text-white font-body text-sm font-semibold">{form.paymentMethod === 'cash' ? '💵 Cash' : '📱 Easypaisa'}</span>
             </div>
             <div className="flex justify-between items-center pt-3 border-t border-krunch-border">
               <span className="text-krunch-gray font-body text-xs uppercase tracking-wider">Total</span>
@@ -411,8 +411,8 @@ const CheckoutPage = () => {
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { value: 'cash', label: 'Cash on Delivery', icon: '💵', desc: 'Pay when you receive' },
-                    { value: 'card', label: 'Card / Online',    icon: '💳', desc: 'Pay by card at door' },
+                    { value: 'cash',      label: 'Cash',      icon: '💵', desc: 'Pay cash on delivery' },
+                    { value: 'easypaisa', label: 'Easypaisa', icon: '📱', desc: 'Pay via Easypaisa' },
                   ].map(opt => (
                     <button key={opt.value} type="button"
                       onClick={() => setForm({ ...form, paymentMethod: opt.value })}
@@ -429,10 +429,13 @@ const CheckoutPage = () => {
                     </button>
                   ))}
                 </div>
-                {form.paymentMethod === 'card' && (
-                  <p className="text-amber-400 font-body text-xs mt-2 bg-amber-400/10 border border-amber-400/20 rounded-xl px-3 py-2">
-                    💳 Card payment available at the door — our rider will carry a card machine.
-                  </p>
+                {form.paymentMethod === 'easypaisa' && (
+                  <div className="mt-3 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-3">
+                    <p className="text-green-400 font-body text-sm font-semibold">📱 Easypaisa Payment</p>
+                    <p className="text-green-300 font-body text-xs mt-1">Send payment to: <span className="font-bold text-white">0317-7787648</span></p>
+                    <p className="text-green-300 font-body text-xs">Account Name: <span className="font-bold text-white">The KrunchEez</span></p>
+                    <p className="text-krunch-gray font-body text-xs mt-1">Please send screenshot to confirm your payment.</p>
+                  </div>
                 )}
               </div>
 

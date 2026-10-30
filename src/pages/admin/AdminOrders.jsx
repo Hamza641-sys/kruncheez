@@ -504,7 +504,9 @@ const AdminOrders = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-xs text-krunch-gray font-body capitalize">{order.paymentMethod === 'cash' ? 'COD' : 'Card'}</span>
+                      <span className={`text-xs font-body font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
+                        {order.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className={`inline-flex items-center gap-1.5 ${st.color} ${st.bg} border px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap`}>

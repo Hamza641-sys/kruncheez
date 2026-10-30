@@ -499,8 +499,8 @@ const AdminReports = () => {
             <div className="card-dark p-5">
               <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">Payment Methods</h3>
               {[
-                { label:'Cash on Delivery', value: filteredOrders.filter(o=>o.paymentMethod==='cash').length },
-                { label:'Card / Online',    value: filteredOrders.filter(o=>o.paymentMethod==='card').length },
+                { label:'💵 Cash',      value: filteredOrders.filter(o=>o.paymentMethod==='cash').length },
+                { label:'📱 Easypaisa', value: filteredOrders.filter(o=>o.paymentMethod==='easypaisa').length },
               ].map((s,i) => (
                 <div key={i} className="mb-3">
                   <div className="flex justify-between mb-1">
@@ -561,7 +561,11 @@ const AdminReports = () => {
                           'bg-yellow-500/20 text-yellow-400'
                         }`}>{o.status}</span>
                       </td>
-                      <td className="px-4 py-2.5 text-krunch-gray font-body text-xs">{o.paymentMethod==='cash'?'COD':'Card'}</td>
+                      <td className="px-4 py-2.5 font-body text-xs">
+                        {o.paymentMethod === 'easypaisa'
+                          ? <span className="text-green-400">📱 Easypaisa</span>
+                          : <span className="text-krunch-gray">💵 Cash</span>}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
