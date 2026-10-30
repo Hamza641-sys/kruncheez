@@ -143,9 +143,13 @@ const AdminCards = () => {
       '.tt{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;margin-bottom:5px;}',
       '.tl{list-style:none;}',
       '.tl li{font-size:10px;color:rgba(255,255,255,0.35);padding:3px 0;display:flex;gap:5px;}',
-      '.bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 60%,transparent 100%);display:flex;justify-content:space-between;align-items:center;}',
-      '.bsi{font-size:15px;color:#E31E24;letter-spacing:5px;font-weight:900;text-shadow:0 0 10px rgba(227,30,36,0.5);}',
-      '.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}',
+      '.bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 60%,transparent 100%);display:flex;justify-content:space-between;align-items:flex-end;gap:10px;}',
+      '.bs-left{flex:1;min-width:0;}',
+      '.bsi{font-size:15px;color:#E31E24;letter-spacing:5px;font-weight:900;text-shadow:0 0 10px rgba(227,30,36,0.5);display:block;margin-bottom:4px;}',
+      '.tt{font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;margin-bottom:4px;}',
+      '.tl{list-style:none;}',
+      '.tl li{font-size:9px;color:rgba(255,255,255,0.35);padding:1px 0;display:flex;gap:4px;}',
+      '.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;}',
       '.qr-box{background:white;border-radius:8px;padding:5px;box-shadow:0 4px 15px rgba(0,0,0,0.5);}',
       '.qr-box img{display:block;width:72px;height:72px;border-radius:4px;}',
       '.qr-lbl{font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;}',
@@ -211,20 +215,20 @@ const AdminCards = () => {
                 <div class="obt">ON CUSTOM DEAL</div>
                 <div class="obs">Enter Card ID at checkout</div>
               </div>
-              <div>
-                <div class="tt">Terms &amp; Conditions:</div>
-                <ul class="tl">
-                  <li>Valid on Custom Deal orders only</li>
-                  <li>One card per customer</li>
-                  <li>Not valid with other offers</li>
-                  <li>Keep this card safe</li>
-                </ul>
-              </div>
             </div>
           </div>
           <div class="bs">
-            <div class="bsi">${card.cardId}</div>
-            ${qrDataUrl ? `<div class="qr-wrap"><div class="qr-box"><img src="${qrDataUrl}" width="48" height="48"/></div><div class="qr-lbl">SCAN &amp; FOLLOW</div></div>` : ''}
+            <div class="bs-left">
+              <span class="bsi">${card.cardId}</span>
+              <div class="tt">Terms &amp; Conditions:</div>
+              <ul class="tl">
+                <li>&#8226; Valid on Custom Deal orders only</li>
+                <li>&#8226; One card per customer</li>
+                <li>&#8226; Not valid with other offers</li>
+                <li>&#8226; Keep this card safe</li>
+              </ul>
+            </div>
+            ${qrDataUrl ? `<div class="qr-wrap"><div class="qr-box"><img src="${qrDataUrl}" width="72" height="72"/></div><div class="qr-lbl">SCAN &amp; FOLLOW</div></div>` : ''}
           </div>
         </div>
       </div>
