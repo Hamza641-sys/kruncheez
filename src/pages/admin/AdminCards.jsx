@@ -52,34 +52,126 @@ const AdminCards = () => {
     await fetchCards();
   };
 
-  // ── PRINT CARD ──────────────────────────────────────────────────────────────
+  // ── PRINT CARD (ID only — no name/phone) ──────────────────────────────────
   const printCard = async (card) => {
-    const pizzaUrl = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=90&auto=format&fit=crop';
-    const followUrl = 'https://kruncheez-pos.web.app/follow';
-    let qrDataUrl = '';
-    try {
-      const QRCode = (await import('qrcode')).default;
-      qrDataUrl = await QRCode.toDataURL(followUrl, {
-        width: 100, margin: 1,
-        color: { dark: '#000000', light: '#E31E24' },
-        errorCorrectionLevel: 'H',
-      });
-    } catch { qrDataUrl = ''; }
+    await printCards([card]);
+  };
 
-    const nm = (card.userName || 'Customer').toUpperCase();
-    const css = `*{margin:0;padding:0;box-sizing:border-box;}@page{size:A4 portrait;margin:8mm;}body{background:#cdc5ba;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;gap:18px;}.lbl{font-size:10px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;align-self:flex-start;width:100%;max-width:640px;}.card{width:100%;max-width:640px;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 20px 60px rgba(0,0,0,0.5);}.dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px);background-size:20px 20px;}.front{height:340px;}.f-pizza{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;border-radius:20px;opacity:0.22;}.yc1{position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:#E31E24;border-radius:50%;z-index:3;}.yc2{position:absolute;bottom:-60px;left:-60px;width:170px;height:170px;background:#E31E24;border-radius:50%;z-index:3;opacity:0.5;}.badge{position:absolute;top:18px;right:18px;width:112px;height:112px;background:#E31E24;border-radius:50%;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.5);box-shadow:0 6px 20px rgba(245,166,35,0.5);}.b-get{font-size:10px;font-weight:900;color:white;letter-spacing:2px;line-height:1;}.b-pct{font-family:Arial;font-size:36px;font-weight:900;color:white;line-height:1;}.b-off{font-family:Arial;font-size:14px;font-weight:900;color:white;}.b-sub{font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.8);text-align:center;line-height:1.4;margin-top:3px;}.f-cnt{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:10px;}.f-brand{font-family:Arial;font-size:46px;font-weight:900;color:#E31E24;line-height:1;letter-spacing:3px;text-transform:uppercase;text-shadow:0 3px 12px rgba(0,0,0,0.6);}.f-tag{font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:4px;}.f-lc{font-family:Arial;font-size:30px;font-weight:900;color:white;letter-spacing:7px;margin-top:8px;}.f-eat{display:flex;align-items:center;gap:12px;margin-top:7px;}.f-eat span{font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;}.f-dot{width:5px;height:5px;background:#E31E24;border-radius:50%;}.f-strip{position:absolute;bottom:0;left:0;right:0;z-index:6;padding:12px 24px;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%);display:flex;justify-content:space-between;align-items:flex-end;}.f-name{font-size:12px;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:3px;text-transform:uppercase;}.f-id{font-size:11px;color:rgba(245,166,35,0.6);letter-spacing:3px;}.back{height:340px;}.yc3{position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:#E31E24;border-radius:50%;z-index:2;opacity:0.85;}.yc4{position:absolute;bottom:-35px;left:-35px;width:120px;height:120px;background:#E31E24;border-radius:50%;z-index:2;opacity:0.6;}.b-inner{position:relative;z-index:4;display:flex;height:100%;padding:18px 20px 55px;gap:20px;}.b-left{flex:1;display:flex;flex-direction:column;}.bl-brand{font-family:Arial;font-size:26px;font-weight:900;color:#E31E24;line-height:1.1;letter-spacing:2px;text-transform:uppercase;}.bl-tag{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:14px;}.ty{margin-top:auto;padding-top:10px;}.ty1{font-size:10px;color:rgba(255,255,255,0.3);font-style:italic;}.ty2{font-family:Arial;font-size:18px;font-weight:900;color:#E31E24;line-height:1.3;letter-spacing:1px;}.ty3{font-size:10px;color:rgba(255,255,255,0.25);}.b-right{width:220px;display:flex;flex-direction:column;gap:12px;}.ob{background:#E31E24;border-radius:6px;padding:10px 14px;}.obr{display:flex;align-items:baseline;gap:3px;}.obp{font-size:38px;font-weight:900;color:white;line-height:1;}.obo{font-size:18px;font-weight:900;color:white;}.obt{font-size:11px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;}.obs{font-size:8px;color:rgba(255,255,255,0.8);font-weight:700;margin-top:3px;}.tt{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:5px;}.tl{list-style:none;}.tl li{font-size:9px;color:rgba(255,255,255,0.28);padding:2px 0;display:flex;gap:5px;}.tl li::before{content:"*";color:#E31E24;}.bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:8px 20px;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.6) 70%,transparent 100%);display:flex;justify-content:space-between;align-items:center;}.bsn{font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:2px;}.bsi{font-size:11px;color:rgba(245,166,35,0.45);letter-spacing:2px;}.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;}.qr-box{background:#E31E24;border-radius:5px;padding:3px;}.qr-box img{display:block;width:48px;height:48px;border-radius:2px;}.qr-lbl{font-size:7px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-align:center;}@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:0;gap:14px;}.card{page-break-inside:avoid;}}`;
+  // ── PRINT MULTIPLE CARDS ────────────────────────────────────────────────────
+  const printCards = async (cardList) => {
+    const cardsHtml = cardList.map(card => `
+      <div class="card">
+        <div class="header">
+          <div class="brand">THE KRUNCHEEZ</div>
+          <div class="tagline">Fast Food • Chinese • BBQ</div>
+        </div>
+        <div class="body">
+          <div class="lc-text">LOYALTY CARD</div>
+          <div class="card-id">${card.cardId}</div>
+          <div class="offer">10% OFF on Custom Deal</div>
+        </div>
+        <div class="footer">
+          <div class="footer-text">Enter this ID at checkout to get your discount</div>
+          <div class="footer-url">kruncheez-pos.web.app</div>
+        </div>
+      </div>
+    `).join('');
 
     const win = window.open('', '_blank');
-    win.document.write(`<!DOCTYPE html><html><head><title>KrunchEez Loyalty Card</title><style>${css}</style></head><body>`);
-    win.document.write(`<div class="lbl">Front Side</div><div class="card front"><div class="dots"></div><div class="yc1"></div><div class="yc2"></div><img class="f-pizza" src="${pizzaUrl}" onerror="this.style.display='none'"/><div class="badge"><div class="b-get">GET</div><div class="b-pct">10%</div><div class="b-off">OFF</div><div class="b-sub">ON CUSTOM<br/>DEAL</div></div><div class="f-cnt"><div class="f-brand">KRUNCHEEZ</div><div class="f-tag">Crunch in Every Bite</div><div class="f-lc">LOYALTY <span style="color:#E31E24">CARD</span></div><div class="f-eat"><span>EAT</span><div class="f-dot"></div><span>EARN</span><div class="f-dot"></div><span>ENJOY</span></div></div><div class="f-strip"><div class="f-name">${nm}</div><div class="f-id">${card.cardId}</div></div></div>`);
-    win.document.write(`<div class="lbl">Back Side</div><div class="card back"><div class="dots"></div><div class="yc3"></div><div class="yc4"></div><div class="b-inner"><div class="b-left"><div class="bl-brand">KRUNCHEEZ</div><div class="bl-tag">Crunch in Every Bite</div><div class="ty"><div class="ty1">Thank You</div><div class="ty2">for being a part of</div><div class="ty3">The Kruncheez Family!</div></div></div><div class="b-right"><div class="ob"><div class="obr"><div class="obp">10%</div><div class="obo">OFF</div></div><div class="obt">ON CUSTOM DEAL</div><div class="obs">Show this card at checkout</div></div><div><div class="tt">Terms & Conditions:</div><ul class="tl"><li>Valid on Custom Deal orders only</li><li>One card per customer</li><li>Not valid with other offers</li><li>Keep this card safe</li></ul></div></div></div><div class="bs"><div><div class="bsn">${nm}</div><div class="bsi">${card.cardId}${card.phone ? ' - ' + card.phone : ''}</div></div>${qrDataUrl ? `<div class="qr-wrap"><div class="qr-box"><img src="${qrDataUrl}" width="48" height="48"/></div><div class="qr-lbl">SCAN & FOLLOW</div></div>` : ''}</div></div>`);
-    win.document.write('<script>(function(){var imgs=document.querySelectorAll("img"),done=0,n=imgs.length;function go(){if(++done>=n)setTimeout(function(){window.print();window.close();},800);}if(!n){setTimeout(function(){window.print();window.close();},1000);return;}imgs.forEach(function(img){if(img.complete&&img.naturalHeight)go();else{img.onload=go;img.onerror=go;}});setTimeout(function(){window.print();window.close();},6000);})();<\/script></body></html>');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>KrunchEez Loyalty Cards</title>
+        <style>
+          * { margin:0; padding:0; box-sizing:border-box; }
+          body { background:#f0f0f0; font-family: Arial, sans-serif; padding: 10px; }
+          .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+          .card {
+            width: 100%;
+            aspect-ratio: 1.586;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+            page-break-inside: avoid;
+          }
+          .header {
+            background: #E31E24;
+            padding: 6px 10px;
+            text-align: center;
+          }
+          .brand { color: white; font-size: 11px; font-weight: 900; letter-spacing: 2px; }
+          .tagline { color: rgba(255,255,255,0.75); font-size: 6px; letter-spacing: 1px; margin-top: 1px; }
+          .body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            gap: 4px;
+          }
+          .lc-text { color: rgba(255,255,255,0.5); font-size: 7px; letter-spacing: 3px; text-transform: uppercase; }
+          .card-id { color: #E31E24; font-size: 16px; font-weight: 900; letter-spacing: 3px; }
+          .offer { color: rgba(255,255,255,0.7); font-size: 7px; letter-spacing: 1px; background: rgba(227,30,36,0.15); border: 1px solid rgba(227,30,36,0.3); border-radius: 3px; padding: 2px 6px; }
+          .footer {
+            background: rgba(0,0,0,0.4);
+            padding: 4px 8px;
+            text-align: center;
+          }
+          .footer-text { color: rgba(255,255,255,0.35); font-size: 6px; }
+          .footer-url { color: rgba(227,30,36,0.6); font-size: 6px; margin-top: 1px; }
+          @media print {
+            body { background: white; padding: 5px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .grid { gap: 5px; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="grid">${cardsHtml}</div>
+        <script>window.onload = () => { window.print(); window.close(); }<\/script>
+      </body>
+      </html>
+    `);
     win.document.close();
+  };
+
+  // ── BULK GENERATE CARDS ──────────────────────────────────────────────────
+  const [bulkCount, setBulkCount] = useState(10);
+  const [bulkLoading, setBulkLoading] = useState(false);
+
+  const handleBulkGenerate = async () => {
+    if (bulkCount < 1 || bulkCount > 1000) {
+      toast.error('Enter between 1 and 1000', toastStyle); return;
+    }
+    setBulkLoading(true);
+    try {
+      const batch = [];
+      for (let i = 0; i < bulkCount; i++) {
+        const cardId = generateCardId();
+        batch.push(addDoc(collection(db, 'loyaltyCards'), {
+          cardId,
+          userId: null, userName: '', phone: '',
+          visits: 0, points: 0, totalVisits: 0, totalSaved: 0,
+          discountPercent: 10, visitsForDiscount: 10,
+          active: true, tier: 'Bronze',
+          createdAt: serverTimestamp(),
+          issuedByAdmin: true,
+        }));
+      }
+      await Promise.all(batch);
+      toast.success(`${bulkCount} cards generated!`, toastStyle);
+      await fetchCards();
+    } catch { toast.error('Failed', toastStyle); }
+    finally { setBulkLoading(false); }
   };
 
   // ── ISSUE CARD ──────────────────────────────────────────────────────────────
   const handleIssue = async () => {
-    if (!issueForm.name || !issueForm.cardId) { toast.error('Customer name is required', toastStyle); return; }
+    if (!issueForm.cardId) { toast.error('Card ID is required', toastStyle); return; }
     const cardId = issueForm.cardId.toUpperCase().startsWith('KC-')
       ? issueForm.cardId.toUpperCase()
       : `KC-${issueForm.cardId.toUpperCase()}`;
@@ -112,11 +204,34 @@ const AdminCards = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Loyalty Cards</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards issued — 10% off on Custom Deal</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards — 10% off on Custom Deal</p>
         </div>
-        <button onClick={openIssue} className="flex items-center gap-2 btn-primary text-sm">
-          <Plus size={16} /> Issue Card
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Bulk Generate */}
+          <div className="flex items-center gap-2 bg-krunch-card border border-krunch-border rounded-xl px-3 py-2">
+            <input
+              type="number" min={1} max={1000} value={bulkCount}
+              onChange={e => setBulkCount(Math.max(1, Math.min(1000, Number(e.target.value))))}
+              className="w-16 bg-transparent text-white font-body text-sm text-center focus:outline-none"
+              placeholder="100"
+            />
+            <span className="text-krunch-gray text-xs">cards</span>
+            <button onClick={handleBulkGenerate} disabled={bulkLoading}
+              className="flex items-center gap-1 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-all disabled:opacity-60 whitespace-nowrap">
+              {bulkLoading ? '...' : '⚡ Generate'}
+            </button>
+          </div>
+          {/* Print All */}
+          {cards.length > 0 && (
+            <button onClick={() => printCards(cards)}
+              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+              <Printer size={15} /> Print All ({cards.length})
+            </button>
+          )}
+          <button onClick={openIssue} className="flex items-center gap-2 btn-primary text-sm">
+            <Plus size={16} /> Issue Card
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -224,17 +339,17 @@ const AdminCards = () => {
               </div>
               <div className="p-6 flex flex-col gap-4">
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Customer Name *</label>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Customer Name <span className="text-krunch-gray/50 normal-case">(optional)</span></label>
                   <input type="text" value={issueForm.name}
                     onChange={e => setIssueForm({ ...issueForm, name: e.target.value })}
-                    placeholder="Muhammad Ahmed"
+                    placeholder="Leave blank for anonymous card"
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                 </div>
                 <div>
-                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Phone Number</label>
+                  <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Phone Number <span className="text-krunch-gray/50 normal-case">(optional)</span></label>
                   <input type="text" value={issueForm.phone}
                     onChange={e => setIssueForm({ ...issueForm, phone: e.target.value })}
-                    placeholder="03XX-XXXXXXX"
+                    placeholder="Leave blank for anonymous card"
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
                 </div>
 
