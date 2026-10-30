@@ -430,11 +430,28 @@ const CheckoutPage = () => {
                   ))}
                 </div>
                 {form.paymentMethod === 'easypaisa' && (
-                  <div className="mt-3 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-3">
-                    <p className="text-green-400 font-body text-sm font-semibold">📱 Easypaisa Payment</p>
-                    <p className="text-green-300 font-body text-xs mt-1">Send payment to: <span className="font-bold text-white">0317-7787648</span></p>
-                    <p className="text-green-300 font-body text-xs">Account Name: <span className="font-bold text-white">The KrunchEez</span></p>
-                    <p className="text-krunch-gray font-body text-xs mt-1">Please send screenshot to confirm your payment.</p>
+                  <div className="mt-3 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-4">
+                    <p className="text-green-400 font-body text-sm font-semibold mb-3">📱 Easypaisa Payment</p>
+                    <p className="text-krunch-gray font-body text-xs mb-3">
+                      Click the button below to open Easypaisa app and pay <span className="text-white font-bold">Rs.{finalTotal.toLocaleString()}</span> directly:
+                    </p>
+                    {/* Clickable Easypaisa button */}
+                    <a
+                      href="tel:03125060186"
+                      className="flex items-center justify-between w-full bg-green-700 hover:bg-green-600 text-white font-heading font-bold text-sm px-4 py-3 rounded-xl transition-all mb-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">📱</span>
+                        <div className="text-left">
+                          <div className="font-bold">0312-5060186</div>
+                          <div className="text-xs text-green-200 font-body font-normal">The KrunchEez — Tap to open Easypaisa</div>
+                        </div>
+                      </div>
+                      <span className="text-green-200 text-xs">→</span>
+                    </a>
+                    <p className="text-krunch-gray font-body text-xs text-center">
+                      After payment, please send screenshot on WhatsApp to confirm.
+                    </p>
                   </div>
                 )}
               </div>

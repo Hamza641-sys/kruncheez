@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
 import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
 
-// ── Print Both (Bill + Kitchen) ───────────────────────────────────────────
+// â”€â”€ Print Both (Bill + Kitchen) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const printBoth = (order) => {
   const date = order.createdAt?.toDate?.() || new Date();
   const dateStr = date.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -59,7 +59,7 @@ const printBoth = (order) => {
       <!-- ====== SLIP 1: CUSTOMER BILL ====== -->
       <div class="center">
         <div class="logo">THE KRUNCHEEZ</div>
-        <div class="tagline">Fast Food • Chinese • BBQ</div>
+        <div class="tagline">Fast Food â€¢ Chinese â€¢ BBQ</div>
         <div class="tagline">Peshawar, Pakistan</div>
       </div>
       <div class="line"></div>
@@ -69,10 +69,10 @@ const printBoth = (order) => {
         <tr><td style="font-size:11px;">Order ID</td><td style="text-align:right;font-size:11px;">#${order.id.slice(0,8).toUpperCase()}</td></tr>
         <tr><td style="font-size:11px;">Date</td><td style="text-align:right;font-size:11px;">${dateStr}</td></tr>
         <tr><td style="font-size:11px;">Time</td><td style="text-align:right;font-size:11px;">${timeStr}</td></tr>
-        <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || '—'}</td></tr>
-        <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || '—'}</td></tr>
+        <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || 'â€”'}</td></tr>
+        <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">${order.tableNumber ? `Dine-In (Table ${order.tableNumber})` : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery'}</td></tr>
-        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}</td></tr>
+        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Easypaisa' : 'Cash'}</td></tr>
       </table>
       <div class="line"></div>
       <table>
@@ -96,7 +96,7 @@ const printBoth = (order) => {
       ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div>` : ''}
       <div class="center footer">
         <div class="bold">Thank you for dining with us!</div>
-        <div>Visit again soon 🍔</div>
+        <div>Visit again soon ðŸ”</div>
         <div>kruncheez-pos.web.app</div>
       </div>
 
@@ -105,7 +105,7 @@ const printBoth = (order) => {
 
       <!-- ====== SLIP 2: KITCHEN ORDER ====== -->
       <div class="center">
-        <div style="font-size:13px;font-weight:bold;">⭐ KITCHEN ORDER SLIP ⭐</div>
+        <div style="font-size:13px;font-weight:bold;">â­ KITCHEN ORDER SLIP â­</div>
       </div>
       <div class="line"></div>
       <div class="center">
@@ -116,7 +116,7 @@ const printBoth = (order) => {
       <table>
         <tr>
           <td style="font-size:13px;font-weight:bold;">ORDER TYPE</td>
-          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `🪑 TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? '🏃 PICKUP' : '🛵 DELIVERY'}</td>
+          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `ðŸª‘ TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'ðŸƒ PICKUP' : 'ðŸ›µ DELIVERY'}</td>
         </tr>
         ${order.customer?.name ? `<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">${order.customer.name}</td></tr>` : ''}
       </table>
@@ -127,7 +127,7 @@ const printBoth = (order) => {
       </table>
       <div class="line"></div>
       ${order.notes ? `
-        <div style="font-size:13px;font-weight:bold;">⚠️ SPECIAL INSTRUCTIONS:</div>
+        <div style="font-size:13px;font-weight:bold;">âš ï¸ SPECIAL INSTRUCTIONS:</div>
         <div style="font-size:13px;margin-top:4px;padding:6px;border:2px solid #000;">${order.notes}</div>
         <div class="line"></div>
       ` : ''}
@@ -180,7 +180,7 @@ const printBill = (order) => {
     <body>
       <div class="center">
         <div class="logo">THE KRUNCHEEZ</div>
-        <div class="tagline">Fast Food • Chinese • BBQ</div>
+        <div class="tagline">Fast Food â€¢ Chinese â€¢ BBQ</div>
         <div class="tagline">Peshawar, Pakistan</div>
       </div>
       <div class="line"></div>
@@ -190,10 +190,10 @@ const printBill = (order) => {
         <tr><td style="font-size:11px;">Order ID</td><td style="text-align:right;font-size:11px;">#${order.id.slice(0,8).toUpperCase()}</td></tr>
         <tr><td style="font-size:11px;">Date</td><td style="text-align:right;font-size:11px;">${dateStr}</td></tr>
         <tr><td style="font-size:11px;">Time</td><td style="text-align:right;font-size:11px;">${timeStr}</td></tr>
-        <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || '—'}</td></tr>
-        <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || '—'}</td></tr>
+        <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || 'â€”'}</td></tr>
+        <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">${order.tableNumber ? `Dine-In (Table ${order.tableNumber})` : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery'}</td></tr>
-        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}</td></tr>
+        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Easypaisa' : 'Cash'}</td></tr>
       </table>
       <div class="line"></div>
       <table>
@@ -217,7 +217,7 @@ const printBill = (order) => {
       ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div>` : ''}
       <div class="center footer">
         <div class="bold">Thank you for dining with us!</div>
-        <div>Visit again soon 🍔</div>
+        <div>Visit again soon ðŸ”</div>
         <div>kruncheez-pos.web.app</div>
       </div>
     </body>
@@ -227,7 +227,7 @@ const printBill = (order) => {
   setTimeout(() => { win.print(); win.close(); }, 400);
 };
 
-// ── Print Kitchen Slip ────────────────────────────────────────────────────
+// â”€â”€ Print Kitchen Slip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const printKitchen = (order) => {
   const date = order.createdAt?.toDate?.() || new Date();
   const timeStr = date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' });
@@ -258,7 +258,7 @@ const printKitchen = (order) => {
     </head>
     <body>
       <div class="center">
-        <div style="font-size:13px;font-weight:bold;">⭐ KITCHEN ORDER SLIP ⭐</div>
+        <div style="font-size:13px;font-weight:bold;">â­ KITCHEN ORDER SLIP â­</div>
       </div>
       <div class="line"></div>
       <div class="center">
@@ -269,7 +269,7 @@ const printKitchen = (order) => {
       <table>
         <tr>
           <td style="font-size:13px;font-weight:bold;">ORDER TYPE</td>
-          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `🪑 TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? '🏃 PICKUP' : '🛵 DELIVERY'}</td>
+          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `ðŸª‘ TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'ðŸƒ PICKUP' : 'ðŸ›µ DELIVERY'}</td>
         </tr>
         ${order.customer?.name ? `<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">${order.customer.name}</td></tr>` : ''}
       </table>
@@ -280,7 +280,7 @@ const printKitchen = (order) => {
       </table>
       <div class="line"></div>
       ${order.notes ? `
-        <div style="font-size:13px;font-weight:bold;">⚠️ SPECIAL INSTRUCTIONS:</div>
+        <div style="font-size:13px;font-weight:bold;">âš ï¸ SPECIAL INSTRUCTIONS:</div>
         <div style="font-size:13px;margin-top:4px;padding:6px;border:2px solid #000;">${order.notes}</div>
         <div class="line"></div>
       ` : ''}
@@ -310,15 +310,15 @@ const nextStatus = {
   out_for_delivery: 'delivered',
 };
 
-// ── Customer Badge ────────────────────────────────────────────────────────
+// â”€â”€ Customer Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const getCustomerBadge = (phone, allOrders) => {
-  if (!phone) return { label: '🆕 New', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
+  if (!phone) return { label: 'ðŸ†• New', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
   const count = allOrders.filter(o =>
     o.customer?.phone === phone && o.status !== 'rejected'
   ).length;
-  if (count >= 10) return { label: '👑 VIP',     color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', count };
-  if (count >= 2)  return { label: '⭐ Regular', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20', count };
-  return               { label: '🆕 New',     color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', count: 1 };
+  if (count >= 10) return { label: 'ðŸ‘‘ VIP',     color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', count };
+  if (count >= 2)  return { label: 'â­ Regular', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20', count };
+  return               { label: 'ðŸ†• New',     color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', count: 1 };
 };
 
 const CustomerBadge = ({ phone, allOrders }) => {
@@ -374,7 +374,7 @@ const AdminOrders = () => {
   });
 
   const handleStatus = async (orderId, status, order) => {
-    // If marking as delivered — show payment confirm popup first
+    // If marking as delivered â€” show payment confirm popup first
     if (status === 'delivered') {
       setPayConfirm({ orderId, order });
       setSelected(null);
@@ -395,7 +395,7 @@ const AdminOrders = () => {
     if (order?.customer?.phone) {
       try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, 'delivered'); } catch {}
     }
-    toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? '💵 Cash' : '📱 Easypaisa'}`, toastStyle);
+    toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? 'ðŸ’µ Cash' : 'ðŸ“± Easypaisa'}`, toastStyle);
     setPayConfirm(null);
   };
 
@@ -454,9 +454,9 @@ const AdminOrders = () => {
         <div className="flex gap-2">
           {[
             { key: 'all',      label: 'All Types' },
-            { key: 'dine-in',  label: '🪑 Dine-In' },
-            { key: 'delivery', label: '🛵 Delivery' },
-            { key: 'pickup',   label: '🏃 Pickup' },
+            { key: 'dine-in',  label: 'ðŸª‘ Dine-In' },
+            { key: 'delivery', label: 'ðŸ›µ Delivery' },
+            { key: 'pickup',   label: 'ðŸƒ Pickup' },
           ].map(t => (
             <button key={t.key} onClick={() => setTypeFilter(t.key)}
               className={`flex-shrink-0 px-3 py-2 rounded-xl font-body font-semibold text-xs transition-all border ${
@@ -506,8 +506,8 @@ const AdminOrders = () => {
                   >
                     <td className="px-4 py-3 font-body font-bold text-white text-sm">#{order.id.slice(0,8).toUpperCase()}</td>
                     <td className="px-4 py-3">
-                      <p className="text-white font-body text-sm">{order.customer?.name || '—'}</p>
-                      <p className="text-krunch-gray font-body text-xs">{order.customer?.phone || '—'}</p>
+                      <p className="text-white font-body text-sm">{order.customer?.name || 'â€”'}</p>
+                      <p className="text-krunch-gray font-body text-xs">{order.customer?.phone || 'â€”'}</p>
                       <div className="mt-1">
                         <CustomerBadge phone={order.customer?.phone} allOrders={orders} />
                       </div>
@@ -518,13 +518,13 @@ const AdminOrders = () => {
                       <div className="flex flex-col gap-1">
                         <OrderTypeBadge orderType={order.orderType} tableNumber={order.tableNumber} />
                         {order.loyaltyCard && (
-                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">🃏 {order.loyaltyCard}</span>
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">ðŸƒ {order.loyaltyCard}</span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-body font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
-                        {order.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}
+                        {order.paymentMethod === 'easypaisa' ? 'ðŸ“± Easypaisa' : 'ðŸ’µ Cash'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -546,7 +546,7 @@ const AdminOrders = () => {
                         {next && (
                           <button onClick={() => handleStatus(order.id, next, order)}
                             className="px-2.5 py-1 rounded-lg bg-krunch-red hover:bg-krunch-darkred text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
-                            → {statusConfig[next]?.label}
+                            â†’ {statusConfig[next]?.label}
                           </button>
                         )}
                         {order.status === 'pending' && (
@@ -601,7 +601,7 @@ const AdminOrders = () => {
                   <div className="flex items-center gap-2 mt-2">
                     <OrderTypeBadge orderType={selected.orderType} tableNumber={selected.tableNumber} />
                     {selected.loyaltyCard && (
-                      <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">🃏 {selected.loyaltyCard}</span>
+                      <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">ðŸƒ {selected.loyaltyCard}</span>
                     )}
                   </div>
                 </div>
@@ -639,7 +639,7 @@ const AdminOrders = () => {
           </>
         )}
       </AnimatePresence>
-      {/* ── PAYMENT CONFIRM MODAL ── */}
+      {/* â”€â”€ PAYMENT CONFIRM MODAL â”€â”€ */}
       <AnimatePresence>
         {payConfirm && (
           <motion.div
@@ -652,10 +652,10 @@ const AdminOrders = () => {
             >
               {/* Header */}
               <div className="bg-green-900/30 border-b border-green-700/30 px-6 py-4 text-center">
-                <div className="text-3xl mb-1">✅</div>
+                <div className="text-3xl mb-1">âœ…</div>
                 <h3 className="font-heading font-black text-white text-lg uppercase">Order Delivered!</h3>
                 <p className="text-green-400 font-body text-sm mt-1">
-                  #{payConfirm.orderId.slice(0,8).toUpperCase()} — Confirm payment received
+                  #{payConfirm.orderId.slice(0,8).toUpperCase()} â€” Confirm payment received
                 </p>
               </div>
 
@@ -663,7 +663,7 @@ const AdminOrders = () => {
               <div className="px-6 py-4 border-b border-krunch-border">
                 <div className="flex justify-between text-sm font-body mb-1">
                   <span className="text-krunch-gray">Customer</span>
-                  <span className="text-white font-semibold">{payConfirm.order?.customer?.name || '—'}</span>
+                  <span className="text-white font-semibold">{payConfirm.order?.customer?.name || 'â€”'}</span>
                 </div>
                 <div className="flex justify-between text-sm font-body mb-1">
                   <span className="text-krunch-gray">Amount</span>
@@ -674,7 +674,7 @@ const AdminOrders = () => {
                 <div className="flex justify-between text-sm font-body">
                   <span className="text-krunch-gray">Customer selected</span>
                   <span className={`font-semibold ${payConfirm.order?.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
-                    {payConfirm.order?.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}
+                    {payConfirm.order?.paymentMethod === 'easypaisa' ? 'ðŸ“± Easypaisa' : 'ðŸ’µ Cash'}
                   </span>
                 </div>
               </div>
@@ -689,7 +689,7 @@ const AdminOrders = () => {
                     onClick={() => handleDeliveryConfirm('cash')}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-krunch-border hover:border-krunch-red bg-krunch-black hover:bg-krunch-red/10 transition-all"
                   >
-                    <span className="text-3xl">💵</span>
+                    <span className="text-3xl">ðŸ’µ</span>
                     <span className="text-white font-heading font-bold text-sm uppercase">Cash</span>
                     <span className="text-krunch-gray font-body text-xs">Received cash</span>
                   </button>
@@ -697,7 +697,7 @@ const AdminOrders = () => {
                     onClick={() => handleDeliveryConfirm('easypaisa')}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-green-700/40 hover:border-green-500 bg-krunch-black hover:bg-green-900/20 transition-all"
                   >
-                    <span className="text-3xl">📱</span>
+                    <span className="text-3xl">ðŸ“±</span>
                     <span className="text-white font-heading font-bold text-sm uppercase">Easypaisa</span>
                     <span className="text-krunch-gray font-body text-xs">Transfer received</span>
                   </button>
@@ -718,3 +718,4 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+
