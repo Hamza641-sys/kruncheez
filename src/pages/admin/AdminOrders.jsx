@@ -346,11 +346,13 @@ const OrderTypeBadge = ({ orderType, tableNumber }) => {
 };
 
 const AdminOrders = () => {
-  const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState(null);
+  const [orders, setOrders]       = useState([]);
+  const [filter, setFilter]       = useState('all');
+  const [search, setSearch]       = useState('');
+  const [selected, setSelected]   = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
+  // Payment confirm modal
+  const [payConfirm, setPayConfirm] = useState(null); // { orderId, order }
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
   useEffect(() => {
@@ -372,12 +374,29 @@ const AdminOrders = () => {
   });
 
   const handleStatus = async (orderId, status, order) => {
+    // If marking as delivered — show payment confirm popup first
+    if (status === 'delivered') {
+      setPayConfirm({ orderId, order });
+      setSelected(null);
+      return;
+    }
     await updateOrderStatus(orderId, status);
-    // Send WhatsApp notification to customer
     if (order?.customer?.phone) {
       try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, status); } catch {}
     }
     toast.success(`Order marked: ${status.replace(/_/g, ' ')}!`, toastStyle);
+  };
+
+  // Confirm delivery with payment method
+  const handleDeliveryConfirm = async (paymentMethod) => {
+    if (!payConfirm) return;
+    const { orderId, order } = payConfirm;
+    await updateOrderStatus(orderId, 'delivered', { paymentMethod });
+    if (order?.customer?.phone) {
+      try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, 'delivered'); } catch {}
+    }
+    toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? '💵 Cash' : '📱 Easypaisa'}`, toastStyle);
+    setPayConfirm(null);
   };
 
   // Table orders quick view
@@ -618,6 +637,80 @@ const AdminOrders = () => {
               </div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+      {/* ── PAYMENT CONFIRM MODAL ── */}
+      <AnimatePresence>
+        {payConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
+              className="w-full max-w-sm bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden"
+            >
+              {/* Header */}
+              <div className="bg-green-900/30 border-b border-green-700/30 px-6 py-4 text-center">
+                <div className="text-3xl mb-1">✅</div>
+                <h3 className="font-heading font-black text-white text-lg uppercase">Order Delivered!</h3>
+                <p className="text-green-400 font-body text-sm mt-1">
+                  #{payConfirm.orderId.slice(0,8).toUpperCase()} — Confirm payment received
+                </p>
+              </div>
+
+              {/* Order info */}
+              <div className="px-6 py-4 border-b border-krunch-border">
+                <div className="flex justify-between text-sm font-body mb-1">
+                  <span className="text-krunch-gray">Customer</span>
+                  <span className="text-white font-semibold">{payConfirm.order?.customer?.name || '—'}</span>
+                </div>
+                <div className="flex justify-between text-sm font-body mb-1">
+                  <span className="text-krunch-gray">Amount</span>
+                  <span className="text-krunch-red font-heading font-black text-base">
+                    Rs.{payConfirm.order?.pricing?.total?.toLocaleString() || payConfirm.order?.summary?.total?.toLocaleString() || '0'}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm font-body">
+                  <span className="text-krunch-gray">Customer selected</span>
+                  <span className={`font-semibold ${payConfirm.order?.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
+                    {payConfirm.order?.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Payment buttons */}
+              <div className="p-6">
+                <p className="text-krunch-gray font-body text-sm text-center mb-4">
+                  Confirm actual payment received:
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleDeliveryConfirm('cash')}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-krunch-border hover:border-krunch-red bg-krunch-black hover:bg-krunch-red/10 transition-all"
+                  >
+                    <span className="text-3xl">💵</span>
+                    <span className="text-white font-heading font-bold text-sm uppercase">Cash</span>
+                    <span className="text-krunch-gray font-body text-xs">Received cash</span>
+                  </button>
+                  <button
+                    onClick={() => handleDeliveryConfirm('easypaisa')}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-green-700/40 hover:border-green-500 bg-krunch-black hover:bg-green-900/20 transition-all"
+                  >
+                    <span className="text-3xl">📱</span>
+                    <span className="text-white font-heading font-bold text-sm uppercase">Easypaisa</span>
+                    <span className="text-krunch-gray font-body text-xs">Transfer received</span>
+                  </button>
+                </div>
+                <button
+                  onClick={() => setPayConfirm(null)}
+                  className="w-full mt-3 text-krunch-gray hover:text-white font-body text-xs text-center transition-colors py-2"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

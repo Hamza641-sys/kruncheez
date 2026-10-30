@@ -51,9 +51,10 @@ export const getAllOrders = (callback) => {
 };
 
 // ── Update Order Status (Admin) ──────────────────────────────────
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async (orderId, status, extraData = {}) => {
   await updateDoc(doc(db, 'orders', orderId), {
     status,
+    ...extraData,
     updatedAt: serverTimestamp(),
     [`timestamps.${status}`]: serverTimestamp(),
   });
