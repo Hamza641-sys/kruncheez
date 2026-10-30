@@ -85,8 +85,8 @@ const AdminCards = () => {
     try {
       const QRCode = (await import('qrcode')).default;
       qrDataUrl = await QRCode.toDataURL(followUrl, {
-        width: 100, margin: 1,
-        color: { dark: '#000000', light: '#E31E24' },
+        width: 200, margin: 1,
+        color: { dark: '#000000', light: '#ffffff' },
         errorCorrectionLevel: 'H',
       });
     } catch { qrDataUrl = ''; }
@@ -116,36 +116,39 @@ const AdminCards = () => {
       '.f-dot{width:5px;height:5px;background:#E31E24;border-radius:50%;}',
       '.f-strip{position:absolute;bottom:0;left:0;right:0;z-index:6;padding:12px 24px;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%);display:flex;justify-content:center;align-items:flex-end;}',
       '.f-id{font-size:16px;font-weight:900;color:#E31E24;letter-spacing:5px;}',
-      '.back{height:340px;}',
-      '.yc3{position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:#E31E24;border-radius:50%;z-index:2;opacity:0.85;}',
-      '.yc4{position:absolute;bottom:-35px;left:-35px;width:120px;height:120px;background:#E31E24;border-radius:50%;z-index:2;opacity:0.6;}',
-      '.b-inner{position:relative;z-index:4;display:flex;height:100%;padding:18px 20px 55px;gap:20px;}',
+      '.back{height:340px;background:linear-gradient(135deg,#1a0505 0%,#2a0a0a 40%,#1a0505 100%);}',
+      '.back-grid{position:absolute;inset:0;z-index:1;background-image:linear-gradient(rgba(227,30,36,0.08) 1px,transparent 1px),linear-gradient(90deg,rgba(227,30,36,0.08) 1px,transparent 1px);background-size:30px 30px;}',
+      '.yc3{position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,#E31E24 0%,rgba(227,30,36,0.3) 70%,transparent 100%);border-radius:50%;z-index:2;}',
+      '.yc4{position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,#E31E24 0%,rgba(227,30,36,0.3) 70%,transparent 100%);border-radius:50%;z-index:2;}',
+      '.yc5{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(227,30,36,0.05) 0%,transparent 70%);border-radius:50%;z-index:2;}',
+      '.b-inner{position:relative;z-index:4;display:flex;height:100%;padding:20px 22px 60px;gap:20px;}',
       '.b-left{flex:1;display:flex;flex-direction:column;}',
-      '.bl-brand{font-size:26px;font-weight:900;color:#E31E24;line-height:1.1;letter-spacing:2px;text-transform:uppercase;}',
-      '.bl-tag{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-bottom:14px;}',
+      '.bl-brand{font-size:28px;font-weight:900;color:#E31E24;line-height:1.1;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 20px rgba(227,30,36,0.5);}',
+      '.bl-tag{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:16px;}',
       '.ty{margin-top:auto;padding-top:10px;}',
-      '.ty1{font-size:10px;color:rgba(255,255,255,0.3);font-style:italic;}',
-      '.ty2{font-size:18px;font-weight:900;color:#E31E24;line-height:1.3;letter-spacing:1px;}',
-      '.ty3{font-size:10px;color:rgba(255,255,255,0.25);}',
-      '.b-right{width:220px;display:flex;flex-direction:column;gap:12px;}',
+      '.ty1{font-size:11px;color:rgba(255,255,255,0.4);font-style:italic;}',
+      '.ty2{font-size:20px;font-weight:900;color:#E31E24;line-height:1.3;letter-spacing:1px;}',
+      '.ty3{font-size:11px;color:rgba(255,255,255,0.3);}',
+      '.b-right{width:210px;display:flex;flex-direction:column;gap:10px;}',
       '.gf{text-align:right;}',
-      '.gf1,.gf2{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.5;}',
+      '.gf1,.gf2{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;}',
       '.gf3{font-size:26px;color:white;line-height:1.2;}',
       '.gfh{color:#E31E24;}',
-      '.ob{background:#E31E24;border-radius:6px;padding:10px 14px;clip-path:polygon(0 8%,3% 0,100% 0,97% 92%,100% 100%,0 100%);}',
+      '.ob{background:linear-gradient(135deg,#E31E24,#c01a1f);border-radius:8px;padding:12px 16px;box-shadow:0 4px 15px rgba(227,30,36,0.4);}',
       '.obr{display:flex;align-items:baseline;gap:3px;}',
-      '.obp{font-size:38px;font-weight:900;color:white;line-height:1;}',
-      '.obo{font-size:18px;font-weight:900;color:white;}',
-      '.obt{font-size:11px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;}',
-      '.obs{font-size:8px;color:rgba(255,255,255,0.8);font-weight:700;margin-top:3px;}',
-      '.tt{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:5px;}',
+      '.obp{font-size:42px;font-weight:900;color:white;line-height:1;}',
+      '.obo{font-size:20px;font-weight:900;color:white;}',
+      '.obt{font-size:12px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;}',
+      '.obs{font-size:10px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;}',
+      '.tt{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;margin-bottom:5px;}',
       '.tl{list-style:none;}',
-      '.tl li{font-size:9px;color:rgba(255,255,255,0.28);padding:2px 0;display:flex;gap:5px;}',
-      '.bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:8px 20px;background:linear-gradient(to top,rgba(0,0,0,0.92) 0%,rgba(0,0,0,0.6) 70%,transparent 100%);display:flex;justify-content:space-between;align-items:center;}',
-      '.bsi{font-size:13px;color:#E31E24;letter-spacing:4px;font-weight:900;}',
-      '.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;}',
-      '.qr-box{background:#E31E24;border-radius:5px;padding:3px;}',
-      '.qr-box img{display:block;width:48px;height:48px;border-radius:2px;}',
+      '.tl li{font-size:10px;color:rgba(255,255,255,0.35);padding:3px 0;display:flex;gap:5px;}',
+      '.bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 60%,transparent 100%);display:flex;justify-content:space-between;align-items:center;}',
+      '.bsi{font-size:15px;color:#E31E24;letter-spacing:5px;font-weight:900;text-shadow:0 0 10px rgba(227,30,36,0.5);}',
+      '.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}',
+      '.qr-box{background:white;border-radius:8px;padding:5px;box-shadow:0 4px 15px rgba(0,0,0,0.5);}',
+      '.qr-box img{display:block;width:72px;height:72px;border-radius:4px;}',
+      '.qr-lbl{font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;}',
       '.qr-lbl{font-size:7px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-align:center;}',
       '.page-pair{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:640px;page-break-after:always;}',
       '@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:0;gap:14px;}.page-pair{page-break-after:always;}.card{page-break-inside:avoid;}}',
@@ -183,8 +186,10 @@ const AdminCards = () => {
         <div class="lbl">Back Side — ${card.cardId}</div>
         <div class="card back">
           <div class="dots"></div>
+          <div class="back-grid"></div>
           <div class="yc3"></div>
           <div class="yc4"></div>
+          <div class="yc5"></div>
           <div class="b-inner">
             <div class="b-left">
               <div class="bl-brand">KRUNCHEEZ</div>
