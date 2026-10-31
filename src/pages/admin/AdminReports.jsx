@@ -216,6 +216,163 @@ const AdminReports = () => {
     a.click();
   };
 
+  // ── Annual Tax Report (PDF Print) ────────────────────────────────────────
+  const printAnnualTaxReport = () => {
+    // Use full year data regardless of period filter
+    const yearOrders    = orders.filter(o => o.status === 'delivered');
+    const yearRev       = yearOrders.reduce((s,o) => s + (o.summary?.total||0), 0);
+    const yearSupplier  = purchases.reduce((s,p) => s + Number(p.amount||0), 0);
+    const yearSalary    = salaries.reduce((s,r) => s + Number(r.paid||0), 0);
+    const yearDaily     = expenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
+                                  .reduce((s,e) => s + Number(e.amount||0), 0);
+    const yearExp       = yearSupplier + yearSalary + yearDaily;
+    const yearProfit    = yearRev - yearExp;
+    const isP           = yearProfit >= 0;
+    const taxYear       = new Date().getFullYear();
+
+    const win = window.open('', '_blank');
+    win.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Annual Tax Report ${taxYear} - The KrunchEez</title>
+        <style>
+          * { margin:0; padding:0; box-sizing:border-box; }
+          @page { size: A4; margin: 20mm; }
+          body { font-family: Arial, sans-serif; font-size: 12px; color: #000; background: #fff; }
+          .header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+          .fbr-logo { font-size: 11px; color: #555; letter-spacing: 2px; margin-bottom: 5px; }
+          .title { font-size: 20px; font-weight: bold; letter-spacing: 1px; margin: 8px 0; }
+          .subtitle { font-size: 13px; color: #333; }
+          .ntn-box { background: #f5f5f5; border: 2px solid #000; padding: 10px 20px; margin: 15px auto; display: inline-block; text-align: center; }
+          .ntn-label { font-size: 10px; letter-spacing: 2px; color: #555; }
+          .ntn-number { font-size: 18px; font-weight: bold; letter-spacing: 3px; }
+          .info-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 11px; color: #555; }
+          .section { margin: 20px 0; }
+          .section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
+          table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+          th { background: #f0f0f0; border: 1px solid #ccc; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+          td { border: 1px solid #ccc; padding: 8px 10px; font-size: 12px; }
+          .amount { text-align: right; font-weight: bold; }
+          .total-row td { background: #f0f0f0; font-weight: bold; font-size: 13px; }
+          .profit-row td { background: ${isP ? '#e8f5e9' : '#ffebee'}; font-weight: bold; font-size: 14px; color: ${isP ? '#2e7d32' : '#c62828'}; }
+          .footer { margin-top: 30px; border-top: 2px solid #000; padding-top: 15px; }
+          .sign-section { display: flex; justify-content: space-between; margin-top: 40px; }
+          .sign-box { text-align: center; width: 45%; }
+          .sign-line { border-top: 1px solid #000; padding-top: 5px; margin-top: 40px; font-size: 11px; }
+          .disclaimer { font-size: 10px; color: #777; margin-top: 15px; text-align: center; }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+        </style>
+      </head>
+      <body>
+        <!-- HEADER -->
+        <div class="header">
+          <div class="fbr-logo">FEDERAL BOARD OF REVENUE - PAKISTAN</div>
+          <div class="title">ANNUAL INCOME STATEMENT</div>
+          <div class="subtitle">Tax Year: ${taxYear} | The KrunchEez Restaurant</div>
+          <div style="margin-top:12px;">
+            <div class="ntn-box">
+              <div class="ntn-label">NTN (National Tax Number)</div>
+              <div class="ntn-number">1730144554693</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAXPAYER INFO -->
+        <div class="section">
+          <div class="section-title">Taxpayer Information</div>
+          <table>
+            <tr><td style="width:40%">Name</td><td><strong>Hamid Ali</strong></td></tr>
+            <tr><td>Business Name</td><td><strong>The KrunchEez Restaurant</strong></td></tr>
+            <tr><td>NTN</td><td><strong>1730144554693</strong></td></tr>
+            <tr><td>Tax Office</td><td>RTO Peshawar</td></tr>
+            <tr><td>Registration Status</td><td>Income Tax: Active</td></tr>
+            <tr><td>Tax Year</td><td>${taxYear}</td></tr>
+            <tr><td>Report Generated</td><td>${new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' })}</td></tr>
+          </table>
+        </div>
+
+        <!-- INCOME -->
+        <div class="section">
+          <div class="section-title">Income / Revenue</div>
+          <table>
+            <tr><th>Description</th><th>Orders</th><th class="amount">Amount (Rs.)</th></tr>
+            <tr>
+              <td>Sales Revenue (Delivered Orders)</td>
+              <td>${yearOrders.length} orders</td>
+              <td class="amount">${yearRev.toLocaleString()}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2"><strong>TOTAL INCOME</strong></td>
+              <td class="amount">${yearRev.toLocaleString()}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- EXPENSES -->
+        <div class="section">
+          <div class="section-title">Expenses / Deductions</div>
+          <table>
+            <tr><th>Category</th><th>Records</th><th class="amount">Amount (Rs.)</th></tr>
+            <tr>
+              <td>Supplier Payments (Stock)</td>
+              <td>${purchases.length} payments</td>
+              <td class="amount">${yearSupplier.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Staff Salaries</td>
+              <td>${salaries.length} records</td>
+              <td class="amount">${yearSalary.toLocaleString()}</td>
+            </tr>
+            <tr>
+              <td>Daily Operational Expenses</td>
+              <td>${expenses.length} entries</td>
+              <td class="amount">${yearDaily.toLocaleString()}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2"><strong>TOTAL EXPENSES</strong></td>
+              <td class="amount">${yearExp.toLocaleString()}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- NET PROFIT -->
+        <div class="section">
+          <div class="section-title">Net Profit / Loss</div>
+          <table>
+            <tr><th>Description</th><th class="amount">Amount (Rs.)</th></tr>
+            <tr><td>Total Income</td><td class="amount">+ ${yearRev.toLocaleString()}</td></tr>
+            <tr><td>Total Expenses</td><td class="amount">- ${yearExp.toLocaleString()}</td></tr>
+            <tr class="profit-row">
+              <td><strong>${isP ? 'NET PROFIT' : 'NET LOSS'}</strong></td>
+              <td class="amount"><strong>${isP ? '+' : '-'} Rs. ${Math.abs(yearProfit).toLocaleString()}</strong></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- SIGNATURES -->
+        <div class="footer">
+          <div class="sign-section">
+            <div class="sign-box">
+              <div class="sign-line">Manager / Authorized Person</div>
+            </div>
+            <div class="sign-box">
+              <div class="sign-line">Owner: Hamid Ali</div>
+            </div>
+          </div>
+          <div class="disclaimer">
+            This is a computer-generated income statement prepared for tax filing purposes.<br/>
+            NTN: 1730144554693 | RTO Peshawar | The KrunchEez Restaurant
+          </div>
+        </div>
+
+        <script>window.onload = () => { window.print(); window.close(); }<\/script>
+      </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
   return (
     <div>
       {/* Header */}
@@ -224,10 +381,16 @@ const AdminReports = () => {
           <h2 className="font-heading font-black text-2xl text-white uppercase">Business Report</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit - complete financial summary</p>
         </div>
-        <button onClick={downloadCSV}
-          className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
-          <Download size={15} /> Export Full Report
-        </button>
+        <div className="flex items-center gap-3">
+          <button onClick={printAnnualTaxReport}
+            className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all shadow-red-glow">
+            <Download size={15} /> Annual Tax Report (PDF)
+          </button>
+          <button onClick={downloadCSV}
+            className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+            <Download size={15} /> Export CSV
+          </button>
+        </div>
       </div>
 
       {/* Period Tabs */}
