@@ -119,7 +119,7 @@ const printBoth = (order) => {
       <table>
         <tr>
           <td style="font-size:13px;font-weight:bold;">ORDER TYPE</td>
-          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `ðŸª‘ TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'ðŸƒ PICKUP' : 'ðŸ›µ DELIVERY'}</td>
+          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'PICKUP' : 'DELIVERY'}</td>
         </tr>
         ${order.customer?.name ? `<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">${order.customer.name}</td></tr>` : ''}
       </table>
@@ -220,7 +220,7 @@ const printBill = (order) => {
       ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div>` : ''}
       <div class="center footer">
         <div class="bold">Thank you for dining with us!</div>
-        <div>Visit again soon ðŸ”</div>
+        <div>Visit again soon </div>
         <div>kruncheez-pos.web.app</div>
       </div>
     </body>
@@ -272,7 +272,7 @@ const printKitchen = (order) => {
       <table>
         <tr>
           <td style="font-size:13px;font-weight:bold;">ORDER TYPE</td>
-          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `ðŸª‘ TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'ðŸƒ PICKUP' : 'ðŸ›µ DELIVERY'}</td>
+          <td style="text-align:right;font-size:15px;font-weight:bold;">${order.tableNumber ? `TABLE ${order.tableNumber}` : order.orderType === 'pickup' ? 'PICKUP' : 'DELIVERY'}</td>
         </tr>
         ${order.customer?.name ? `<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">${order.customer.name}</td></tr>` : ''}
       </table>
@@ -315,13 +315,13 @@ const nextStatus = {
 
 // â”€â”€ Customer Badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const getCustomerBadge = (phone, allOrders) => {
-  if (!phone) return { label: 'ðŸ†• New', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
+  if (!phone) return { label: 'New', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' };
   const count = allOrders.filter(o =>
     o.customer?.phone === phone && o.status !== 'rejected'
   ).length;
-  if (count >= 10) return { label: 'ðŸ‘‘ VIP',     color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', count };
+  if (count >= 10) return { label: 'VIP',     color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', count };
   if (count >= 2)  return { label: 'â­ Regular', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20', count };
-  return               { label: 'ðŸ†• New',     color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', count: 1 };
+  return               { label: 'New',     color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', count: 1 };
 };
 
 const CustomerBadge = ({ phone, allOrders }) => {
@@ -398,7 +398,7 @@ const AdminOrders = () => {
     if (order?.customer?.phone) {
       try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, 'delivered'); } catch {}
     }
-    toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? 'ðŸ’µ Cash' : 'ðŸ“± Easypaisa'}`, toastStyle);
+    toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? 'Cash' : 'Easypaisa'}`, toastStyle);
     setPayConfirm(null);
   };
 
@@ -457,9 +457,9 @@ const AdminOrders = () => {
         <div className="flex gap-2">
           {[
             { key: 'all',      label: 'All Types' },
-            { key: 'dine-in',  label: 'ðŸª‘ Dine-In' },
-            { key: 'delivery', label: 'ðŸ›µ Delivery' },
-            { key: 'pickup',   label: 'ðŸƒ Pickup' },
+            { key: 'dine-in',  label: 'Dine-In' },
+            { key: 'delivery', label: 'Delivery' },
+            { key: 'pickup',   label: 'Pickup' },
           ].map(t => (
             <button key={t.key} onClick={() => setTypeFilter(t.key)}
               className={`flex-shrink-0 px-3 py-2 rounded-xl font-body font-semibold text-xs transition-all border ${
@@ -521,13 +521,13 @@ const AdminOrders = () => {
                       <div className="flex flex-col gap-1">
                         <OrderTypeBadge orderType={order.orderType} tableNumber={order.tableNumber} />
                         {order.loyaltyCard && (
-                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">ðŸƒ {order.loyaltyCard}</span>
+                          <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">{order.loyaltyCard}</span>
                         )}
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs font-body font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
-                        {order.paymentMethod === 'easypaisa' ? 'ðŸ“± Easypaisa' : 'ðŸ’µ Cash'}
+                        {order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}
                       </span>
                     </td>
                     <td className="px-4 py-3">
@@ -604,7 +604,7 @@ const AdminOrders = () => {
                   <div className="flex items-center gap-2 mt-2">
                     <OrderTypeBadge orderType={selected.orderType} tableNumber={selected.tableNumber} />
                     {selected.loyaltyCard && (
-                      <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">ðŸƒ {selected.loyaltyCard}</span>
+                      <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">{selected.loyaltyCard}</span>
                     )}
                   </div>
                 </div>
@@ -677,7 +677,7 @@ const AdminOrders = () => {
                 <div className="flex justify-between text-sm font-body">
                   <span className="text-krunch-gray">Customer selected</span>
                   <span className={`font-semibold ${payConfirm.order?.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
-                    {payConfirm.order?.paymentMethod === 'easypaisa' ? 'ðŸ“± Easypaisa' : 'ðŸ’µ Cash'}
+                    {payConfirm.order?.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}
                   </span>
                 </div>
               </div>
@@ -692,7 +692,7 @@ const AdminOrders = () => {
                     onClick={() => handleDeliveryConfirm('cash')}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-krunch-border hover:border-krunch-red bg-krunch-black hover:bg-krunch-red/10 transition-all"
                   >
-                    <span className="text-3xl">ðŸ’µ</span>
+                    <span className="text-3xl"></span>
                     <span className="text-white font-heading font-bold text-sm uppercase">Cash</span>
                     <span className="text-krunch-gray font-body text-xs">Received cash</span>
                   </button>
@@ -700,7 +700,7 @@ const AdminOrders = () => {
                     onClick={() => handleDeliveryConfirm('easypaisa')}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-green-700/40 hover:border-green-500 bg-krunch-black hover:bg-green-900/20 transition-all"
                   >
-                    <span className="text-3xl">ðŸ“±</span>
+                    <span className="text-3xl"></span>
                     <span className="text-white font-heading font-bold text-sm uppercase">Easypaisa</span>
                     <span className="text-krunch-gray font-body text-xs">Transfer received</span>
                   </button>
