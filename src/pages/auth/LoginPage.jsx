@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Chrome } from 'lucide-react';
@@ -164,7 +164,7 @@ const LoginPage = () => {
           ) : (
             <>
               <h2 className="font-heading font-black text-2xl text-white uppercase mb-1">Reset Password</h2>
-              <p className="text-krunch-gray font-body text-sm mb-6">Enter your email — we'll send a reset link</p>
+              <p className="text-krunch-gray font-body text-sm mb-6">Enter your email - we'll send a reset link</p>
               <form onSubmit={handleReset} className="flex flex-col gap-4">
                 <div className="relative">
                   <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-krunch-gray" />

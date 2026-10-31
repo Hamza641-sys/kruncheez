@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
@@ -88,7 +88,7 @@ const AppLayout = () => {
         <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/custom-deal" element={<PublicLayout><CustomDealPage /></PublicLayout>} />
 
-        {/* Checkout — needs login */}
+        {/* Checkout - needs login */}
         <Route path="/checkout" element={
           <ProtectedRoute>
             <PublicLayout><CheckoutPage /></PublicLayout>

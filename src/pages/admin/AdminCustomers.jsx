@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Eye, Star, ShoppingBag, TrendingUp, X } from 'lucide-react';
 import { collection, getDocs, updateDoc, doc } from 'firebase/firestore';
@@ -101,11 +101,11 @@ const AdminCustomers = () => {
                       <div className="w-8 h-8 rounded-full bg-krunch-red flex items-center justify-center text-white font-heading font-black text-sm flex-shrink-0">
                         {c.name?.[0]?.toUpperCase() || '?'}
                       </div>
-                      <span className="text-white font-body font-semibold text-sm">{c.name || '—'}</span>
+                      <span className="text-white font-body font-semibold text-sm">{c.name || '-'}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-krunch-gray font-body text-sm">{c.email || '—'}</td>
-                  <td className="px-4 py-3 text-krunch-gray font-body text-sm">{c.phone || '—'}</td>
+                  <td className="px-4 py-3 text-krunch-gray font-body text-sm">{c.email || '-'}</td>
+                  <td className="px-4 py-3 text-krunch-gray font-body text-sm">{c.phone || '-'}</td>
                   <td className="px-4 py-3 text-white font-body font-bold text-sm">{c.totalOrders || 0}</td>
                   <td className="px-4 py-3 text-krunch-red font-heading font-black text-sm">Rs.{(c.totalSpent || 0).toLocaleString()}</td>
                   <td className="px-4 py-3">

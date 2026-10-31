@@ -77,7 +77,7 @@ const AdminCards = () => {
     await printCards([card]);
   };
 
-  // ── PRINT MULTIPLE CARDS (Original Design — front + back) ─────────────────
+  // ── PRINT MULTIPLE CARDS (Original Design - front + back) ─────────────────
   const printCards = async (cardList) => {
     const pizzaUrl = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=90&auto=format&fit=crop';
     const followUrl = 'https://kruncheez-pos.web.app/follow';
@@ -157,7 +157,7 @@ const AdminCards = () => {
 
     const pairs = cardList.map(card => `
       <div class="page-pair">
-        <div class="lbl">Front Side — ${card.cardId}</div>
+        <div class="lbl">Front Side - ${card.cardId}</div>
         <div class="card front">
           <div class="dots"></div>
           <div class="yc1"></div>
@@ -184,7 +184,7 @@ const AdminCards = () => {
           </div>
         </div>
 
-        <div class="lbl">Back Side — ${card.cardId}</div>
+        <div class="lbl">Back Side - ${card.cardId}</div>
         <div class="card back">
           <div class="dots"></div>
           <div class="back-grid"></div>
@@ -245,7 +245,7 @@ const AdminCards = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Loyalty Cards</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards — 10% off on Custom Deal</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards - 10% off on Custom Deal</p>
         </div>
         <div className="flex items-center gap-3">
           {/* Generate Cards */}
@@ -328,8 +328,8 @@ const AdminCards = () => {
                     <span className="font-heading font-black text-krunch-red text-sm tracking-widest">{card.cardId}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="text-white font-body font-semibold text-sm">{card.userName || '—'}</p>
-                    <p className="text-krunch-gray font-body text-xs">{card.phone || '—'}</p>
+                    <p className="text-white font-body font-semibold text-sm">{card.userName || '-'}</p>
+                    <p className="text-krunch-gray font-body text-xs">{card.phone || '-'}</p>
                   </td>
                   <td className="px-4 py-3">
                     <button onClick={() => handleToggle(card)}

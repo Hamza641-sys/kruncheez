@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Plus, Minus, Trash2, Zap, Tag, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -111,7 +111,7 @@ const CustomDealPage = () => {
               MY CUSTOM <span className="text-krunch-red">DEAL</span>
             </h1>
             <p className="text-krunch-gray font-body text-base max-w-xl mx-auto">
-              Choose any items you want — add 2 or more and get <span className="text-krunch-red font-bold">10% OFF</span> automatically!
+              Choose any items you want - add 2 or more and get <span className="text-krunch-red font-bold">10% OFF</span> automatically!
             </p>
           </motion.div>
         </div>
@@ -425,7 +425,7 @@ const CustomDealPage = () => {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-krunch-red mt-0.5">•</span>
-                    Discount auto-applies — no code needed
+                    Discount auto-applies - no code needed
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-krunch-red mt-0.5">•</span>

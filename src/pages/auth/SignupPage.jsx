@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, User, Phone, ArrowRight } from 'lucide-react';
@@ -73,7 +73,7 @@ const SignupPage = () => {
 
         <div className="card-dark p-8">
           <h2 className="font-heading font-black text-2xl text-white uppercase mb-1">Create Account</h2>
-          <p className="text-krunch-gray font-body text-sm mb-6">Join KrunchEez — Order faster, earn points!</p>
+          <p className="text-krunch-gray font-body text-sm mb-6">Join KrunchEez - Order faster, earn points!</p>
 
           {/* Google Signup */}
           <button onClick={handleGoogle} disabled={googleLoading}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   collection, getDocs, addDoc, updateDoc,
@@ -77,7 +77,7 @@ const AdminSuppliers = () => {
         totalPaid: increment(amt)
       });
 
-      // NOTE: Do NOT add to expenses — supplier payments tracked separately
+      // NOTE: Do NOT add to expenses - supplier payments tracked separately
 
       toast.success('Payment recorded!', toastStyle);
       setShowPay(false);
@@ -238,14 +238,14 @@ const AdminSuppliers = () => {
                   <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No payment records found</td></tr>
                 ) : payments.map(p => (
                   <tr key={p.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
-                    <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{p.date || '—'}</td>
+                    <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{p.date || '-'}</td>
                     <td className="px-4 py-3 text-white font-body font-semibold text-sm">{p.supplierName}</td>
-                    <td className="px-4 py-3 text-krunch-gray font-body text-xs max-w-xs truncate">{p.items || '—'}</td>
+                    <td className="px-4 py-3 text-krunch-gray font-body text-xs max-w-xs truncate">{p.items || '-'}</td>
                     <td className="px-4 py-3 text-krunch-red font-heading font-black text-base whitespace-nowrap">
                       Rs.{Number(p.amount||0).toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs capitalize">{p.paymentMethod}</td>
-                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{p.notes || '—'}</td>
+                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{p.notes || '-'}</td>
                   </tr>
                 ))}
               </tbody>

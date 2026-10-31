@@ -1,11 +1,11 @@
-// WhatsApp notification via wa.me link (no API key needed)
+﻿// WhatsApp notification via wa.me link (no API key needed)
 // Admin gets notified via WhatsApp when new order placed
 
 const ADMIN_PHONE = '923177787648'; // +92 format, no spaces/dashes
 
 export const sendWhatsAppOrderNotification = (order, orderId) => {
   const items = order.items?.map(i => `• ${i.name} x${i.quantity} = Rs.${i.price * i.quantity}`).join('\n') || '';
-  const message = `🔔 *NEW ORDER — The KrunchEez*\n\n` +
+  const message = `🔔 *NEW ORDER - The KrunchEez*\n\n` +
     `Order ID: #${orderId.slice(0,8).toUpperCase()}\n` +
     `Customer: ${order.customer?.name}\n` +
     `Phone: ${order.customer?.phone}\n` +
@@ -19,7 +19,7 @@ export const sendWhatsAppOrderNotification = (order, orderId) => {
   const encoded = encodeURIComponent(message);
   const url = `https://wa.me/${ADMIN_PHONE}?text=${encoded}`;
 
-  // Open WhatsApp in new tab — admin will see the message
+  // Open WhatsApp in new tab - admin will see the message
   window.open(url, '_blank');
 };
 

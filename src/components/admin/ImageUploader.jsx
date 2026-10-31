@@ -1,7 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Image, X } from 'lucide-react';
 
-// Simple image URL input component (Cloudinary removed — using direct URL links)
+// Simple image URL input component (Cloudinary removed - using direct URL links)
 const ImageUploader = ({ currentImage = null, onUploaded, label = 'Image URL' }) => {
   const [url, setUrl] = useState(currentImage || '');
 

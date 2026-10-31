@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { MapPin, Phone, Clock, Navigation, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const locations = [
   {
     id: 1,
-    name: 'Boatclub Road — Main Branch',
+    name: 'Boatclub Road - Main Branch',
     address: 'New Officers Housing Society, Boatclub Road, Rawalpindi',
     phone: ['0317-7787648', '0308-4509090', '0335-6609178'],
     hours: '11:00 AM – 2:00 AM',
@@ -63,7 +63,7 @@ const LocationsPage = () => {
               OUR <span className="text-krunch-red">LOCATIONS</span>
             </h1>
             <p className="text-krunch-gray font-body text-base max-w-md mx-auto">
-              3 convenient locations across Rawalpindi — always close to your craving.
+              3 convenient locations across Rawalpindi - always close to your craving.
             </p>
           </motion.div>
         </div>
@@ -153,7 +153,7 @@ const LocationsPage = () => {
           <div className="p-5 border-b border-krunch-border flex items-center justify-between">
             <div className="flex items-center gap-3">
               <MapPin size={18} className="text-krunch-red" />
-              <h3 className="font-heading font-bold text-lg text-white uppercase">Main Branch — Boatclub Road</h3>
+              <h3 className="font-heading font-bold text-lg text-white uppercase">Main Branch - Boatclub Road</h3>
             </div>
             <a
               href="https://maps.google.com/?q=New+Officers+Housing+Society+Boatclub+Road+Rawalpindi"

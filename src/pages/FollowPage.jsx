@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { doc, getDoc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// Social links — admin can update from Firebase
+// Social links - admin can update from Firebase
 const DEFAULT_LINKS = {
   instagram: 'https://www.instagram.com/thekruncheez.peshawer/',
   tiktok:    'https://www.tiktok.com/@thekruncheez',   // update when available
@@ -26,7 +26,7 @@ const FollowPage = () => {
           const data = snap.data();
           setLinks({ ...DEFAULT_LINKS, ...data.links });
           setScans(data.scanCount || 0);
-          // Atomic increment — no race condition
+          // Atomic increment - no race condition
           await updateDoc(ref, { scanCount: increment(1) });
         } else {
           // Create doc if doesn't exist

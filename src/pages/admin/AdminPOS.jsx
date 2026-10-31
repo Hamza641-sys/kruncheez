@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, getDocs, addDoc, query, where, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -103,7 +103,7 @@ const AdminPOS = () => {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="font-heading font-black text-2xl text-white uppercase">POS — Point of Sale</h2>
+        <h2 className="font-heading font-black text-2xl text-white uppercase">POS - Point of Sale</h2>
         <p className="text-krunch-gray font-body text-sm mt-1">Walk-in & table orders with instant billing</p>
       </div>
 

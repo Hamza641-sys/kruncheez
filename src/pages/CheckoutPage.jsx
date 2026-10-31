@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -87,7 +87,7 @@ const CheckoutPage = () => {
 
   const removePromo = () => { setPromoResult(null); setPromoCode(''); };
 
-  // Apply loyalty card — Simple: card ID valid ho + Custom Deal ho = 10% off
+  // Apply loyalty card - Simple: card ID valid ho + Custom Deal ho = 10% off
   const handleCard = async () => {
     if (!cardNumber.trim()) { toast.error('Enter your card number', toastStyle); return; }
     setCardLoading(true);
@@ -161,7 +161,7 @@ const CheckoutPage = () => {
         await usePromoCode(promoResult.promo.id);
       }
 
-      // Process loyalty card — just record card used, no visit tracking
+      // Process loyalty card - just record card used, no visit tracking
       if (cardResult?.id && cardDiscount > 0) {
         try { await addVisitAndPoints(cardResult.id, finalTotal); } catch {}
       }
@@ -444,7 +444,7 @@ const CheckoutPage = () => {
                         <span className="text-xl">📱</span>
                         <div className="text-left">
                           <div className="font-bold">0312-5060186</div>
-                          <div className="text-xs text-green-200 font-body font-normal">The KrunchEez — Tap to open Easypaisa</div>
+                          <div className="text-xs text-green-200 font-body font-normal">The KrunchEez - Tap to open Easypaisa</div>
                         </div>
                       </div>
                       <span className="text-green-200 text-xs">→</span>

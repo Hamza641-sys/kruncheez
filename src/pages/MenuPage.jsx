@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, SlidersHorizontal, X, QrCode } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -56,7 +56,7 @@ const MenuPage = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
             <QrCode size={18} />
             <span className="font-heading font-bold text-sm uppercase tracking-widest">
-              📍 You are at Table {tableNumber} — Order directly from your seat!
+              📍 You are at Table {tableNumber} - Order directly from your seat!
             </span>
           </div>
         </motion.div>

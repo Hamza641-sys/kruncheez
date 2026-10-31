@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, ShoppingBag, CheckCheck, Clock } from 'lucide-react';
 import { getAllOrders } from '../../firebase/orderService';
@@ -194,7 +194,7 @@ const NotificationPanel = () => {
                           </span>
                         </div>
                         <p className={`text-xs font-body truncate mb-1 ${isUnread ? 'text-krunch-light' : 'text-krunch-gray'}`}>
-                          {order.customer?.name || 'Customer'} — Rs.{order.summary?.total?.toLocaleString()}
+                          {order.customer?.name || 'Customer'} - Rs.{order.summary?.total?.toLocaleString()}
                         </p>
                         <div className="flex items-center justify-between">
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${sc}`}>

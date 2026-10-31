@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import QRCode from 'qrcode';
@@ -78,7 +78,7 @@ const MyCardPage = () => {
     ctx.fillText('THE KRUNCHEEZ', 30, 52);
     ctx.font = '13px Arial';
     ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillText('LOYALTY CARD — FAST FOOD • CHINESE • BBQ', 30, 72);
+    ctx.fillText('LOYALTY CARD - FAST FOOD • CHINESE • BBQ', 30, 72);
 
     // Card number
     ctx.fillStyle = '#E31E24';
@@ -154,7 +154,7 @@ const MyCardPage = () => {
     if (navigator.share) {
       navigator.share({
         title: 'My KrunchEez Loyalty Card',
-        text: `My KrunchEez Loyalty Card: ${card?.cardId} — ${card?.visits}/${VISITS_FOR_DISCOUNT} visits to 10% discount!`,
+        text: `My KrunchEez Loyalty Card: ${card?.cardId} - ${card?.visits}/${VISITS_FOR_DISCOUNT} visits to 10% discount!`,
         url: 'https://kruncheez-pos.web.app',
       });
     } else {
@@ -187,7 +187,7 @@ const MyCardPage = () => {
           <p className="text-krunch-gray font-body text-sm mb-2">Get your free KrunchEez Loyalty Card and start earning rewards!</p>
           <div className="bg-krunch-black border border-krunch-border rounded-xl p-4 mb-6 text-left">
             {[
-              '🎁 Get 1 card for free — instantly',
+              '🎁 Get 1 card for free - instantly',
               '🏠 Earn visits with every dine-in order',
               '💰 10 visits = 10% discount on your bill',
               '⭐ Earn points with every order',
@@ -234,7 +234,7 @@ const MyCardPage = () => {
           <div className="bg-krunch-red px-6 py-4 flex items-center justify-between">
             <div>
               <p className="font-heading font-black text-white text-xl tracking-widest">🐂 THE KRUNCHEEZ</p>
-              <p className="text-red-200 text-[10px] tracking-widest uppercase">Loyalty Card — Fast Food • Chinese • BBQ</p>
+              <p className="text-red-200 text-[10px] tracking-widest uppercase">Loyalty Card - Fast Food • Chinese • BBQ</p>
             </div>
             <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-xl">
               <p className="text-white font-heading font-black text-sm">{tier.badge} {card.tier}</p>

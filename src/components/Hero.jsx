@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
@@ -12,7 +12,7 @@ const DEFAULT_SLIDES = [
     headline1: 'LOADED.',
     headline2: 'CHEESY.',
     headline3: 'AMAZING.',
-    sub: 'From 5" to XL — Chicken Tikka BBQ, Fajita, Supreme, Hot & Spicy, KrunchEez Special & more. Made fresh every time.',
+    sub: 'From 5" to XL - Chicken Tikka BBQ, Fajita, Supreme, Hot & Spicy, KrunchEez Special & more. Made fresh every time.',
     tag1: 'Cheesy',
     tag2: 'Fresh',
     tag3: 'Loaded',
@@ -24,7 +24,7 @@ const DEFAULT_SLIDES = [
     headline1: 'SMOKY.',
     headline2: 'TENDER.',
     headline3: 'PERFECT.',
-    sub: 'Authentic BBQ platters for 1 to 8 people — Angara, Tikka, Kabab, Malai Boti & more. All on one table.',
+    sub: 'Authentic BBQ platters for 1 to 8 people - Angara, Tikka, Kabab, Malai Boti & more. All on one table.',
     tag1: 'Smoky',
     tag2: 'Grilled',
     tag3: 'Fresh',
@@ -48,7 +48,7 @@ const DEFAULT_SLIDES = [
     headline1: 'WOK.',
     headline2: 'FIRED.',
     headline3: 'FLAVOR.',
-    sub: 'Chicken Chowmein, Special Chowmein, Fried Rice & more — wok-fired Chinese classics made fresh to order.',
+    sub: 'Chicken Chowmein, Special Chowmein, Fried Rice & more - wok-fired Chinese classics made fresh to order.',
     tag1: 'Wok Fired',
     tag2: 'Fresh',
     tag3: 'Spicy',
@@ -120,7 +120,7 @@ const Hero = () => {
           transition={{ duration: 1.2, ease: 'easeOut' }}
           className="absolute inset-0 z-0"
         >
-          {/* The food image — full screen */}
+          {/* The food image - full screen */}
           <img
             src={slide.bgImg}
             alt=""
@@ -128,7 +128,7 @@ const Hero = () => {
             loading="eager"
           />
 
-          {/* Dark overlay — left heavy so text is readable */}
+          {/* Dark overlay - left heavy so text is readable */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/40" />
 
           {/* Extra dark top & bottom fade */}
@@ -139,7 +139,7 @@ const Hero = () => {
         </motion.div>
       </AnimatePresence>
 
-      {/* Red glow — top left corner */}
+      {/* Red glow - top left corner */}
       <div className="absolute -top-32 -left-32 w-[500px] h-[500px] bg-krunch-red/10 rounded-full blur-[120px] pointer-events-none z-[1]" />
 
       {/* Grid texture */}
@@ -153,7 +153,7 @@ const Hero = () => {
       />
 
       {/* ══════════════════════════════════════════
-          MAIN CONTENT — left aligned text
+          MAIN CONTENT - left aligned text
       ══════════════════════════════════════════ */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 min-h-screen flex flex-col justify-center pt-28 pb-24">
         <div className="max-w-2xl">

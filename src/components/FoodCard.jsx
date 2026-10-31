@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { ShoppingCart, Plus } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import toast from 'react-hot-toast';
@@ -17,7 +17,7 @@ const badgeColors = {
   'FAMILY FEAST': 'bg-blue-600',
 };
 
-// Real food images per category — all chicken-based / accurate
+// Real food images per category - all chicken-based / accurate
 const categoryImages = {
   // Crispy chicken zinger burger (NOT beef)
   burgers: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&q=80&auto=format&fit=crop',
@@ -86,7 +86,7 @@ const FoodCard = ({ item, compact = false }) => {
         </div>
       )}
 
-      {/* Image area — real food photo */}
+      {/* Image area - real food photo */}
       <div className={`relative overflow-hidden bg-krunch-black ${compact ? 'h-32' : 'h-44'}`}>
         {img ? (
           <img

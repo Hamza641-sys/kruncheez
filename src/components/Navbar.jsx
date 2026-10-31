@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -114,7 +114,7 @@ const Navbar = () => {
 
           {/* ── AUTH SECTION ── */}
           {user ? (
-            /* Logged in — show user dropdown */
+            /* Logged in - show user dropdown */
             <div className="relative hidden md:block" ref={dropRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -187,7 +187,7 @@ const Navbar = () => {
                         My Profile
                       </Link>
 
-                      {/* Admin link — only for admins */}
+                      {/* Admin link - only for admins */}
                       {isAdmin && (
                         <>
                           <div className="h-px bg-krunch-border mx-4 my-1" />
@@ -211,7 +211,7 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
           ) : (
-            /* Not logged in — show Login + Signup */
+            /* Not logged in - show Login + Signup */
             <div className="hidden md:flex items-center gap-2">
               <Link to="/login"
                 className="flex items-center gap-1.5 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full transition-all duration-200">
@@ -225,7 +225,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Order Now — desktop */}
+          {/* Order Now - desktop */}
           <Link to="/menu"
             className="hidden lg:flex btn-primary btn-shine text-xs py-2.5 px-4">
             Order Now

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import QRCode from 'qrcode';
 import { Plus, Printer, Download, Trash2, QrCode, Eye, X, CheckCircle } from 'lucide-react';
@@ -264,7 +264,7 @@ const AdminQR = () => {
         <div className="flex items-center gap-3">
           <span className="text-2xl">🪑</span>
           <div>
-            <p className="text-white font-body font-semibold text-sm">7 Tables — Fixed Layout</p>
+            <p className="text-white font-body font-semibold text-sm">7 Tables - Fixed Layout</p>
             <p className="text-krunch-gray font-body text-xs mt-0.5">
               <span className="text-amber-400 font-semibold">Family Hall:</span> Table 1, 2, 3 &nbsp;|&nbsp;
               <span className="text-blue-400 font-semibold">Outside:</span> Table 4, 5, 6, 7

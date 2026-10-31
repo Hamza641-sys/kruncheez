@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Instagram, Facebook } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -32,7 +32,7 @@ const ContactPage = () => {
         read:      false,
       });
       // Open WhatsApp to notify admin
-      const msg = `📩 *New Contact Message — KrunchEez*\n\n` +
+      const msg = `📩 *New Contact Message - KrunchEez*\n\n` +
         `Name: ${form.name}\nPhone: ${form.phone}\nSubject: ${form.subject}\n\nMessage:\n${form.message}`;
       window.open(`https://wa.me/923177787648?text=${encodeURIComponent(msg)}`, '_blank');
       setSubmitted(true);

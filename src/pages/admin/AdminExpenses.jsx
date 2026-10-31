@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, getDocs, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -246,12 +246,12 @@ const AdminExpenses = () => {
                 </td></tr>
               ) : manualExpenses.length === 0 ? (
                 <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">
-                  No expenses recorded — click "Add Expense" to get started
+                  No expenses recorded - click "Add Expense" to get started
                 </td></tr>
               ) : manualExpenses.map(exp => (
                 <tr key={exp.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
                   <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">
-                    {exp.date || exp.createdAt?.toDate?.()?.toLocaleDateString('en-PK') || '—'}
+                    {exp.date || exp.createdAt?.toDate?.()?.toLocaleDateString('en-PK') || '-'}
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-xs bg-krunch-black border border-krunch-border text-krunch-gray px-2 py-0.5 rounded font-body">
@@ -291,7 +291,7 @@ const AdminExpenses = () => {
               </div>
               <div className="p-6 flex flex-col gap-4">
 
-                {/* Category select — with icons */}
+                {/* Category select - with icons */}
                 <div>
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2 block">Expense Category</label>
                   <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">

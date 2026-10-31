@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, ShoppingBag, Users, Star } from 'lucide-react';
 import { getAllOrders } from '../../firebase/orderService';
@@ -77,10 +77,10 @@ const AdminAnalytics = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Revenue Chart — Last 7 Days */}
+        {/* Revenue Chart - Last 7 Days */}
         <div className="card-dark p-6">
           <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-5">
-            Revenue — Last 7 Days
+            Revenue - Last 7 Days
           </h3>
           <div className="flex items-end gap-2 h-40">
             {last7.map((d, i) => (

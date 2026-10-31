@@ -1,4 +1,4 @@
-// ── Groq AI Service ─────────────────────────────────────────────────────────
+﻿// ── Groq AI Service ─────────────────────────────────────────────────────────
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'qwen/qwen3.8-27b'; // Working model
@@ -10,7 +10,7 @@ export const getRestaurantContext = (menuItems = [], orders = [], expenses = [],
     : 'Burgers, BBQ, Pizza, Chinese, Wraps, Pasta, Starters, Fried Chicken, Soup, Platters';
 
   return `
-You are KrunchBot — the official AI assistant for "The KrunchEez" restaurant in Peshawar, Pakistan.
+You are KrunchBot - the official AI assistant for "The KrunchEez" restaurant in Peshawar, Pakistan.
 
 RESTAURANT INFO:
 - Name: The KrunchEez
@@ -35,7 +35,7 @@ RULES:
 - Answer in the same language the customer uses (Urdu/Roman Urdu/English)
 - Be friendly, helpful and concise
 - If you don't know something specific, say "Please contact us directly"
-- Never make up prices — use menu data provided
+- Never make up prices - use menu data provided
 - Always encourage ordering!
 - Keep responses short (2-3 sentences max for simple questions)
 `;
@@ -53,7 +53,7 @@ export const getAdminContext = (data = {}) => {
   const totalSalaries = salaries.reduce((s, s2) => s + (s2.paid || 0), 0);
 
   return `
-You are KrunchAdmin AI — the intelligent business assistant for The KrunchEez restaurant admin panel.
+You are KrunchAdmin AI - the intelligent business assistant for The KrunchEez restaurant admin panel.
 
 CURRENT BUSINESS DATA:
 - Today's Orders: ${todayOrders.length} orders
@@ -167,11 +167,11 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
     });
   }
 
-  // Rule 4: Single item — suggest custom deal
+  // Rule 4: Single item - suggest custom deal
   if (cartItems.length === 1) {
     suggestions.push({
       type: 'deal',
-      message: '✨ Add one more item — unlock 10% OFF with Custom Deal!',
+      message: '✨ Add one more item - unlock 10% OFF with Custom Deal!',
       icon: '✨',
     });
   }

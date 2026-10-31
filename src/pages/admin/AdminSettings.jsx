@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Save, Phone, Clock, MapPin, Bell, Shield,
@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS = {
   ],
 };
 
-// ── UI Helpers — OUTSIDE component to prevent re-render focus loss ──
+// ── UI Helpers - OUTSIDE component to prevent re-render focus loss ──
 const Section = ({ icon, title, children }) => (
   <div className="card-dark p-6 mb-5">
     <div className="flex items-center gap-2 mb-5 pb-3 border-b border-krunch-border">
@@ -217,7 +217,7 @@ const AdminSettings = () => {  const { userData } = useAuth();
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Settings</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">Restaurant configuration — changes are saved to Firestore</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">Restaurant configuration - changes are saved to Firestore</p>
         </div>
         <button
           onClick={handleSave}
@@ -282,14 +282,14 @@ const AdminSettings = () => {  const { userData } = useAuth();
         {/* ── Hero Slides ── */}
         <Section icon={<Image size={18} />} title="Hero Slideshow Images">
           <p className="text-krunch-gray font-body text-xs mb-4">
-            Change the background images of the 4 homepage hero slides. Paste any image URL — website updates instantly after saving.
+            Change the background images of the 4 homepage hero slides. Paste any image URL - website updates instantly after saving.
           </p>
           <div className="flex flex-col gap-5">
             {[
-              { index: 0, label: 'Slide 1 — Pizza Zone' },
-              { index: 1, label: 'Slide 2 — BBQ Platters' },
-              { index: 2, label: 'Slide 3 — Burgers' },
-              { index: 3, label: 'Slide 4 — Chinese' },
+              { index: 0, label: 'Slide 1 - Pizza Zone' },
+              { index: 1, label: 'Slide 2 - BBQ Platters' },
+              { index: 2, label: 'Slide 3 - Burgers' },
+              { index: 3, label: 'Slide 4 - Chinese' },
             ].map(({ index, label }) => (
               <div key={index}>
                 <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
@@ -418,7 +418,7 @@ const AdminSettings = () => {  const { userData } = useAuth();
           </form>
         </Section>
 
-        {/* ── Change Email — Admin only ── */}
+        {/* ── Change Email - Admin only ── */}
         {userData?.role === 'admin' && (
         <Section icon={<Mail size={18} />} title="Change Email">
           <div className="bg-amber-400/10 border border-amber-400/20 rounded-xl px-4 py-3 mb-4">

@@ -1,4 +1,4 @@
-import {
+﻿import {
   collection, addDoc, getDoc, getDocs, doc,
   updateDoc, query, where, serverTimestamp, increment
 } from 'firebase/firestore';
@@ -80,7 +80,7 @@ export const addVisitAndPoints = async (cardDocId, orderTotal) => {
   return { newVisits, pointsEarned, tier };
 };
 
-// Apply 10% discount (after 10 visits) — reset visit counter
+// Apply 10% discount (after 10 visits) - reset visit counter
 export const applyCardDiscount = async (cardDocId, orderTotal) => {
   const cardRef = doc(db, 'loyaltyCards', cardDocId);
   const cardSnap = await getDoc(cardRef);

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Award, Flame, Heart, Star, Users, Clock, ArrowRight } from 'lucide-react';
 
@@ -51,10 +51,10 @@ const AboutPage = () => {
                 <span className="text-krunch-red">REAL PASSION.</span>
               </h1>
               <p className="text-krunch-gray font-body text-base leading-relaxed mb-4">
-                The KrunchEez was born from a simple obsession — making food that doesn't just fill your stomach, but blows your mind. We combined the finest fast food, authentic Chinese, and bold BBQ under one roof to create something truly one-of-a-kind.
+                The KrunchEez was born from a simple obsession - making food that doesn't just fill your stomach, but blows your mind. We combined the finest fast food, authentic Chinese, and bold BBQ under one roof to create something truly one-of-a-kind.
               </p>
               <p className="text-krunch-gray font-body text-base leading-relaxed mb-6">
-                Based in Rawalpindi, we've quickly become the go-to destination for food lovers who refuse to settle for ordinary. Every item on our menu is a statement — fresh ingredients, bold flavors, and unmatched quality.
+                Based in Rawalpindi, we've quickly become the go-to destination for food lovers who refuse to settle for ordinary. Every item on our menu is a statement - fresh ingredients, bold flavors, and unmatched quality.
               </p>
               <Link to="/menu" className="btn-primary inline-flex items-center gap-2">
                 Explore Menu <ArrowRight size={18} />
@@ -202,7 +202,7 @@ const AboutPage = () => {
             TASTE THE <span className="text-krunch-red">DIFFERENCE</span>
           </h2>
           <p className="text-krunch-gray font-body text-base mb-8 max-w-md mx-auto">
-            Come visit us or order online — experience the flavor that has everyone talking.
+            Come visit us or order online - experience the flavor that has everyone talking.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/menu" className="btn-primary flex items-center gap-2">

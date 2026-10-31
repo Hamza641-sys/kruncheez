@@ -1,4 +1,4 @@
-export const menuCategories = [
+﻿export const menuCategories = [
   { id: 'burgers', name: 'Burgers', icon: '🍔', description: 'Juicy, crispy, loaded with flavor' },
   { id: 'bbq', name: 'BBQ', icon: '🔥', description: 'Smoky, tender, char-grilled perfection' },
   { id: 'wraps', name: 'Wraps & Rolls', icon: '🌯', description: 'Fresh wraps packed with flavor' },
@@ -79,7 +79,7 @@ export const menuItems = {
       img: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=400&q=80&auto=format&fit=crop' },
   ],
   pizza: [
-    // Regular Pizzas — each unique
+    // Regular Pizzas - each unique
     { id: 'p1', name: 'Chicken Tikka BBQ', price: 599, badge: 'POPULAR', description: 'Smoky chicken tikka with BBQ sauce', sizes: { '5"': 599, '10"': 1099, '13"': 1399, 'XL': 1799 }, category: 'pizza',
       img: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&q=80&auto=format&fit=crop' },
     { id: 'p2', name: 'Chicken Fajita', price: 599, badge: '', description: 'Mexican-style chicken fajita pizza', sizes: { '5"': 599, '10"': 1099, '13"': 1399, 'XL': 1799 }, category: 'pizza',

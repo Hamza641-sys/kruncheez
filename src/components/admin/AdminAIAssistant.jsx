@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, Loader, Sparkles, X, ChevronDown, TrendingUp, Users, DollarSign, ShoppingBag } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
@@ -52,7 +52,7 @@ const AdminAIAssistant = () => {
     loadBizData();
     setMessages([{
       role: 'assistant',
-      content: `Hello! 👋 I'm **KrunchAdmin AI** — your intelligent business assistant!\n\nAsk me anything about your business:\n• Sales reports\n• Profit analysis\n• Staff status\n• Supplier payments\n• Business suggestions\n\nWhat would you like to know? 📊`,
+      content: `Hello! 👋 I'm **KrunchAdmin AI** - your intelligent business assistant!\n\nAsk me anything about your business:\n• Sales reports\n• Profit analysis\n• Staff status\n• Supplier payments\n• Business suggestions\n\nWhat would you like to know? 📊`,
       time: new Date(),
     }]);
   }, []);
@@ -129,7 +129,7 @@ const AdminAIAssistant = () => {
           <div className="text-left">
             <p className="font-heading font-black text-sm uppercase tracking-wide">KrunchAdmin AI</p>
             <p className={`font-body text-xs ${open ? 'text-red-200' : 'text-krunch-gray'}`}>
-              {dataLoading ? 'Loading business data...' : `Business data ready — ${(bizData.orders||[]).length} orders, ${(bizData.staff||[]).length} staff`}
+              {dataLoading ? 'Loading business data...' : `Business data ready - ${(bizData.orders||[]).length} orders, ${(bizData.staff||[]).length} staff`}
             </p>
           </div>
         </div>
@@ -233,7 +233,7 @@ const AdminAIAssistant = () => {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && sendMessage()}
-                    placeholder="Ask anything — sales, profit, staff..."
+                    placeholder="Ask anything - sales, profit, staff..."
                     disabled={loading}
                     className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors disabled:opacity-50"
                   />

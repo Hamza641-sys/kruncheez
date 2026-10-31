@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   collection, getDocs, addDoc, updateDoc,
@@ -122,7 +122,7 @@ const AdminStaff = () => {
         createdAt:    serverTimestamp(),
       });
 
-      // NOTE: Salary is tracked in salaryRecords — NOT in expenses
+      // NOTE: Salary is tracked in salaryRecords - NOT in expenses
       // Reports will load salaryRecords separately
 
       toast.success('Salary recorded!', toastStyle);
@@ -369,7 +369,7 @@ const AdminStaff = () => {
                         <div>
                           <h4 className="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Reports / Issues</h4>
                           {sReports.length === 0 ? (
-                            <p className="text-krunch-gray font-body text-xs">No reports — all good! ✅</p>
+                            <p className="text-krunch-gray font-body text-xs">No reports - all good! ✅</p>
                           ) : (
                             <div className="flex flex-col gap-2">
                               {sReports.slice(0,5).map(r => (
@@ -426,7 +426,7 @@ const AdminStaff = () => {
                           <span className="text-red-400 font-body font-bold text-xs">-Rs.{s.fine.toLocaleString()}</span>
                           {s.fineReason && <p className="text-krunch-gray text-[10px]">{s.fineReason}</p>}
                         </div>
-                      ) : <span className="text-krunch-gray text-xs">—</span>}
+                      ) : <span className="text-krunch-gray text-xs">-</span>}
                     </td>
                     <td className="px-4 py-3">
                       {s.bonus > 0 ? (
@@ -434,7 +434,7 @@ const AdminStaff = () => {
                           <span className="text-amber-400 font-body font-bold text-xs">+Rs.{s.bonus.toLocaleString()}</span>
                           {s.bonusReason && <p className="text-krunch-gray text-[10px]">{s.bonusReason}</p>}
                         </div>
-                      ) : <span className="text-krunch-gray text-xs">—</span>}
+                      ) : <span className="text-krunch-gray text-xs">-</span>}
                     </td>
                     <td className="px-4 py-3 text-krunch-red font-heading font-black text-base">Rs.{(s.netSalary||0).toLocaleString()}</td>
                     <td className="px-4 py-3 text-green-400 font-body font-bold text-sm">Rs.{(s.paid||0).toLocaleString()}</td>
@@ -447,7 +447,7 @@ const AdminStaff = () => {
                         <span className="text-green-400 font-body text-xs">✅ Cleared</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{s.notes || '—'}</td>
+                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{s.notes || '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -470,7 +470,7 @@ const AdminStaff = () => {
               </thead>
               <tbody>
                 {reports.length === 0 ? (
-                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No reports found — all good! ✅</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No reports found - all good! ✅</td></tr>
                 ) : reports.map(r => (
                   <tr key={r.id} className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
                     <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">{r.date}</td>
@@ -484,7 +484,7 @@ const AdminStaff = () => {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-krunch-gray font-body text-sm max-w-xs">{r.description}</td>
-                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{r.action || '—'}</td>
+                    <td className="px-4 py-3 text-krunch-gray font-body text-xs">{r.action || '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -509,13 +509,13 @@ const AdminStaff = () => {
               <div className="p-6 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
 
-                  {/* Photo — top pe taake pehle dikhay */}
+                  {/* Photo - top pe taake pehle dikhay */}
                   <div className="col-span-2">
                     <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
                       Staff Photo URL <span className="text-krunch-red text-[10px] normal-case">(ID Card pe lagegi)</span>
                     </label>
                     <input type="text" value={staffForm.photo} onChange={e => setStaffForm({...staffForm,photo:e.target.value})}
-                      placeholder="https://i.ibb.co/... — ImgBB pe photo upload karo aur URL paste karo"
+                      placeholder="https://i.ibb.co/... - ImgBB pe photo upload karo aur URL paste karo"
                       className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"/>
                     {staffForm.photo ? (
                       <div className="mt-3 flex items-center gap-4 bg-krunch-black border border-green-700/30 rounded-xl p-3">
@@ -650,7 +650,7 @@ const AdminStaff = () => {
                     }}
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none">
                     <option value="">Select staff member</option>
-                    {staff.map(s => <option key={s.id} value={s.id}>{s.name} — {s.role} (Rs.{(s.salary||0).toLocaleString()})</option>)}
+                    {staff.map(s => <option key={s.id} value={s.id}>{s.name} - {s.role} (Rs.{(s.salary||0).toLocaleString()})</option>)}
                   </select>
                 </div>
 
@@ -778,7 +778,7 @@ const AdminStaff = () => {
                     }}
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none">
                     <option value="">Select staff member</option>
-                    {staff.map(s => <option key={s.id} value={s.id}>{s.name} — {s.role}</option>)}
+                    {staff.map(s => <option key={s.id} value={s.id}>{s.name} - {s.role}</option>)}
                   </select>
                 </div>
 

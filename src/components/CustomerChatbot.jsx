@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Bot, User, Loader, Minimize2 } from 'lucide-react';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
@@ -37,7 +37,7 @@ const CustomerChatbot = () => {
     // Welcome message
     setMessages([{
       role: 'assistant',
-      content: 'Hello! 👋 I\'m KrunchBot — The KrunchEez official AI assistant!\n\nHow can I help you today? Ask me anything about our menu, deals, delivery or anything else! 🍔',
+      content: 'Hello! 👋 I\'m KrunchBot - The KrunchEez official AI assistant!\n\nHow can I help you today? Ask me anything about our menu, deals, delivery or anything else! 🍔',
       time: new Date(),
     }]);
   }, []);
@@ -115,7 +115,7 @@ const CustomerChatbot = () => {
                   <h3 className="font-heading font-black text-white text-sm uppercase">KrunchBot</h3>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                    <span className="text-red-200 text-xs font-body">Online — Always here to help</span>
+                    <span className="text-red-200 text-xs font-body">Online - Always here to help</span>
                   </div>
                 </div>
                 <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white transition-colors">

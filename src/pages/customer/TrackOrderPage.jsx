@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Clock, ChefHat, Truck, Home, ArrowLeft } from 'lucide-react';
@@ -168,7 +168,7 @@ const TrackOrderPage = () => {
               </div>
             )}
 
-            {/* Easypaisa payment button — visible anytime if easypaisa selected */}
+            {/* Easypaisa payment button - visible anytime if easypaisa selected */}
             {order.paymentMethod === 'easypaisa' && !['rejected'].includes(order.status) && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -179,7 +179,7 @@ const TrackOrderPage = () => {
                 <p className="text-krunch-gray font-body text-xs mb-3">
                   {order.status === 'out_for_delivery'
                     ? '🛵 Rider is on the way! Pay now before delivery:'
-                    : 'You can pay anytime — before or after delivery:'}
+                    : 'You can pay anytime - before or after delivery:'}
                 </p>
                 <a
                   href="tel:03125060186"
@@ -189,7 +189,7 @@ const TrackOrderPage = () => {
                     <span className="text-xl">📱</span>
                     <div className="text-left">
                       <div className="font-bold">0312-5060186</div>
-                      <div className="text-xs text-green-200 font-body font-normal">Tap to open Easypaisa — Rs. {order.summary?.total?.toLocaleString()}</div>
+                      <div className="text-xs text-green-200 font-body font-normal">Tap to open Easypaisa - Rs. {order.summary?.total?.toLocaleString()}</div>
                     </div>
                   </div>
                   <span className="text-green-200 text-sm">→</span>

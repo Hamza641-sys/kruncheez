@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+﻿import { useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Printer } from 'lucide-react';
 
@@ -246,7 +246,7 @@ const StaffIDCard = ({ staff, onClose }) => {
           <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
             <div>
               <h3 className="font-heading font-black text-white uppercase">Staff ID Card</h3>
-              <p className="text-krunch-gray font-body text-xs mt-0.5">{staff.name} — {staff.role}</p>
+              <p className="text-krunch-gray font-body text-xs mt-0.5">{staff.name} - {staff.role}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -263,7 +263,7 @@ const StaffIDCard = ({ staff, onClose }) => {
 
           {/* Card Preview */}
           <div className="p-6 bg-gray-900">
-            <p className="text-krunch-gray font-body text-xs text-center mb-4 uppercase tracking-widest">Preview — Front & Back</p>
+            <p className="text-krunch-gray font-body text-xs text-center mb-4 uppercase tracking-widest">Preview - Front & Back</p>
 
             <div ref={cardRef}>
               <div className="print-wrapper" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -352,7 +352,7 @@ const StaffIDCard = ({ staff, onClose }) => {
                     {/* Back Header */}
                     <div style={{ background: '#E31E24', padding: '6px 12px', textAlign: 'center' }}>
                       <p style={{ fontSize: '8px', color: 'white', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '2px' }}>
-                        THE KRUNCHEEZ — EMPLOYEE CARD
+                        THE KRUNCHEEZ - EMPLOYEE CARD
                       </p>
                     </div>
 
@@ -430,7 +430,7 @@ const StaffIDCard = ({ staff, onClose }) => {
                 <li className="flex items-start gap-2"><span className="text-krunch-red">•</span> Paper size: <strong className="text-white">CR80 (Credit Card Size)</strong> ya A4 pe print karo phir cut karo</li>
                 <li className="flex items-start gap-2"><span className="text-krunch-red">•</span> Best result: Glossy photo paper use karo</li>
                 <li className="flex items-start gap-2"><span className="text-krunch-red">•</span> Photo add karne ke liye: Staff edit karo → Photo URL add karo</li>
-                <li className="flex items-start gap-2"><span className="text-krunch-red">•</span> Print karne ke baad laminate karo — zyada durable hoga</li>
+                <li className="flex items-start gap-2"><span className="text-krunch-red">•</span> Print karne ke baad laminate karo - zyada durable hoga</li>
               </ul>
             </div>
           </div>

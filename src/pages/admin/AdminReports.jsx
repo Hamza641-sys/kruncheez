@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -97,19 +97,19 @@ const AdminReports = () => {
   // ── Helper: Format date+time ─────────────────────────────────────────
   const fmtDate = (item, field = 'createdAt') => {
     const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
-    if (!d) return '—';
+    if (!d) return '-';
     return d.toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' });
   };
 
   const fmtDateTime = (item, field = 'createdAt') => {
     const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
-    if (!d) return '—';
+    if (!d) return '-';
     return d.toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' }) +
       ' ' + d.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
   };
 
   // ── Expense by category ───────────────────────────────────────────────
-  // By category — use dailyExpenses only (exclude Supplier Payment)
+  // By category - use dailyExpenses only (exclude Supplier Payment)
   const expByCat = {};
   dailyExpenses.forEach(e => {
     expByCat[e.category] = (expByCat[e.category]||0) + Number(e.amount||0);
@@ -148,7 +148,7 @@ const AdminReports = () => {
   const downloadCSV = () => {
     const fmt = (item, field = 'createdAt') => {
       const d = item[field]?.toDate?.() || (item[field] ? new Date(item[field]) : null);
-      if (!d) return '—';
+      if (!d) return '-';
       return d.toLocaleDateString('en-PK') + ' ' + d.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
     };
 
@@ -169,15 +169,15 @@ const AdminReports = () => {
       ['=== NET PROFIT ==='],
       ['NET PROFIT', `Rs.${profit}`, 'Margin', `${profitMargin}%`],
       [],
-      ['=== ALL ORDERS — COMPLETE DETAILS ==='],
+      ['=== ALL ORDERS - COMPLETE DETAILS ==='],
       ['#','Order ID','Date & Time','Customer','Phone','Items','Subtotal','Delivery Fee','Total','Type','Status','Payment'],
       ...filteredOrders.map((o, i) => [
         i+1,
         o.id.slice(0,8).toUpperCase(),
         fmt(o),
-        o.customer?.name || '—',
-        o.customer?.phone || '—',
-        o.items?.map(i => `${i.name} x${i.quantity}`).join(' | ') || '—',
+        o.customer?.name || '-',
+        o.customer?.phone || '-',
+        o.items?.map(i => `${i.name} x${i.quantity}`).join(' | ') || '-',
         o.summary?.subtotal || 0,
         o.summary?.deliveryFee || 0,
         o.summary?.total || 0,
@@ -186,26 +186,26 @@ const AdminReports = () => {
         o.paymentMethod || 'cash',
       ]),
       [],
-      ['=== SUPPLIER PAYMENTS — COMPLETE DETAILS ==='],
+      ['=== SUPPLIER PAYMENTS - COMPLETE DETAILS ==='],
       ['#','Date','Supplier','Items','Amount','Notes'],
       ...filteredPurchases.map((p, i) => [
-        i+1, fmt(p), p.supplierName || '—', p.items || '—', p.amount || 0, p.notes || '—',
+        i+1, fmt(p), p.supplierName || '-', p.items || '-', p.amount || 0, p.notes || '-',
       ]),
       [],
-      ['=== STAFF SALARY — COMPLETE DETAILS ==='],
+      ['=== STAFF SALARY - COMPLETE DETAILS ==='],
       ['#','Date','Staff Name','Month','Total Salary','Fine','Fine Reason','Bonus','Bonus Reason','Paid','Remaining'],
       ...filteredSalaries.map((s, i) => [
-        i+1, fmt(s), s.staffName || '—', s.month || '—',
-        s.totalSalary || 0, s.fine || 0, s.fineReason || '—',
-        s.bonus || 0, s.bonusReason || '—', s.paid || 0, s.remaining || 0,
+        i+1, fmt(s), s.staffName || '-', s.month || '-',
+        s.totalSalary || 0, s.fine || 0, s.fineReason || '-',
+        s.bonus || 0, s.bonusReason || '-', s.paid || 0, s.remaining || 0,
       ]),
       [],
-      ['=== DAILY EXPENSES — COMPLETE DETAILS ==='],
+      ['=== DAILY EXPENSES - COMPLETE DETAILS ==='],
       ['#','Date','Category','Description','Amount','Payment Method'],
       ...filteredExpenses.map((e, i) => [
         i+1,
-        fmt(e) || e.date || '—',
-        e.category || '—', e.description || '—', e.amount || 0, e.paymentMethod || '—',
+        fmt(e) || e.date || '-',
+        e.category || '-', e.description || '-', e.amount || 0, e.paymentMethod || '-',
       ]),
     ];
     const csv = rows.map(r => Array.isArray(r) ? r.map(c => `"${c}"`).join(',') : r).join('\n');
@@ -222,7 +222,7 @@ const AdminReports = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Business Report</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit — complete financial summary</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit - complete financial summary</p>
         </div>
         <button onClick={downloadCSV}
           className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
@@ -314,7 +314,7 @@ const AdminReports = () => {
           {/* ══════════ REVENUE vs EXPENSES CHART ══════════ */}
           <div className="card-dark p-5 mb-6">
             <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-2">
-              Revenue vs Expenses — Last 7 Days
+              Revenue vs Expenses - Last 7 Days
             </h3>
             <div className="flex items-center gap-4 mb-4">
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-green-500"/><span className="text-krunch-gray font-body text-xs">Revenue</span></div>
@@ -404,7 +404,7 @@ const AdminReports = () => {
           {/* ══════════ PROFIT SUMMARY TABLE ══════════ */}
           <div className="card-dark p-5 mb-6">
             <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">
-            Complete Summary — {period === 'today' ? "Today" : period === 'week' ? "This Week" : period === 'month' ? "This Month" : "All Time"}
+            Complete Summary - {period === 'today' ? "Today" : period === 'week' ? "This Week" : period === 'month' ? "This Month" : "All Time"}
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -433,7 +433,7 @@ const AdminReports = () => {
                   {filteredPurchases.length > 0 && filteredPurchases.map(p => (
                     <tr key={p.id} className="border-b border-krunch-border/20">
                       <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
-                        📅 {fmtDate(p)} — {p.supplierName} — {p.items || 'Payment'}
+                        📅 {fmtDate(p)} - {p.supplierName} - {p.items || 'Payment'}
                       </td>
                       <td className="py-1.5 text-right text-krunch-gray font-body text-xs">Rs.{Number(p.amount||0).toLocaleString()}</td>
                     </tr>
@@ -449,7 +449,7 @@ const AdminReports = () => {
                   {filteredSalaries.length > 0 && filteredSalaries.map(s => (
                     <tr key={s.id} className="border-b border-krunch-border/20">
                       <td className="py-1.5 pl-8 text-krunch-gray font-body text-xs">
-                        📅 {fmtDate(s)} — {s.staffName} — {s.month}
+                        📅 {fmtDate(s)} - {s.staffName} - {s.month}
                         {s.fine > 0 ? ` | Fine: -Rs.${s.fine}` : ''}
                         {s.bonus > 0 ? ` | Bonus: +Rs.${s.bonus}` : ''}
                         {s.remaining > 0 ? ` | Remaining: Rs.${s.remaining}` : ''}
@@ -476,7 +476,7 @@ const AdminReports = () => {
                         {catItems.map(e => (
                           <tr key={e.id} className="border-b border-krunch-border/10">
                             <td className="py-1 pl-12 text-krunch-gray/60 font-body text-[11px]">
-                              📅 {fmtDate(e)} — {e.description || '—'}
+                              📅 {fmtDate(e)} - {e.description || '-'}
                             </td>
                             <td className="py-1 text-right text-krunch-gray/60 font-body text-[11px]">Rs.{Number(e.amount||0).toLocaleString()}</td>
                           </tr>
@@ -581,10 +581,10 @@ const AdminReports = () => {
             </div>
           </div>
 
-          {/* Recent Orders — All with full details */}
+          {/* Recent Orders - All with full details */}
           <div className="card-dark overflow-hidden mt-6">
             <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border">
-              <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">All Orders — Complete Details</h3>
+              <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider">All Orders - Complete Details</h3>
               <span className="text-krunch-gray font-body text-xs">{filteredOrders.length} total</span>
             </div>
             <div className="overflow-x-auto">
@@ -607,10 +607,10 @@ const AdminReports = () => {
                         <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">
                           {fmtDateTime(o)}
                         </td>
-                        <td className="px-4 py-2.5 text-white font-body text-xs whitespace-nowrap">{o.customer?.name || '—'}</td>
-                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">{o.customer?.phone || '—'}</td>
+                        <td className="px-4 py-2.5 text-white font-body text-xs whitespace-nowrap">{o.customer?.name || '-'}</td>
+                        <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">{o.customer?.phone || '-'}</td>
                         <td className="px-4 py-2.5 text-krunch-gray font-body text-xs max-w-xs">
-                          {o.items?.map(i => `${i.name} x${i.quantity}`).join(', ') || '—'}
+                          {o.items?.map(i => `${i.name} x${i.quantity}`).join(', ') || '-'}
                         </td>
                         <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">Rs.{(o.summary?.subtotal||0).toLocaleString()}</td>
                         <td className="px-4 py-2.5 text-krunch-gray font-body text-xs whitespace-nowrap">Rs.{(o.summary?.deliveryFee||0).toLocaleString()}</td>

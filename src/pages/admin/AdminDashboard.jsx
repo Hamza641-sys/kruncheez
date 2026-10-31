@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, TrendingUp, Users, Clock, CheckCircle, ChefHat, Truck, XCircle, Wifi } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
         {stats.map((s, i) => <StatCard key={i} {...s} />)}
       </div>
 
-      {/* Online Staff Indicator — visible to admin only, shows when manager is online */}
+      {/* Online Staff Indicator - visible to admin only, shows when manager is online */}
       {userData?.role === 'admin' && onlineStaff.filter(s => s.role === 'manager').length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Pending Orders — needs action */}
+        {/* Pending Orders - needs action */}
         <div className="card-dark">
           <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border">
             <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider flex items-center gap-2">
