@@ -72,7 +72,7 @@ const printBoth = (order) => {
         <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">${order.tableNumber ? `Dine-In (Table ${order.tableNumber})` : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery'}</td></tr>
-        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Easypaisa' : 'Cash'}</td></tr>
+        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}</td></tr>
       </table>
       <div class="line"></div>
       <table>
@@ -193,7 +193,7 @@ const printBill = (order) => {
         <tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">${order.customer?.name || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Phone</td><td style="text-align:right;font-size:11px;">${order.customer?.phone || 'â€”'}</td></tr>
         <tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">${order.tableNumber ? `Dine-In (Table ${order.tableNumber})` : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery'}</td></tr>
-        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'cash' ? 'Easypaisa' : 'Cash'}</td></tr>
+        <tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">${order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}</td></tr>
       </table>
       <div class="line"></div>
       <table>
@@ -718,4 +718,6 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+
+
 
