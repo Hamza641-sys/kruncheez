@@ -93,12 +93,15 @@ const printBoth = (order) => {
         <tr class="total-row"><td>TOTAL</td><td style="text-align:right;">Rs.${(order.summary?.total || 0).toLocaleString()}</td></tr>
       </table>
       <div class="line"></div>
-      ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div>` : ''}
+      ${order.notes ? `<div style="font-size:11px;margin-bottom:6px;">Note: ${order.notes}</div><div class="line"></div>` : ""}
+      <div class="center" style="font-size:11px;font-weight:bold;letter-spacing:1px;margin-bottom:2px;">NTN: 1730144554693</div>
+      <div class="center" style="font-size:10px;color:#444;margin-bottom:6px;">TAX INVOICE | RTO PESHAWAR</div>
+      <div class="line"></div>
       <div class="center footer">
         <div class="bold">Thank you for dining with us!</div>
-        <div>Visit again soon ðŸ”</div>
+        <div>Visit again soon!</div>
         <div>kruncheez-pos.web.app</div>
-      </div>
+      </div
 
       <!-- PAGE BREAK between 2 slips -->
       <div class="page-break"></div>
