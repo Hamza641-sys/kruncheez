@@ -1,6 +1,6 @@
 ﻿import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Award, Flame, Heart, Star, Users, Clock, ArrowRight } from 'lucide-react';
+import { Award, Flame, Heart, Star, ArrowRight } from 'lucide-react';
 
 const values = [
   { icon: <Flame className="text-krunch-red" size={24} />, title: 'Bold Flavors', desc: 'Every recipe crafted for maximum taste. No compromise on flavor, ever.' },
@@ -65,42 +65,28 @@ const AboutPage = () => {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
+              className="relative hidden lg:block"
             >
-              {/* Logo display */}
-              <div className="relative w-72 h-72 mx-auto">
-                <div className="absolute inset-0 rounded-full border-2 border-krunch-red/30 animate-pulse" />
-                <div className="absolute inset-4 rounded-full border border-krunch-red/20" />
-                <div className="absolute inset-8 rounded-full bg-krunch-card border border-krunch-border flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="font-heading font-black text-4xl text-white leading-none">THE</div>
-                    <div className="font-heading font-black text-5xl text-krunch-red leading-none">KRUNCHEEZ</div>
-                    <div className="text-krunch-gray text-xs font-body uppercase tracking-widest mt-2">Fast Food • Chinese • BBQ</div>
-                    <div className="text-3xl mt-3">🐂🔥</div>
-                  </div>
+              {/* Clean brand card */}
+              <div className="card-dark p-10 text-center border-krunch-red/20">
+                <div className="w-24 h-24 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black mx-auto mb-6">
+                  <span className="font-heading font-black text-4xl text-krunch-red">K</span>
+                </div>
+                <div className="font-heading font-black text-3xl text-white leading-none mb-1">THE</div>
+                <div className="font-heading font-black text-4xl text-krunch-red leading-none mb-3">KRUNCHEEZ</div>
+                <div className="text-krunch-gray text-xs font-body uppercase tracking-widest mb-8">
+                  Fast Food • Chinese • BBQ
+                </div>
+                <div className="divider" />
+                <div className="grid grid-cols-2 gap-4 mt-6">
+                  {stats.map((s, i) => (
+                    <div key={i} className="text-center">
+                      <div className="font-heading font-black text-xl text-krunch-red">{s.value}</div>
+                      <div className="font-body text-xs text-krunch-gray mt-0.5">{s.label}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              {/* Floating stats */}
-              {stats.map((s, i) => {
-                const positions = [
-                  'absolute -top-4 -right-4',
-                  'absolute top-1/2 -right-8 -translate-y-1/2',
-                  'absolute -bottom-4 -left-4',
-                  'absolute top-1/2 -left-8 -translate-y-1/2',
-                ];
-                return (
-                  <motion.div
-                    key={i}
-                    animate={{ y: [0, i % 2 === 0 ? -6 : 6, 0] }}
-                    transition={{ repeat: Infinity, duration: 3 + i * 0.5, ease: 'easeInOut' }}
-                    className={`${positions[i]} bg-krunch-card border border-krunch-border rounded-xl px-3 py-2 text-center shadow-card hidden sm:block`}
-                  >
-                    <div className="font-heading font-black text-xl text-krunch-red">{s.value}</div>
-                    <div className="font-body text-xs text-krunch-gray whitespace-nowrap">{s.label}</div>
-                  </motion.div>
-                );
-              })}
             </motion.div>
           </div>
         </div>
