@@ -58,7 +58,7 @@ const AdminCards = () => {
         batch.push(addDoc(collection(db, 'loyaltyCards'), {
           cardId: generateCardId(),
           userId: null, userName: '', phone: '',
-          visits: 0, points: 0, totalVisits: 0, totalSaved: 0,
+          visits: 0, totalVisits: 0, totalSaved: 0,
           discountPercent: 10, visitsForDiscount: 10,
           active: true, tier: 'Bronze',
           createdAt: serverTimestamp(),

@@ -117,29 +117,21 @@ const MyCardPage = () => {
       ctx.textAlign = 'left';
     }
 
-    // Points
-    ctx.fillStyle = '#F59E0B';
-    ctx.font = 'bold 40px Arial';
-    ctx.fillText(card.points || 0, 30, 420);
-    ctx.fillStyle = '#888';
-    ctx.font = '14px Arial';
-    ctx.fillText('POINTS', 30, 445);
-
     // Total visits
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 40px Arial';
-    ctx.fillText(card.totalVisits || 0, 200, 420);
+    ctx.fillText(card.totalVisits || 0, 30, 420);
     ctx.fillStyle = '#888';
     ctx.font = '14px Arial';
-    ctx.fillText('TOTAL VISITS', 200, 445);
+    ctx.fillText('TOTAL VISITS', 30, 445);
 
     // Total saved
     ctx.fillStyle = '#10B981';
     ctx.font = 'bold 32px Arial';
-    ctx.fillText(`Rs.${(card.totalSaved || 0).toLocaleString()}`, 400, 420);
+    ctx.fillText(`Rs.${(card.totalSaved || 0).toLocaleString()}`, 200, 420);
     ctx.fillStyle = '#888';
     ctx.font = '14px Arial';
-    ctx.fillText('TOTAL SAVED', 400, 445);
+    ctx.fillText('TOTAL SAVED', 200, 445);
 
     canvas.toBlob(blob => {
       const a = document.createElement('a');
@@ -190,8 +182,8 @@ const MyCardPage = () => {
               '🎁 Get 1 card for free - instantly',
               '🏠 Earn visits with every dine-in order',
               '💰 10 visits = 10% discount on your bill',
-              '⭐ Earn points with every order',
-              '🥇 Unlock Bronze → Silver → Gold tiers',
+              '🎉 Get discount on Custom Deal orders',
+              '🥇 Unlock Bronze -> Silver -> Gold tiers',
             ].map((b, i) => (
               <div key={i} className="flex items-center gap-2 py-1.5 border-b border-krunch-border last:border-0">
                 <span className="text-sm">{b}</span>
@@ -296,9 +288,9 @@ const MyCardPage = () => {
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-3 mb-5">
               {[
-                { label: 'Points',       value: card.points || 0,    color: 'text-amber-400', icon: '⭐' },
                 { label: 'Total Visits', value: card.totalVisits || 0, color: 'text-white',   icon: '🏠' },
                 { label: 'Total Saved',  value: `Rs.${(card.totalSaved || 0).toLocaleString()}`, color: 'text-green-400', icon: '💰' },
+                { label: 'Tier',         value: card.tier || 'Bronze',  color: 'text-amber-400', icon: '🥇' },
               ].map((s, i) => (
                 <div key={i} className="bg-krunch-black border border-krunch-border rounded-xl p-3 text-center">
                   <div className="text-lg mb-0.5">{s.icon}</div>
@@ -377,9 +369,8 @@ const MyCardPage = () => {
             {[
               { step: '01', text: 'Dine in or order online at KrunchEez', icon: '🍔' },
               { step: '02', text: 'Enter your card number at checkout (KC-XXXXX)', icon: '🃏' },
-              { step: '03', text: 'Earn 1 visit + points with every order', icon: '⭐' },
-              { step: '04', text: 'Complete 10 visits to unlock 10% discount', icon: '🎁' },
-              { step: '05', text: 'Discount auto-applied on your 10th visit!', icon: '✅' },
+              { step: '03', text: 'Get 10% off on Custom Deal orders', icon: '🎁' },
+              { step: '04', text: 'Show card at counter for discount', icon: '✅' },
             ].map((s, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-krunch-red/10 border border-krunch-red/30 flex items-center justify-center flex-shrink-0">
