@@ -1,6 +1,7 @@
 ﻿import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Award, Flame, Heart, Star, ArrowRight } from 'lucide-react';
+import LogoCircle from '../components/LogoCircle';
 
 const values = [
   { icon: <Flame className="text-krunch-red" size={24} />, title: 'Bold Flavors', desc: 'Every recipe crafted for maximum taste. No compromise on flavor, ever.' },
@@ -69,9 +70,7 @@ const AboutPage = () => {
             >
               {/* Clean brand card */}
               <div className="card-dark p-10 text-center border-krunch-red/20">
-                <div className="w-24 h-24 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black mx-auto mb-6">
-                  <span className="font-heading font-black text-4xl text-krunch-red">K</span>
-                </div>
+                <LogoCircle size="xl" className="mx-auto mb-6" />
                 <div className="font-heading font-black text-3xl text-white leading-none mb-1">THE</div>
                 <div className="font-heading font-black text-4xl text-krunch-red leading-none mb-3">KRUNCHEEZ</div>
                 <div className="text-krunch-gray text-xs font-body uppercase tracking-widest mb-8">
