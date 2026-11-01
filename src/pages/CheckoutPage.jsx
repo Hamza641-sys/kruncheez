@@ -11,7 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { placeOrder } from '../firebase/orderService';
 import { validatePromoCode, usePromoCode } from '../firebase/promoService';
 import { sendWhatsAppOrderNotification } from '../firebase/whatsappService';
-import { getCardByCardId, addVisitAndPoints, applyCardDiscount, getCardByUserId } from '../firebase/cardService';
+import { getCardByCardId, addVisitAndPoints } from '../firebase/cardService';
 import toast from 'react-hot-toast';
 import OrderAssistant from '../components/OrderAssistant';
 

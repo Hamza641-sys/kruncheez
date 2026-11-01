@@ -381,11 +381,11 @@ const AdminSettings = () => {  const { userData } = useAuth();
               <p className="text-white font-body font-semibold text-sm">{userData?.name}</p>
               <p className="text-krunch-gray font-body text-xs truncate">{auth.currentUser?.email}</p>
             </div>
-            <span className="ml-auto text-[10px] px-2 py-0.5 rounded font-bold uppercase flex-shrink-0 border ${
+            <span className={`ml-auto text-[10px] px-2 py-0.5 rounded font-bold uppercase flex-shrink-0 border ${
               userData?.role === 'admin'
                 ? 'bg-krunch-red/20 text-krunch-red border-krunch-red/30'
                 : 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-            }">
+            }`}>
               {userData?.role || 'admin'}
             </span>
           </div>
