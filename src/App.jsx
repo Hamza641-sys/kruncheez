@@ -42,7 +42,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminMenu from './pages/admin/AdminMenu';
 import AdminCustomers from './pages/admin/AdminCustomers';
-import AdminPromos from './pages/admin/AdminPromos';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminQR from './pages/admin/AdminQR';
@@ -126,7 +125,6 @@ const AppLayout = () => {
           <Route path="expenses"  element={<AdminExpenses />} />
           <Route path="staff"     element={<AdminStaff />} />
           <Route path="customers" element={<AdminCustomers />} />
-          <Route path="promos"    element={<AdminPromos />} />
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="settings"  element={<AdminSettings />} />
         </Route>

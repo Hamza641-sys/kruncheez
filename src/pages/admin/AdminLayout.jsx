@@ -3,7 +3,7 @@ import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
-  BarChart3, Settings, LogOut, Menu, X, Tag,
+  BarChart3, Settings, LogOut, Menu, X,
   QrCode, CreditCard, Receipt,
   Truck, TrendingDown, UserCheck, LineChart
 } from 'lucide-react';
@@ -24,7 +24,6 @@ const navItems = [
   { path: '/admin/qr',        label: 'QR Codes',         icon: <QrCode size={17} /> },
   { path: '/admin/cards',     label: 'Loyalty Cards',    icon: <CreditCard size={17} /> },
   { path: '/admin/customers', label: 'Customers',        icon: <Users size={17} /> },
-  { path: '/admin/promos',    label: 'Promo Codes',      icon: <Tag size={17} /> },
   { path: '/admin/settings',  label: 'Settings',         icon: <Settings size={17} /> },
 ];
 

@@ -4,12 +4,11 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   CheckCircle, ShoppingCart, MapPin, Phone,
   User, MessageSquare, ArrowLeft, Truck,
-  Store, CreditCard, Tag, X, ArrowRight, QrCode
+  Store, CreditCard, X, ArrowRight, QrCode
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { placeOrder } from '../firebase/orderService';
-import { validatePromoCode, usePromoCode } from '../firebase/promoService';
 import { sendWhatsAppOrderNotification } from '../firebase/whatsappService';
 import { getCardByCardId, addVisitAndPoints } from '../firebase/cardService';
 import toast from 'react-hot-toast';
@@ -35,9 +34,6 @@ const CheckoutPage = () => {
     notes: '', paymentMethod: 'cash',
     orderType: tableNumber ? 'dine-in' : 'delivery',
   });
-  const [promoCode, setPromoCode]           = useState('');
-  const [promoResult, setPromoResult]       = useState(null);
-  const [promoLoading, setPromoLoading]     = useState(false);
   const [cardNumber, setCardNumber]         = useState('');
   const [cardResult, setCardResult]         = useState(null);
   const [cardLoading, setCardLoading]       = useState(false);
@@ -61,31 +57,12 @@ const CheckoutPage = () => {
     }
   }, [userData]);
 
-  const discount      = promoResult?.discount || 0;
+  const discount      = 0;
   const finalSubtotal = cartSubtotal - discount - cardDiscount;
   const finalDelivery = form.orderType === 'delivery' ? deliveryFee : 0;
   const finalTotal    = Math.max(finalSubtotal + finalDelivery, 0);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  // Apply promo code
-  const handlePromo = async () => {
-    if (!promoCode.trim()) { toast.error('Enter a promo code', toastStyle); return; }
-    setPromoLoading(true);
-    try {
-      const result = await validatePromoCode(promoCode, cartSubtotal);
-      if (result.valid) {
-        setPromoResult(result);
-        toast.success(result.message, toastStyle);
-      } else {
-        setPromoResult(null);
-        toast.error(result.message, toastStyle);
-      }
-    } catch { toast.error('Could not validate code', toastStyle); }
-    finally { setPromoLoading(false); }
-  };
-
-  const removePromo = () => { setPromoResult(null); setPromoCode(''); };
 
   // Apply loyalty card - Simple: card ID valid ho + Custom Deal ho = 10% off
   const handleCard = async () => {
@@ -141,12 +118,11 @@ const CheckoutPage = () => {
         })),
         summary: {
           subtotal:    cartSubtotal,
-          discount:    discount,
+          discount:    0,
           cardDiscount: cardDiscount,
           deliveryFee: finalDelivery,
           total:       finalTotal,
         },
-        promoCode:     promoResult?.promo?.code || null,
         loyaltyCard:   cardResult?.cardId || null,
         orderType:     form.orderType,
         paymentMethod: form.paymentMethod,
@@ -156,12 +132,7 @@ const CheckoutPage = () => {
 
       const newOrderId = await placeOrder(orderData);
 
-      // Use promo code (increment usage)
-      if (promoResult?.promo?.id) {
-        await usePromoCode(promoResult.promo.id);
-      }
-
-      // Process loyalty card - just record card used, no visit tracking
+      // Process loyalty card
       if (cardResult?.id && cardDiscount > 0) {
         try { await addVisitAndPoints(cardResult.id, finalTotal); } catch {}
       }
@@ -504,37 +475,6 @@ const CheckoutPage = () => {
                 )}
               </div>
 
-              {/* Promo Code */}
-              <div className="card-dark p-6">
-                <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
-                  <Tag size={18} className="text-krunch-red" /> Promo Code
-                </h3>
-                {promoResult ? (
-                  <div className="flex items-center justify-between bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-3">
-                    <div>
-                      <p className="text-green-400 font-body font-bold text-sm">{promoResult.promo?.code}</p>
-                      <p className="text-green-300 font-body text-xs">
-                        Rs. {promoResult.discount} discount applied!
-                      </p>
-                    </div>
-                    <button onClick={removePromo} className="text-krunch-gray hover:text-red-400 transition-colors">
-                      <X size={18} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex gap-3">
-                    <input type="text" value={promoCode}
-                      onChange={e => setPromoCode(e.target.value.toUpperCase())}
-                      placeholder="Enter promo code"
-                      className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-heading font-bold text-sm tracking-widest placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors uppercase" />
-                    <button type="button" onClick={handlePromo} disabled={promoLoading}
-                      className="bg-krunch-red hover:bg-krunch-darkred text-white font-body font-bold text-sm px-5 rounded-xl transition-all disabled:opacity-70">
-                      {promoLoading ? '...' : 'Apply'}
-                    </button>
-                  </div>
-                )}
-              </div>
-
               {/* Notes */}
               <div className="card-dark p-6">
                 <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
@@ -581,12 +521,6 @@ const CheckoutPage = () => {
                         <span>Subtotal</span>
                         <span className="text-white">Rs. {cartSubtotal.toLocaleString()}</span>
                       </div>
-                      {discount > 0 && (
-                        <div className="flex justify-between font-body text-sm">
-                          <span className="text-green-400">Promo Discount</span>
-                          <span className="text-green-400 font-semibold">- Rs. {discount.toLocaleString()}</span>
-                        </div>
-                      )}
                       {cardDiscount > 0 && (
                         <div className="flex justify-between font-body text-sm">
                           <span className="text-amber-400">Card Discount (10%)</span>
