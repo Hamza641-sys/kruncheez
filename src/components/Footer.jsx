@@ -172,7 +172,6 @@ const Footer = () => {
           </p>
           <div className="flex items-center gap-4">
             <span className="text-krunch-gray font-body text-xs">Real Food. Real Passion.</span>
-            <span className="text-2xl">🐂🔥</span>
           </div>
           <div className="flex gap-4">
             <Link to="/contact" className="text-krunch-gray hover:text-white font-body text-xs transition-colors">Privacy Policy</Link>
