@@ -95,15 +95,9 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
   if (cartItems.length === 0) return [];
   const suggestions = [];
   const cartCategories = cartItems.map(i => i.category);
-  const cartTotal = cartItems.reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
 
   if (cartCategories.includes('burgers') && !cartCategories.includes('drinks')) {
     suggestions.push({ type: 'combo', message: '🥤 Add a drink to complete your burger meal!', icon: '🥤' });
-  }
-
-  const deliveryThreshold = 500;
-  if (cartTotal > 0 && cartTotal < deliveryThreshold) {
-    suggestions.push({ type: 'delivery', message: `🚚 Add Rs. ${deliveryThreshold - cartTotal} more for FREE delivery!`, icon: '🚚' });
   }
 
   if (cartItems.length === 1) {

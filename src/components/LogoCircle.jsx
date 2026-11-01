@@ -19,13 +19,13 @@ const LogoCircle = ({ size = 'md', className = '' }) => {
           src={logoUrl}
           alt="KrunchEez Logo"
           className="w-full h-full object-contain"
-          onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+          onError={e => { e.target.style.display = 'none'; e.target.parentNode.querySelector('.logo-fallback').style.display = 'flex'; }}
         />
-      ) : (
-        <span className="text-krunch-red font-heading font-black">K</span>
-      )}
-      {/* Fallback — hidden by default */}
-      <span className="text-krunch-red font-heading font-black hidden items-center justify-center w-full h-full">K</span>
+      ) : null}
+      <span
+        className="logo-fallback text-krunch-red font-heading font-black"
+        style={{ display: logoUrl ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}
+      >K</span>
     </div>
   );
 };

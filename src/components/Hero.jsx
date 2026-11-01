@@ -87,7 +87,7 @@ const Hero = () => {
       setCurrent(prev => (prev + 1) % slides.length);
     }, 5500);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const goTo = (index) => {
     setDirection(index > current ? 1 : -1);

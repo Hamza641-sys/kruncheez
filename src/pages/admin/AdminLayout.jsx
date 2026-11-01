@@ -68,16 +68,7 @@ const AdminLayout = () => {
           <nav className="flex-1 overflow-y-auto py-4 px-3">
             {navItems.map(item => {
               const active = location.pathname === item.path ||
-                (item.path !== '/admin' && !item.external && location.pathname.startsWith(item.path));
-              if (item.external) {
-                return (
-                  <a key={item.path} href={item.path} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-xl mb-1 transition-all duration-200 font-body font-semibold text-sm text-amber-400 hover:bg-amber-400/10 border border-amber-400/20 hover:border-amber-400/40 mb-2">
-                    {item.icon}
-                    {item.label}
-                  </a>
-                );
-              }
+                (item.path !== '/admin' && location.pathname.startsWith(item.path));
               return (
                 <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl mb-1 transition-all duration-200 font-body font-semibold text-sm ${

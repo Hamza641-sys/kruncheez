@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthChange, getUserData, logout } from '../firebase/authService';
-import { getFirestore, doc, updateDoc, serverTimestamp, onSnapshot, collection, query, where } from 'firebase/firestore';
+import { doc, updateDoc, serverTimestamp, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 const AuthContext = createContext();
@@ -34,14 +34,16 @@ export const AuthProvider = ({ children }) => {
           } catch {}
 
           // Set offline on tab close
-          window.addEventListener('beforeunload', async () => {
+          const uid = firebaseUser.uid;
+          const handleUnload = () => {
+            // Use synchronous XHR as async requests don't complete on unload
             try {
-              await updateDoc(doc(db, 'users', firebaseUser.uid), {
-                onlineStatus: false,
-                lastSeen: serverTimestamp(),
-              });
+              const xhr = new XMLHttpRequest();
+              xhr.open('POST', `https://firestore.googleapis.com/v1/projects/kruncheez-pos/databases/(default)/documents/users/${uid}`, false);
             } catch {}
-          });
+          };
+          window.removeEventListener('beforeunload', handleUnload); // remove any old listener
+          window.addEventListener('beforeunload', handleUnload);
         }
       } else {
         setUser(null);
