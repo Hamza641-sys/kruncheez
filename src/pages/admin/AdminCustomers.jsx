@@ -49,7 +49,7 @@ const AdminCustomers = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { icon: <ShoppingBag size={18} className="text-blue-400" />, label: 'Total Customers', value: customers.length, color: 'bg-blue-400/10' },
           { icon: <TrendingUp size={18} className="text-green-400" />, label: 'Total Revenue', value: `Rs.${totalRevenue.toLocaleString()}`, color: 'bg-green-400/10' },

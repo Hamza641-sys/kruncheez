@@ -376,12 +376,12 @@ const AdminReports = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Business Report</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">Revenue + Expenses + Profit - complete financial summary</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <button onClick={printAnnualTaxReport}
             className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all shadow-red-glow">
             <Download size={15} /> Annual Tax Report (PDF)

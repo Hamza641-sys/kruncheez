@@ -246,7 +246,7 @@ const AdminQR = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { label: 'Total Tables', value: tables.length, color: 'text-white',        bg: 'bg-krunch-card' },
           { label: 'Free',         value: free,          color: 'text-green-400',    bg: 'bg-green-400/10' },
@@ -261,9 +261,9 @@ const AdminQR = () => {
 
       {/* Info Banner */}
       <div className="card-dark p-4 mb-6 border border-amber-500/30 bg-amber-500/5">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           <span className="text-2xl">🪑</span>
-          <div>
+          <div className="flex-1">
             <p className="text-white font-body font-semibold text-sm">7 Tables - Fixed Layout</p>
             <p className="text-krunch-gray font-body text-xs mt-0.5">
               <span className="text-amber-400 font-semibold">Family Hall:</span> Table 1, 2, 3 &nbsp;|&nbsp;
@@ -272,7 +272,7 @@ const AdminQR = () => {
           </div>
           {tables.length > 0 && (
             <button onClick={printAll}
-              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all ml-auto">
+              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all sm:ml-auto">
               <Printer size={15} /> Print All 7
             </button>
           )}

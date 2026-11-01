@@ -454,7 +454,7 @@ const AdminOrders = () => {
             className="w-full bg-krunch-card border border-krunch-border rounded-xl pl-10 pr-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
         </div>
         {/* Type filter */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {[
             { key: 'all',      label: 'All Types' },
             { key: 'dine-in',  label: 'Dine-In' },

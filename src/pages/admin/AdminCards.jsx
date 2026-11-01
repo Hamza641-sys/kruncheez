@@ -242,18 +242,18 @@ const AdminCards = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Loyalty Cards</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards - 10% off on Custom Deal</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Generate Cards */}
-          <div className="flex items-center gap-2 bg-krunch-card border border-krunch-border rounded-xl px-3 py-2.5">
+          <div className="flex items-center gap-2 bg-krunch-card border border-krunch-border rounded-xl px-3 py-2">
             <input
               type="number" min={1} max={1000} value={bulkCount}
               onChange={e => setBulkCount(Math.max(1, Math.min(1000, Number(e.target.value))))}
-              className="w-16 bg-transparent text-white font-body text-sm text-center focus:outline-none"
+              className="w-14 bg-transparent text-white font-body text-sm text-center focus:outline-none"
             />
             <span className="text-krunch-gray text-xs font-body">cards</span>
             <button onClick={handleBulkGenerate} disabled={bulkLoading}
@@ -264,7 +264,7 @@ const AdminCards = () => {
           {/* Print All */}
           {cards.length > 0 && (
             <button onClick={() => printCards(cards)}
-              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+              className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all whitespace-nowrap">
               <Printer size={15} /> Print All ({cards.length})
             </button>
           )}

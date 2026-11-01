@@ -180,18 +180,18 @@ const AdminStaff = () => {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Staff Management</h2>
           <p className="text-krunch-gray font-body text-sm mt-1">{staff.filter(s=>s.active).length} active staff</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={() => setShowReportForm(true)}
-            className="flex items-center gap-2 border border-orange-500/40 hover:border-orange-500 text-orange-400 hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+            className="flex items-center gap-2 border border-orange-500/40 hover:border-orange-500 text-orange-400 hover:text-white font-body font-semibold text-sm px-3 py-2 rounded-xl transition-all">
             <AlertTriangle size={15} /> Report
           </button>
           <button onClick={() => setShowSalaryForm(true)}
-            className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+            className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-3 py-2 rounded-xl transition-all">
             <DollarSign size={15} /> Pay Salary
           </button>
           <button onClick={() => {
@@ -292,7 +292,7 @@ const AdminStaff = () => {
                     </div>
                   </div>
                   {/* Actions */}
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
                     <button onClick={() => { setIdCardStaff(s); setShowIDCard(true); }}
                       className="flex items-center gap-1 text-[10px] bg-blue-900/20 text-blue-400 border border-blue-700/30 hover:bg-blue-600 hover:text-white font-bold px-2.5 py-1.5 rounded-xl transition-all whitespace-nowrap">
                       🪪 ID Card

@@ -170,10 +170,10 @@ const AdminExpenses = () => {
       </div>
 
       {/* Period Tabs */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
         {periods.map(p => (
           <button key={p.k} onClick={() => setPeriod(p.k)}
-            className={`px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
+            className={`flex-shrink-0 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
               period === p.k ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
             }`}>
             {p.l}
