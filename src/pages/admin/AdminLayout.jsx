@@ -29,8 +29,11 @@ const navItems = [
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { userData, logout } = useAuth();
+  const { userData, logout, onlineStaff, user } = useAuth();
   const location = useLocation();
+
+  // Check if current user is online in Firestore
+  const isOnline = onlineStaff.some(s => s.id === user?.uid);
 
   return (
     <div className="min-h-screen bg-krunch-black flex">
@@ -98,7 +101,7 @@ const AdminLayout = () => {
                   }`}>
                     {userData?.role || 'admin'}
                   </span>
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <div className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-gray-600'}`} />
                 </div>
               </div>
             </div>
