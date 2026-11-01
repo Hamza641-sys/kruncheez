@@ -30,6 +30,7 @@ const DEFAULT_SETTINGS = {
   whatsappNotify: true,
   emailNotify: false,
   acceptingOrders: true,
+  logoUrl: '',
   heroSlides: [
     'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=90&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1544025162-d76694265947?w=1920&q=90&auto=format&fit=crop',
@@ -277,6 +278,40 @@ const AdminSettings = () => {  const { userData } = useAuth();
             value={settings.whatsappNotify} onChange={v => setSettings({ ...settings, whatsappNotify: v })} />
           <Toggle label="Email Notifications" desc="Get order summaries via email"
             value={settings.emailNotify} onChange={v => setSettings({ ...settings, emailNotify: v })} />
+        </Section>
+
+        {/* ── Logo ── */}
+        <Section icon={<Image size={18} />} title="Restaurant Logo">
+          <p className="text-krunch-gray font-body text-xs mb-4">
+            Paste your logo image URL — it will appear in Navbar, Footer, Login page and Admin panel instantly.
+          </p>
+          <div className="flex gap-4 items-start">
+            {/* Preview */}
+            <div className="w-16 h-16 rounded-full border-2 border-krunch-red bg-krunch-black flex items-center justify-center flex-shrink-0 overflow-hidden">
+              {settings.logoUrl ? (
+                <img src={settings.logoUrl} alt="Logo preview" className="w-full h-full object-contain"
+                  onError={e => { e.target.style.display='none'; }} />
+              ) : (
+                <span className="text-krunch-red font-heading font-black text-xl">K</span>
+              )}
+            </div>
+            <div className="flex-1">
+              <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Logo Image URL</label>
+              <input
+                type="text"
+                value={settings.logoUrl || ''}
+                onChange={e => setSettings({ ...settings, logoUrl: e.target.value })}
+                placeholder="https://res.cloudinary.com/... or any image URL"
+                className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors"
+              />
+              {settings.logoUrl && (
+                <p className="text-green-400 font-body text-xs mt-1.5">✅ Logo URL set — save to apply everywhere</p>
+              )}
+              <p className="text-krunch-gray/50 font-body text-xs mt-1.5">
+                💡 Tip: Use transparent PNG for best result on dark background
+              </p>
+            </div>
+          </div>
         </Section>
 
         {/* ── Hero Slides ── */}

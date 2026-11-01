@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { LogoProvider } from './context/LogoContext';
 import { ProtectedRoute, AdminRoute, PublicRoute } from './components/auth/ProtectedRoute';
 
 // Layout
@@ -159,9 +160,11 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <LogoProvider>
         <CartProvider>
           <AppLayout />
         </CartProvider>
+        </LogoProvider>
       </AuthProvider>
     </BrowserRouter>
   );

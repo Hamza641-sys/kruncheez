@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../../components/admin/NotificationPanel';
+import LogoCircle from '../../components/LogoCircle';
 
 const navItems = [
   { path: '/admin',           label: 'Dashboard',        icon: <LayoutDashboard size={17} /> },
@@ -52,9 +53,7 @@ const AdminLayout = () => {
           {/* Logo */}
           <div className="flex items-center justify-between px-5 py-5 border-b border-krunch-border">
             <Link to="/admin" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black">
-                <span className="text-krunch-red font-heading font-black text-sm">K</span>
-              </div>
+              <LogoCircle size="sm" />
               <div>
                 <div className="font-heading font-black text-sm text-white leading-none">KRUNCHEEZ</div>
                 <div className="text-krunch-gray text-[9px] uppercase tracking-widest">Admin Panel</div>

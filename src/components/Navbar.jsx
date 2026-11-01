@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import LogoCircle from './LogoCircle';
 
 const navLinks = [
   { name: 'Home',        path: '/' },
@@ -60,9 +61,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
-          <div className="w-11 h-11 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black group-hover:border-white transition-colors duration-300">
-            <span className="text-krunch-red font-heading font-black text-base">K</span>
-          </div>
+          <LogoCircle size="md" className="group-hover:border-white transition-colors duration-300" />
           <div className="hidden sm:block">
             <div className="font-heading font-black text-lg text-white leading-none tracking-wider">
               THE <span className="text-krunch-red">KRUNCHEEZ</span>

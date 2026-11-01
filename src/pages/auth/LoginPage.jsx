@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Chrome } from 'lucide-react';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../../firebase/authService';
 import toast from 'react-hot-toast';
+import LogoCircle from '../../components/LogoCircle';
 
 const LoginPage = () => {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -70,9 +71,7 @@ const LoginPage = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black">
-              <span className="text-krunch-red font-heading font-black text-lg">K</span>
-            </div>
+            <LogoCircle size="lg" className="group-hover:border-white transition-colors duration-300" />
             <div className="text-left">
               <div className="font-heading font-black text-xl text-white leading-none">THE <span className="text-krunch-red">KRUNCHEEZ</span></div>
               <div className="text-krunch-gray text-[10px] uppercase tracking-widest">Fast Food • Chinese • BBQ</div>

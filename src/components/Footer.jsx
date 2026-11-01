@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Phone, MapPin, Clock, Instagram, Facebook, ArrowRight } from 'lucide-react';
+import LogoCircle from './LogoCircle';
 
 const quickLinks = [
   { label: 'Home', path: '/' },
@@ -51,9 +52,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             {/* Logo */}
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-full border-2 border-krunch-red flex items-center justify-center bg-krunch-black">
-                <span className="text-krunch-red font-heading font-black text-lg">K</span>
-              </div>
+              <LogoCircle size="lg" />
               <div>
                 <div className="font-heading font-black text-xl text-white leading-none">
                   THE <span className="text-krunch-red">KRUNCHEEZ</span>
