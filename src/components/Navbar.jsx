@@ -224,9 +224,9 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Order Now - desktop */}
+          {/* Order Now - desktop/tablet */}
           <Link to="/menu"
-            className="hidden lg:flex btn-primary btn-shine text-xs py-2.5 px-4">
+            className="hidden md:flex btn-primary btn-shine text-xs py-2.5 px-4">
             Order Now
           </Link>
 

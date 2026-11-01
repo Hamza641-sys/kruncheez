@@ -340,7 +340,7 @@ const CheckoutPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <form onSubmit={handleSubmit}>
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
 
             {/* ── LEFT: FORM ── */}
             <div className="lg:col-span-2 flex flex-col gap-5">

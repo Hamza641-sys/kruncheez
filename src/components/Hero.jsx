@@ -186,7 +186,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 25 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="text-6xl sm:text-7xl lg:text-8xl xl:text-[6rem] text-white"
+                  className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white hero-headline"
                   style={{ textShadow: '0 4px 30px rgba(0,0,0,0.8)' }}
                 >
                   {slide.headline1}
@@ -195,7 +195,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 25 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.22 }}
-                  className="text-6xl sm:text-7xl lg:text-8xl xl:text-[6rem] text-white"
+                  className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-white hero-headline"
                   style={{ textShadow: '0 4px 30px rgba(0,0,0,0.8)' }}
                 >
                   {slide.headline2}
@@ -204,7 +204,7 @@ const Hero = () => {
                   initial={{ opacity: 0, y: 25 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-6xl sm:text-7xl lg:text-8xl xl:text-[6rem] text-krunch-red"
+                  className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl text-krunch-red hero-headline"
                   style={{ textShadow: '0 0 50px rgba(227,30,36,0.7), 0 4px 30px rgba(0,0,0,0.8)' }}
                 >
                   {slide.headline3}
@@ -227,18 +227,18 @@ const Hero = () => {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.45 }}
-                className="flex flex-wrap gap-4 mb-8"
+                className="flex flex-wrap gap-3 sm:gap-4 mb-8 hero-cta"
               >
                 <Link
                   to="/menu"
-                  className="group flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(227,30,36,0.55)] hover:shadow-[0_0_50px_rgba(227,30,36,0.75)]"
+                  className="group flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold text-xs sm:text-sm uppercase tracking-widest px-5 sm:px-7 py-3 sm:py-3.5 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(227,30,36,0.55)] hover:shadow-[0_0_50px_rgba(227,30,36,0.75)] flex-1 sm:flex-none justify-center"
                 >
                   ORDER NOW
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/menu"
-                  className="flex items-center gap-2 border-2 border-white/30 hover:border-white text-white font-heading font-bold text-sm uppercase tracking-widest px-7 py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm bg-white/5 hover:bg-white/10"
+                  className="flex items-center gap-2 border-2 border-white/30 hover:border-white text-white font-heading font-bold text-xs sm:text-sm uppercase tracking-widest px-5 sm:px-7 py-3 sm:py-3.5 rounded-full transition-all duration-300 backdrop-blur-sm bg-white/5 hover:bg-white/10 flex-1 sm:flex-none justify-center"
                 >
                   VIEW MENU
                 </Link>
@@ -269,7 +269,7 @@ const Hero = () => {
         {/* ══════════════════════════════════════════
             BOTTOM: Slider Controls
         ══════════════════════════════════════════ */}
-        <div className="flex items-center justify-between mt-14">
+        <div className="flex items-center justify-between mt-10 sm:mt-14 gap-2 hero-controls">
 
           {/* Slide dots */}
           <div className="flex items-center gap-2.5">

@@ -131,7 +131,7 @@ const CartSidebar = () => {
                         {/* Remove */}
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="w-7 h-7 flex items-center justify-center text-krunch-gray hover:text-krunch-red transition-colors opacity-0 group-hover:opacity-100"
+                          className="w-7 h-7 flex items-center justify-center text-krunch-gray hover:text-krunch-red transition-colors md:opacity-0 md:group-hover:opacity-100"
                         >
                           <X size={14} />
                         </button>
@@ -172,17 +172,10 @@ const CartSidebar = () => {
                   <ArrowRight size={18} />
                 </Link>
 
-                {/* Payment icons */}
+                {/* Payment methods */}
                 <div className="flex items-center justify-center gap-3 mt-4">
-                  <span className="text-krunch-gray text-xs font-body">🔒 Secure & Safe Payment</span>
-                </div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex gap-2">
-                    <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">VISA</span>
-                    <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">MC</span>
-                    <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">JCB</span>
-                  </div>
-                  <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">Cash on Delivery</span>
+                  <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">💵 Cash</span>
+                  <span className="text-xs bg-krunch-card border border-krunch-border px-2 py-1 rounded text-krunch-gray">📱 Easypaisa</span>
                 </div>
               </div>
             )}
