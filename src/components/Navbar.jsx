@@ -24,6 +24,7 @@ const Navbar = () => {
   const [scrolled, setScrolled]     = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userExpanded, setUserExpanded] = useState(false);
   const { cartCount, setIsCartOpen } = useCart();
   const { user, userData, isAdmin, logout } = useAuth();
   const location  = useLocation();
@@ -35,7 +36,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); setDropdownOpen(false); }, [location]);
+  useEffect(() => { setMobileOpen(false); setDropdownOpen(false); setUserExpanded(false); }, [location]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -246,13 +247,15 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-krunch-dark border-t border-krunch-border overflow-hidden"
+            className="lg:hidden bg-krunch-dark border-t border-krunch-border overflow-hidden max-h-[85vh] overflow-y-auto"
           >
-            <div className="px-4 py-4 flex flex-col gap-1">
+            <div className="px-3 py-3 flex flex-col gap-0.5">
+
+              {/* ── NAV LINKS ── */}
               {navLinks.map(link => (
                 link.path === '/custom-deal' ? (
                   <Link key={link.path} to={link.path}
-                    className={`py-3 px-4 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all duration-200 flex items-center gap-2 border ${
+                    className={`py-2.5 px-3 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all flex items-center gap-2 border ${
                       location.pathname === link.path
                         ? 'bg-krunch-red text-white border-krunch-red'
                         : 'text-krunch-red border-krunch-red/40 hover:bg-krunch-red hover:text-white'
@@ -261,7 +264,7 @@ const Navbar = () => {
                   </Link>
                 ) : (
                   <Link key={link.path} to={link.path}
-                    className={`py-3 px-4 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all duration-200 ${
+                    className={`py-2.5 px-3 rounded-xl font-body font-semibold text-sm uppercase tracking-wider transition-all ${
                       location.pathname === link.path
                         ? 'bg-krunch-red text-white'
                         : 'text-krunch-light hover:bg-krunch-card hover:text-white'
@@ -274,70 +277,82 @@ const Navbar = () => {
               <div className="h-px bg-krunch-border my-2" />
 
               {user ? (
-                /* Logged in mobile */
+                /* ── LOGGED IN ── */
                 <>
-                  {/* User info */}
-                  <div className="flex items-center gap-3 px-4 py-3 bg-krunch-card rounded-xl mb-1">
-                    <div className="w-9 h-9 rounded-full bg-krunch-red flex items-center justify-center text-white font-heading font-black text-sm flex-shrink-0">
+                  {/* User card — tap to expand account links */}
+                  <button
+                    onClick={() => setUserExpanded(prev => !prev)}
+                    className="flex items-center gap-3 px-3 py-2.5 bg-krunch-card border border-krunch-border rounded-xl w-full text-left"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-krunch-red flex items-center justify-center text-white font-heading font-black text-sm flex-shrink-0">
                       {avatar}
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-white font-body font-semibold text-sm truncate">{displayName}</p>
                       <p className="text-krunch-gray font-body text-xs truncate">{user.email}</p>
                     </div>
-                    {isAdmin && <span className="ml-auto text-[10px] bg-krunch-red text-white px-2 py-0.5 rounded font-bold">ADMIN</span>}
-                  </div>
-
-                  <Link to="/dashboard"
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
-                    <LayoutDashboard size={15} className="text-krunch-red" /> Dashboard
-                  </Link>
-                  <Link to="/my-orders"
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
-                    <ShoppingBag size={15} className="text-blue-400" /> My Orders
-                  </Link>
-                  <Link to="/loyalty"
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
-                    <Gift size={15} className="text-amber-400" /> Loyalty Points
-                  </Link>
-                  <Link to="/my-card"
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm">
-                    <span className="text-base">🃏</span> My Loyalty Card
-                  </Link>
-                  {isAdmin && (
-                    <Link to="/admin"
-                      className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-krunch-red font-semibold hover:bg-krunch-red/10 transition-all font-body text-sm">
-                      <Settings size={15} /> Admin Panel
-                    </Link>
-                  )}
-                  <button onClick={handleLogout}
-                    className="flex items-center gap-3 py-2.5 px-4 rounded-xl text-red-400 hover:bg-red-400/10 transition-all font-body text-sm mt-1">
-                    <LogOut size={15} /> Logout
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {isAdmin && <span className="text-[9px] bg-krunch-red text-white px-1.5 py-0.5 rounded font-bold">ADMIN</span>}
+                      <ChevronDown size={14} className={`text-krunch-gray transition-transform ${userExpanded ? 'rotate-180' : ''}`} />
+                    </div>
                   </button>
+
+                  {/* Expandable account links */}
+                  <AnimatePresence>
+                    {userExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="bg-krunch-black border border-krunch-border rounded-xl mt-1 overflow-hidden">
+                          <Link to="/dashboard" className="flex items-center gap-3 py-2.5 px-4 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm border-b border-krunch-border">
+                            <LayoutDashboard size={14} className="text-krunch-red flex-shrink-0" /> Dashboard
+                          </Link>
+                          <Link to="/my-orders" className="flex items-center gap-3 py-2.5 px-4 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm border-b border-krunch-border">
+                            <ShoppingBag size={14} className="text-blue-400 flex-shrink-0" /> My Orders
+                          </Link>
+                          <Link to="/loyalty" className="flex items-center gap-3 py-2.5 px-4 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm border-b border-krunch-border">
+                            <Gift size={14} className="text-amber-400 flex-shrink-0" /> Loyalty Points
+                            {userData?.loyaltyPoints > 0 && <span className="ml-auto text-amber-400 font-bold text-xs">{userData.loyaltyPoints}</span>}
+                          </Link>
+                          <Link to="/my-card" className="flex items-center gap-3 py-2.5 px-4 text-krunch-gray hover:text-white hover:bg-krunch-card transition-all font-body text-sm border-b border-krunch-border">
+                            <span className="text-sm flex-shrink-0">🃏</span> My Loyalty Card
+                          </Link>
+                          {isAdmin && (
+                            <Link to="/admin" className="flex items-center gap-3 py-2.5 px-4 text-krunch-red font-semibold hover:bg-krunch-red/10 transition-all font-body text-sm border-b border-krunch-border">
+                              <Settings size={14} className="flex-shrink-0" /> Admin Panel
+                            </Link>
+                          )}
+                          <button onClick={handleLogout} className="flex items-center gap-3 py-2.5 px-4 text-red-400 hover:bg-red-400/10 transition-all font-body text-sm w-full">
+                            <LogOut size={14} className="flex-shrink-0" /> Logout
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </>
               ) : (
-                /* Not logged in mobile */
-                <div className="flex flex-col gap-2 mt-1">
-                  <Link to="/login"
-                    className="flex items-center justify-center gap-2 border border-krunch-border text-white font-body font-semibold text-sm py-3 rounded-xl hover:border-krunch-red transition-all">
-                    <User size={15} /> Login
+                /* ── NOT LOGGED IN ── */
+                <div className="flex gap-2">
+                  <Link to="/login" className="flex-1 flex items-center justify-center gap-2 border border-krunch-border text-white font-body font-semibold text-sm py-2.5 rounded-xl hover:border-krunch-red transition-all">
+                    <User size={14} /> Login
                   </Link>
-                  <Link to="/signup"
-                    className="flex items-center justify-center gap-2 bg-krunch-red text-white font-body font-semibold text-sm py-3 rounded-xl hover:bg-krunch-darkred transition-all">
-                    Sign Up Free
+                  <Link to="/signup" className="flex-1 flex items-center justify-center gap-2 bg-krunch-red text-white font-body font-semibold text-sm py-2.5 rounded-xl hover:bg-krunch-darkred transition-all">
+                    Sign Up
                   </Link>
                 </div>
               )}
 
-              <Link to="/menu" className="mt-2 btn-primary text-center text-sm">
+              {/* Order Now */}
+              <Link to="/menu" className="mt-2 btn-primary text-center text-sm py-2.5">
                 Order Now
               </Link>
 
-              <div className="mt-3 pt-3 border-t border-krunch-border">
-                <p className="text-krunch-gray text-xs text-center">
-                  📞 0317-7787648 &nbsp;|&nbsp; ⏰ 11am – 2am
-                </p>
-              </div>
+              <p className="text-krunch-gray text-xs text-center mt-2 pb-1">
+                📞 0317-7787648 &nbsp;|&nbsp; ⏰ 11am – 2am
+              </p>
             </div>
           </motion.div>
         )}
