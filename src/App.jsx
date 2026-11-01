@@ -51,6 +51,7 @@ import AdminPOS from './pages/admin/AdminPOS';
 import AdminExpenses from './pages/admin/AdminExpenses';
 import AdminSuppliers from './pages/admin/AdminSuppliers';
 import AdminStaff from './pages/admin/AdminStaff';
+import AdminMessages from './pages/admin/AdminMessages';
 
 // New Customer Pages
 import MyCardPage from './pages/customer/MyCardPage';
@@ -125,6 +126,7 @@ const AppLayout = () => {
           <Route path="customers" element={<AdminCustomers />} />
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="settings"  element={<AdminSettings />} />
+          <Route path="messages"  element={<AdminMessages />} />
         </Route>
 
         {/* ── 404 ── */}

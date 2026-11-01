@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
   BarChart3, Settings, LogOut, Menu, X,
   QrCode, CreditCard, Receipt,
-  Truck, TrendingDown, UserCheck, LineChart
+  Truck, TrendingDown, UserCheck, LineChart, MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../../components/admin/NotificationPanel';
@@ -25,6 +27,7 @@ const navItems = [
   { path: '/admin/cards',     label: 'Loyalty Cards',    icon: <CreditCard size={17} /> },
   { path: '/admin/customers', label: 'Customers',        icon: <Users size={17} /> },
   { path: '/admin/settings',  label: 'Settings',         icon: <Settings size={17} /> },
+  { path: '/admin/messages',  label: 'Messages',          icon: <MessageSquare size={17} /> },
 ];
 
 const AdminLayout = () => {
@@ -32,7 +35,14 @@ const AdminLayout = () => {
   const { userData, logout, onlineStaff, user } = useAuth();
   const location = useLocation();
 
-  // Check if current user is online in Firestore
+  // Unread messages count
+  const [unreadMsgs, setUnreadMsgs] = useState(0);
+  useEffect(() => {
+    const q = query(collection(db, 'contactMessages'), where('read', '==', false));
+    const unsub = onSnapshot(q, snap => setUnreadMsgs(snap.size));
+    return () => unsub();
+  }, []);
+
   const isOnline = onlineStaff.some(s => s.id === user?.uid);
 
   return (
@@ -80,6 +90,11 @@ const AdminLayout = () => {
                   }`}>
                   {item.icon}
                   {item.label}
+                  {item.path === '/admin/messages' && unreadMsgs > 0 && (
+                    <span className="ml-auto bg-krunch-red text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                      {unreadMsgs}
+                    </span>
+                  )}
                 </Link>
               );
             })}
