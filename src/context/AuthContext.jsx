@@ -18,7 +18,12 @@ export const AuthProvider = ({ children }) => {
   const [onlineStaff, setOnlineStaff] = useState([]);
 
   useEffect(() => {
+    let cleanupFn = null;
+
     const unsubscribe = onAuthChange(async (firebaseUser) => {
+      // Remove previous beforeunload listener if any
+      if (cleanupFn) { cleanupFn(); cleanupFn = null; }
+
       if (firebaseUser) {
         setUser(firebaseUser);
         const data = await getUserData(firebaseUser.uid);
@@ -33,17 +38,29 @@ export const AuthProvider = ({ children }) => {
             });
           } catch {}
 
-          // Set offline on tab close
+          // Set offline on tab close using Beacon API to Firestore REST
           const uid = firebaseUser.uid;
           const handleUnload = () => {
-            // Use synchronous XHR as async requests don't complete on unload
             try {
-              const xhr = new XMLHttpRequest();
-              xhr.open('POST', `https://firestore.googleapis.com/v1/projects/kruncheez-pos/databases/(default)/documents/users/${uid}`, false);
+              // Use fetch keepalive — works in modern browsers on unload
+              fetch(
+                `https://firestore.googleapis.com/v1/projects/kruncheez-pos/databases/(default)/documents/users/${uid}?updateMask.fieldPaths=onlineStatus&updateMask.fieldPaths=lastSeen`,
+                {
+                  method: 'PATCH',
+                  keepalive: true,
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    fields: {
+                      onlineStatus: { booleanValue: false },
+                    }
+                  })
+                }
+              ).catch(() => {});
             } catch {}
           };
-          window.removeEventListener('beforeunload', handleUnload); // remove any old listener
+
           window.addEventListener('beforeunload', handleUnload);
+          cleanupFn = () => window.removeEventListener('beforeunload', handleUnload);
         }
       } else {
         setUser(null);
@@ -51,14 +68,23 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     });
-    return () => unsubscribe();
+
+    return () => {
+      unsubscribe();
+      if (cleanupFn) cleanupFn();
+    };
   }, []);
 
   // Listen for online admin/manager users
   useEffect(() => {
-    const q = query(collection(db, 'users'), where('isAdmin', '==', true));
+    // Query users where isAdmin is true (both admin + manager have isAdmin: true)
+    const q = query(
+      collection(db, 'users'),
+      where('isAdmin', '==', true),
+      where('onlineStatus', '==', true)
+    );
     const unsub = onSnapshot(q, (snap) => {
-      setOnlineStaff(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(u => u.onlineStatus));
+      setOnlineStaff(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     });
     return () => unsub();
   }, []);

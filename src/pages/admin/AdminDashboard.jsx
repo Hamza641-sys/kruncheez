@@ -84,27 +84,38 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-2 mb-3">
             <Wifi size={15} className="text-green-400" />
             <h3 className="font-heading font-bold text-white text-sm uppercase tracking-wide">
-              Staff Online Now
+              Manager Online
             </h3>
             <span className="ml-auto bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-              {onlineStaff.length} online
+              {onlineStaff.filter(s => s.role === 'manager').length} online
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
-            {onlineStaff.filter(s => s.role === 'manager').map(staff => (
-              <div key={staff.id} className="flex items-center gap-2 bg-krunch-black border border-green-700/20 rounded-xl px-3 py-2">
-                <div className="relative">
-                  <div className="w-7 h-7 rounded-full bg-green-900/50 border border-green-600/30 flex items-center justify-center text-green-400 font-bold text-xs">
-                    {staff.name?.[0]?.toUpperCase() || 'S'}
+            {onlineStaff.filter(s => s.role === 'manager').map(staff => {
+              const lastSeen = staff.lastSeen?.toDate?.();
+              const timeAgo = lastSeen ? (() => {
+                const diff = Math.floor((Date.now() - lastSeen.getTime()) / 1000);
+                if (diff < 60) return `${diff}s ago`;
+                if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+                return `${Math.floor(diff/3600)}h ago`;
+              })() : '';
+              return (
+                <div key={staff.id} className="flex items-center gap-2 bg-krunch-black border border-green-700/20 rounded-xl px-3 py-2">
+                  <div className="relative">
+                    <div className="w-7 h-7 rounded-full bg-green-900/50 border border-green-600/30 flex items-center justify-center text-green-400 font-bold text-xs">
+                      {staff.name?.[0]?.toUpperCase() || 'M'}
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-krunch-black animate-pulse" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-krunch-black animate-pulse" />
+                  <div>
+                    <p className="text-white font-body font-semibold text-xs">{staff.name}</p>
+                    <p className="text-green-400 text-[10px] font-body">
+                      Manager • Online {timeAgo && `· ${timeAgo}`}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-white font-body font-semibold text-xs">{staff.name}</p>
-                  <p className="text-green-400 text-[10px] font-body capitalize">{staff.role} • Online</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </motion.div>
       )}
