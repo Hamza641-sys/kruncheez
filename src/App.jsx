@@ -88,11 +88,9 @@ const AppLayout = () => {
         <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/custom-deal" element={<PublicLayout><CustomDealPage /></PublicLayout>} />
 
-        {/* Checkout - needs login */}
+        {/* Checkout - public, guest allowed */}
         <Route path="/checkout" element={
-          <ProtectedRoute>
-            <PublicLayout><CheckoutPage /></PublicLayout>
-          </ProtectedRoute>
+          <PublicLayout><CheckoutPage /></PublicLayout>
         } />
 
         {/* ── AUTH ROUTES (no navbar) ── */}

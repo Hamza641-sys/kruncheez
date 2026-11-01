@@ -29,6 +29,9 @@ const CheckoutPage = () => {
   const [searchParams] = useSearchParams();
   const tableNumber = searchParams.get('table');
 
+  // Guest mode state
+  const [checkoutMode, setCheckoutMode] = useState(null); // null = choose, 'guest', 'login'
+
   const [form, setForm] = useState({
     name: '', phone: '', address: '', area: '',
     notes: '', paymentMethod: 'cash',
@@ -41,6 +44,11 @@ const CheckoutPage = () => {
   const [loading, setLoading]               = useState(false);
   const [ordered, setOrdered]               = useState(false);
   const [orderId, setOrderId]               = useState('');
+
+  // If user is logged in, skip choice screen
+  useEffect(() => {
+    if (user) setCheckoutMode('loggedin');
+  }, [user]);
 
   // Pre-fill form from logged-in user data
   useEffect(() => {
@@ -211,6 +219,83 @@ const CheckoutPage = () => {
               </Link>
             )}
             <Link to="/" className="flex-1 btn-outline text-sm py-3 text-center">Back to Home</Link>
+          </div>        </motion.div>
+      </div>
+    );
+  }
+
+  // ── GUEST / LOGIN CHOICE ────────────────────────────────────────────────────
+  if (!checkoutMode && cartItems.length > 0) {
+    return (
+      <div className="min-h-screen bg-krunch-black flex items-center justify-center pt-20 pb-16 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full"
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="text-5xl mb-3">🛒</div>
+            <h2 className="font-heading font-black text-2xl text-white uppercase">Ready to Order?</h2>
+            <p className="text-krunch-gray font-body text-sm mt-2">
+              {cartItems.reduce((s,i) => s + i.quantity, 0)} items · Rs. {cartTotal.toLocaleString()}
+            </p>
+          </div>
+
+          {/* Choice Cards */}
+          <div className="flex flex-col gap-4">
+
+            {/* Guest Option */}
+            <button
+              onClick={() => setCheckoutMode('guest')}
+              className="w-full card-dark p-5 border-2 border-krunch-border hover:border-krunch-red transition-all text-left group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-krunch-red/10 border border-krunch-red/20 flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-krunch-red/20 transition-all">
+                  👤
+                </div>
+                <div className="flex-1">
+                  <p className="font-heading font-bold text-white text-base">Continue as Guest</p>
+                  <p className="text-krunch-gray font-body text-xs mt-0.5">Just enter your name & phone — no account needed</p>
+                </div>
+                <ArrowRight size={18} className="text-krunch-gray group-hover:text-krunch-red transition-colors" />
+              </div>
+              <div className="flex gap-2 mt-3 ml-16">
+                <span className="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-body">✓ Fast</span>
+                <span className="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-body">✓ No signup</span>
+                <span className="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full font-body">✓ Loyalty card supported</span>
+              </div>
+            </button>
+
+            {/* Login Option */}
+            <Link
+              to="/login"
+              state={{ from: '/checkout' }}
+              className="w-full card-dark p-5 border-2 border-krunch-border hover:border-blue-500/50 transition-all text-left group block"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-blue-500/20 transition-all">
+                  🔐
+                </div>
+                <div className="flex-1">
+                  <p className="font-heading font-bold text-white text-base">Login / Sign Up</p>
+                  <p className="text-krunch-gray font-body text-xs mt-0.5">Track orders, save addresses & earn loyalty points</p>
+                </div>
+                <ArrowRight size={18} className="text-krunch-gray group-hover:text-blue-400 transition-colors" />
+              </div>
+              <div className="flex gap-2 mt-3 ml-16">
+                <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-body">✓ Track order</span>
+                <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-body">✓ Save address</span>
+                <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full font-body">✓ Earn points</span>
+              </div>
+            </Link>
+          </div>
+
+          {/* Back */}
+          <div className="text-center mt-6">
+            <Link to="/menu" className="text-krunch-gray font-body text-sm hover:text-white transition-colors flex items-center justify-center gap-1">
+              <ArrowLeft size={14} /> Back to Menu
+            </Link>
           </div>
         </motion.div>
       </div>
