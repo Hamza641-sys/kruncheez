@@ -24,14 +24,18 @@ export const connectQZ = async () => {
   const qz = await loadQZ();
   if (!qz) throw new Error('QZ Tray library not available');
 
-  // Security setup — allow unsigned for local trusted connection
-  qz.security.setCertificatePromise((_resolve, _reject) => {
-    _resolve('-----BEGIN CERTIFICATE REQUEST-----\nMIIByjCCATMCAQAwgYkxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlh\nMRYwFAYDVQQHEw1TYW50YUJhcmJhcmExEzARBgNVBAoTClFaIEluZHVzdHJpZXMx\nFDASBgNVBAsTEFFaIEluZHVzdHJpZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDQAW\nggEGAoIBAQC7bReN\n-----END CERTIFICATE REQUEST-----');
+  // ✅ Correct QZ Tray 2.x security setup for unsigned local use
+  qz.security.setCertificatePromise((resolve) => {
+    resolve('-----BEGIN CERTIFICATE REQUEST-----\nMIIByjCCATMCAQAwgYkxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlh\n-----END CERTIFICATE REQUEST-----');
   });
 
   qz.security.setSignatureAlgorithm('SHA512');
-  qz.security.setSignaturePromise((_resolve, _reject) => {
-    _resolve('');
+
+  // ✅ This is the correct signature — resolve with empty string for unsigned
+  qz.security.setSignaturePromise((toSign) => {
+    return new Promise((resolve) => {
+      resolve(''); // unsigned — allowed when QZ Tray has "Allow unsigned" enabled
+    });
   });
 
   if (!qz.websocket.isActive()) {
