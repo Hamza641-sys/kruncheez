@@ -412,10 +412,15 @@ const AdminOrders = () => {
                           className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all">
                           <Eye size={12} />
                         </button>
-                        <button onClick={() => printBoth(order)}
-                          title="Print Bill + Kitchen Slip"
+                        <button onClick={() => printBill(order)}
+                          title="Print Counter Bill"
                           className="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-900/20 border border-green-700/30 text-green-400 hover:bg-green-600 hover:text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
-                          <Printer size={11} /> Print
+                          <Printer size={11} /> Counter
+                        </button>
+                        <button onClick={() => printKitchen(order)}
+                          title="Print Kitchen Slip"
+                          className="flex items-center gap-1 px-2 py-1 rounded-lg bg-orange-900/20 border border-orange-700/30 text-orange-400 hover:bg-orange-600 hover:text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
+                          <UtensilsCrossed size={11} /> Kitchen
                         </button>
                         {next && (
                           <button onClick={() => handleStatus(order.id, next, order)}
@@ -455,9 +460,13 @@ const AdminOrders = () => {
               <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
                 <h3 className="font-heading font-bold text-white uppercase">Order #{selected.id.slice(0,8).toUpperCase()}</h3>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => printBoth(selected)}
+                  <button onClick={() => printBill(selected)}
                     className="flex items-center gap-1.5 bg-green-900/20 border border-green-700/30 hover:bg-green-600 text-green-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
-                    <Printer size={13} /> Print Bill + Kitchen
+                    <Printer size={13} /> Counter
+                  </button>
+                  <button onClick={() => printKitchen(selected)}
+                    className="flex items-center gap-1.5 bg-orange-900/20 border border-orange-700/30 hover:bg-orange-600 text-orange-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
+                    <UtensilsCrossed size={13} /> Kitchen
                   </button>
                   <button onClick={() => setSelected(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
                 </div>
