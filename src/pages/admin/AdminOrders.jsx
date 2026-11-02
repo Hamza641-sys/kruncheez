@@ -48,8 +48,9 @@ const printBoth = (order) => {
         th { font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
         .total-row td { font-weight: bold; font-size: 14px; padding-top: 6px; }
         .footer { font-size: 10px; margin-top: 4px; }
+        @page { size: 80mm auto; margin: 2mm; }
         @media print {
-          body { margin: 0; }
+          html, body { margin: 0 !important; padding: 0 !important; width: 80mm !important; }
           .page-break { page-break-after: always; }
         }
       </style>
@@ -142,6 +143,7 @@ const printBoth = (order) => {
     </html>
   `);
   win.document.close();
+  win.document.close();
   setTimeout(() => { win.print(); win.close(); }, 400);
 };
 const printBill = (order) => {
@@ -177,7 +179,8 @@ const printBill = (order) => {
         th { font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
         .total-row td { font-weight: bold; font-size: 14px; padding-top: 6px; }
         .footer { font-size: 10px; margin-top: 4px; }
-        @media print { body { margin: 0; } }
+        @page { size: 80mm auto; margin: 2mm; }
+        @media print { html, body { margin: 0 !important; padding: 0 !important; width: 80mm !important; } }
       </style>
     </head>
     <body>
@@ -226,6 +229,7 @@ const printBill = (order) => {
     </body>
     </html>
   `);
+  win.document.close();
   win.document.close();
   setTimeout(() => { win.print(); win.close(); }, 400);
 };
@@ -293,6 +297,7 @@ const printKitchen = (order) => {
     </body>
     </html>
   `);
+  win.document.close();
   win.document.close();
   setTimeout(() => { win.print(); win.close(); }, 400);
 };
