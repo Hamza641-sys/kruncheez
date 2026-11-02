@@ -4,6 +4,7 @@ import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Pr
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
 import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
+import usePrinter from '../../hooks/usePrinter';
 
 // â”€â”€ Print Both (Bill + Kitchen) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const printBoth = (order) => {
@@ -361,8 +362,17 @@ const AdminOrders = () => {
   const [selected, setSelected]   = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
   // Payment confirm modal
-  const [payConfirm, setPayConfirm] = useState(null); // { orderId, order }
+  const [payConfirm, setPayConfirm] = useState(null);
+  // Print status per order
+  const [orderPrintStatus, setOrderPrintStatus] = useState({}); // { [orderId]: { counter, kitchen } }
+
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
+
+  // Printer hook
+  const {
+    qzStatus, config: printerConfig,
+    printOrder, retryCounter, retryKitchen,
+  } = usePrinter();
 
   useEffect(() => {
     const unsub = getAllOrders(setOrders);
@@ -383,7 +393,7 @@ const AdminOrders = () => {
   });
 
   const handleStatus = async (orderId, status, order) => {
-    // If marking as delivered â€” show payment confirm popup first
+    // If marking as delivered - show payment confirm popup first
     if (status === 'delivered') {
       setPayConfirm({ orderId, order });
       setSelected(null);
@@ -394,8 +404,26 @@ const AdminOrders = () => {
       try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, status); } catch {}
     }
     toast.success(`Order marked: ${status.replace(/_/g, ' ')}!`, toastStyle);
-  };
 
+    // Auto-print when order is CONFIRMED
+    if (status === 'confirmed' && printerConfig.autoPrint) {
+      const updatedOrder = { ...order, status: 'confirmed' };
+      setOrderPrintStatus(prev => ({ ...prev, [orderId]: { counter: 'printing', kitchen: 'printing' } }));
+      try {
+        const result = await printOrder(updatedOrder, orderId);
+        if (result?.results) {
+          setOrderPrintStatus(prev => ({ ...prev, [orderId]: result.results }));
+          if (result.results.counter === 'success' && result.results.kitchen === 'success') {
+            toast.success('Printed: Bill + Kitchen slip!', toastStyle);
+          } else {
+            toast('Print partial - check printer', { icon: 'Printer', ...toastStyle });
+          }
+        }
+      } catch {
+        setOrderPrintStatus(prev => ({ ...prev, [orderId]: { counter: 'error', kitchen: 'error' } }));
+      }
+    }
+  };
   // Confirm delivery with payment method
   const handleDeliveryConfirm = async (paymentMethod) => {
     if (!payConfirm) return;
@@ -547,10 +575,21 @@ const AdminOrders = () => {
                           className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all">
                           <Eye size={12} />
                         </button>
-                        <button onClick={() => printBoth(order)}
+                        <button onClick={async () => {
+                            if (printerConfig.autoPrint && qzStatus === 'connected') {
+                              setOrderPrintStatus(prev => ({ ...prev, [order.id]: { counter: 'printing', kitchen: 'printing' } }));
+                              const result = await printOrder(order, order.id + '_manual');
+                              if (result?.results) setOrderPrintStatus(prev => ({ ...prev, [order.id]: result.results }));
+                            } else {
+                              printBoth(order);
+                            }
+                          }}
                           title="Print Bill + Kitchen Slip"
                           className="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-900/20 border border-green-700/30 text-green-400 hover:bg-green-600 hover:text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
-                          <Printer size={11} /> Print
+                          <Printer size={11} />
+                          {orderPrintStatus[order.id]?.counter === 'printing' ? '...' :
+                           orderPrintStatus[order.id]?.counter === 'success' ? 'Printed' :
+                           orderPrintStatus[order.id]?.counter === 'error' ? 'Retry' : 'Print'}
                         </button>
                         {next && (
                           <button onClick={() => handleStatus(order.id, next, order)}

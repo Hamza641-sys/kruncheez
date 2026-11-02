@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../../components/admin/NotificationPanel';
 import LogoCircle from '../../components/LogoCircle';
+import usePrinter from '../../hooks/usePrinter';
 
 const navItems = [
   { path: '/admin',           label: 'Dashboard',        icon: <LayoutDashboard size={17} /> },
@@ -34,6 +35,7 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { userData, logout, onlineStaff, user } = useAuth();
   const location = useLocation();
+  const { qzStatus, config: printerConfig } = usePrinter();
 
   // Unread messages count
   const [unreadMsgs, setUnreadMsgs] = useState(0);
@@ -148,6 +150,24 @@ const AdminLayout = () => {
             </p>
           </div>
           <div className="flex items-center gap-3 ml-auto">
+            {/* Printer Status Indicator */}
+            {printerConfig.autoPrint && (
+              <div
+                title={`Printer: ${qzStatus} | Counter: ${printerConfig.counterPrinter || 'not set'} | Kitchen: ${printerConfig.kitchenPrinter || 'not set'}`}
+                className="hidden sm:flex items-center gap-1.5 bg-krunch-black border border-krunch-border rounded-lg px-2.5 py-1.5 cursor-pointer"
+                onClick={() => window.location.href = '/admin/settings'}
+              >
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  qzStatus === 'connected'  ? 'bg-green-500 animate-pulse' :
+                  qzStatus === 'connecting' ? 'bg-amber-400 animate-pulse' :
+                  'bg-red-500'
+                }`} />
+                <span className="text-[10px] font-body font-semibold text-krunch-gray">
+                  {qzStatus === 'connected' ? 'Printer Ready' :
+                   qzStatus === 'connecting' ? 'Connecting...' : 'Printer Off'}
+                </span>
+              </div>
+            )}
             <NotificationPanel />
             <div className="w-9 h-9 rounded-xl bg-krunch-red flex items-center justify-center text-white font-heading font-black text-sm">
               {userData?.name?.[0]?.toUpperCase() || 'A'}

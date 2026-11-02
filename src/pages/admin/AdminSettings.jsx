@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import {
   Save, Phone, Clock, MapPin, Bell, Shield,
-  Lock, Mail, Eye, EyeOff, RefreshCw, CheckCircle, Image
+  Lock, Mail, Eye, EyeOff, RefreshCw, CheckCircle, Image, Printer
 } from 'lucide-react';
 import {
   doc, getDoc, setDoc, serverTimestamp
@@ -14,6 +14,7 @@ import {
 import { db, auth } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import usePrinter from '../../hooks/usePrinter';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
@@ -105,6 +106,16 @@ const AdminSettings = () => {  const { userData } = useAuth();
   const [settings, setSettings]   = useState(DEFAULT_SETTINGS);
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
+
+  // Printer hook
+  const {
+    qzStatus, printers, config: printerConfig,
+    connect: connectPrinter, refreshPrinters,
+    updateConfig: updatePrinterConfig,
+    testCounter, testKitchen,
+  } = usePrinter();
+  const [testingCounter, setTestingCounter] = useState(false);
+  const [testingKitchen, setTestingKitchen] = useState(false);
 
   // Change Password state
   const [pwForm, setPwForm]       = useState({ current: '', newPw: '', confirm: '' });
@@ -365,6 +376,123 @@ const AdminSettings = () => {  const { userData } = useAuth();
           <p className="text-krunch-gray/50 font-body text-xs mt-3">
             💡 Tip: Click "Save Changes" above to apply. Recommended: landscape images (1920×1080 or wider).
           </p>
+        </Section>
+
+        {/* ── Printer Settings ── */}
+        <Section icon={<Printer size={18} />} title="Printer Settings (QZ Tray)">
+          {/* Connection Status */}
+          <div className="flex items-center justify-between mb-4 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3">
+            <div className="flex items-center gap-2">
+              <div className={`w-2.5 h-2.5 rounded-full ${
+                qzStatus === 'connected'   ? 'bg-green-500 animate-pulse' :
+                qzStatus === 'connecting'  ? 'bg-amber-400 animate-pulse' :
+                qzStatus === 'error'       ? 'bg-red-500' : 'bg-gray-500'
+              }`} />
+              <span className="font-body text-sm text-white font-semibold">
+                QZ Tray: {qzStatus === 'connected' ? 'Connected' :
+                          qzStatus === 'connecting' ? 'Connecting...' :
+                          qzStatus === 'error' ? 'Error' : 'Disconnected'}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => refreshPrinters().catch(() => {})}
+                className="flex items-center gap-1 text-xs bg-krunch-card border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white px-3 py-1.5 rounded-lg transition-all">
+                <RefreshCw size={12} /> Refresh
+              </button>
+              {qzStatus !== 'connected' && (
+                <button onClick={connectPrinter}
+                  className="flex items-center gap-1 text-xs bg-krunch-red hover:bg-krunch-darkred text-white px-3 py-1.5 rounded-lg transition-all">
+                  Connect
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* QZ Tray not installed notice */}
+          {qzStatus === 'error' && (
+            <div className="mb-4 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
+              <p className="text-amber-400 font-body text-sm font-semibold">QZ Tray not running</p>
+              <p className="text-krunch-gray font-body text-xs mt-1">
+                Download and install QZ Tray on this PC: <span className="text-blue-400">qz.io/download</span>
+              </p>
+            </div>
+          )}
+
+          {/* Auto Print Toggle */}
+          <div className="flex items-center justify-between py-3 border-b border-krunch-border">
+            <div>
+              <p className="text-white font-body font-semibold text-sm">Auto Print on Order</p>
+              <p className="text-krunch-gray font-body text-xs mt-0.5">Automatically print when order is confirmed</p>
+            </div>
+            <button type="button" onClick={() => updatePrinterConfig({ autoPrint: !printerConfig.autoPrint })}
+              className={`w-12 h-6 rounded-full transition-all relative flex-shrink-0 ${printerConfig.autoPrint ? 'bg-krunch-red' : 'bg-krunch-border'}`}>
+              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${printerConfig.autoPrint ? 'left-6' : 'left-0.5'}`} />
+            </button>
+          </div>
+
+          {/* Counter Printer */}
+          <div className="mt-4">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+              Counter Printer (Customer Bill)
+            </label>
+            <div className="flex gap-2">
+              <select
+                value={printerConfig.counterPrinter}
+                onChange={e => updatePrinterConfig({ counterPrinter: e.target.value })}
+                className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none"
+              >
+                <option value="">-- Select Counter Printer --</option>
+                {printers.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <button
+                onClick={async () => {
+                  setTestingCounter(true);
+                  try { await testCounter(); toast.success('Counter test printed!', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } }); }
+                  catch (e) { toast.error('Counter test failed: ' + e.message, { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } }); }
+                  setTestingCounter(false);
+                }}
+                disabled={!printerConfig.counterPrinter || testingCounter}
+                className="px-3 py-2 bg-green-900/20 border border-green-700/30 hover:bg-green-600 text-green-400 hover:text-white font-body font-bold text-xs rounded-xl transition-all disabled:opacity-40 whitespace-nowrap"
+              >
+                {testingCounter ? '...' : 'Test'}
+              </button>
+            </div>
+          </div>
+
+          {/* Kitchen Printer */}
+          <div className="mt-4">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">
+              Kitchen Printer (Kitchen Slip)
+            </label>
+            <div className="flex gap-2">
+              <select
+                value={printerConfig.kitchenPrinter}
+                onChange={e => updatePrinterConfig({ kitchenPrinter: e.target.value })}
+                className="flex-1 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none"
+              >
+                <option value="">-- Select Kitchen Printer --</option>
+                {printers.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <button
+                onClick={async () => {
+                  setTestingKitchen(true);
+                  try { await testKitchen(); toast.success('Kitchen test printed!', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } }); }
+                  catch (e) { toast.error('Kitchen test failed: ' + e.message, { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } }); }
+                  setTestingKitchen(false);
+                }}
+                disabled={!printerConfig.kitchenPrinter || testingKitchen}
+                className="px-3 py-2 bg-orange-900/20 border border-orange-700/30 hover:bg-orange-600 text-orange-400 hover:text-white font-body font-bold text-xs rounded-xl transition-all disabled:opacity-40 whitespace-nowrap"
+              >
+                {testingKitchen ? '...' : 'Test'}
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 bg-krunch-black border border-krunch-border rounded-xl px-4 py-3">
+            <p className="text-krunch-gray font-body text-xs">
+              💡 Config saved locally on this device. Connect QZ Tray → Refresh → Select printers → Test.
+            </p>
+          </div>
         </Section>
 
         {/* ── System ── */}
