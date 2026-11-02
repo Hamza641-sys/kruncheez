@@ -86,10 +86,47 @@ const AdminMenu = () => {
         </button>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col gap-4">
 
-        {/* ── LEFT: Category Sidebar ── */}
-        <aside className="lg:w-52 flex-shrink-0">
+        {/* ── Category Tabs — Mobile horizontal scroll ── */}
+        <div className="flex gap-2 overflow-x-auto pb-2 lg:hidden" style={{ scrollbarWidth: 'none' }}>
+          <button
+            onClick={() => setCatFilter('all')}
+            className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
+              catFilter === 'all'
+                ? 'bg-krunch-red text-white shadow-red-glow'
+                : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
+            }`}>
+            <span className="text-lg">🍴</span>
+            <span className="whitespace-nowrap">All Items</span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${catFilter === 'all' ? 'bg-white/20' : 'bg-krunch-black'}`}>
+              {items.length}
+            </span>
+          </button>
+          {menuCategories.map((cat) => {
+            const count = items.filter(i => i.category === cat.id).length;
+            return (
+              <button key={cat.id}
+                onClick={() => setCatFilter(cat.id)}
+                className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
+                  catFilter === cat.id
+                    ? 'bg-krunch-red text-white shadow-red-glow'
+                    : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:border-krunch-red hover:text-white'
+                }`}>
+                <span className="text-lg">{cat.icon}</span>
+                <span className="whitespace-nowrap">{cat.name}</span>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${catFilter === cat.id ? 'bg-white/20' : 'bg-krunch-black'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-6">
+
+        {/* ── LEFT: Category Sidebar — Desktop only ── */}
+        <aside className="lg:w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-4">
             <h3 className="font-heading font-bold text-white text-xs uppercase tracking-widest mb-3 px-1">Categories</h3>
             <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0" style={{ scrollbarWidth: 'none' }}>
@@ -157,7 +194,7 @@ const AdminMenu = () => {
 
           {/* Items Grid */}
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => <div key={i} className="h-48 bg-krunch-card rounded-xl animate-pulse" />)}
             </div>
           ) : filtered.length === 0 ? (
@@ -167,7 +204,7 @@ const AdminMenu = () => {
               <button onClick={openAdd} className="btn-primary mt-4 text-sm">+ Add Item</button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
               {filtered.map((item, i) => (
                 <motion.div key={item.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -175,7 +212,7 @@ const AdminMenu = () => {
                   transition={{ delay: i * 0.03 }}
                   className={`card-dark overflow-hidden group ${!item.available ? 'opacity-50' : ''}`}
                 >
-                  <div className="h-32 bg-krunch-black overflow-hidden relative">
+                  <div className="h-36 bg-krunch-black overflow-hidden relative">
                     {item.img ? (
                       <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
@@ -183,7 +220,6 @@ const AdminMenu = () => {
                         {menuCategories.find(c => c.id === item.category)?.icon || '🍴'}
                       </div>
                     )}
-                    {/* Category badge */}
                     <div className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">
                       {item.category}
                     </div>
@@ -191,7 +227,7 @@ const AdminMenu = () => {
                   <div className="p-3">
                     <p className="font-body font-bold text-white text-sm truncate">{item.name}</p>
                     <p className="text-krunch-red font-heading font-black text-lg">Rs.{Number(item.price).toLocaleString()}</p>
-                    <div className="flex items-center gap-1.5 mt-2">
+                    <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                       <button onClick={() => toggleAvailable(item)}
                         className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg transition-all ${item.available ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
                         {item.available ? <ToggleRight size={12} /> : <ToggleLeft size={12} />}
@@ -209,7 +245,7 @@ const AdminMenu = () => {
                     {/* Custom Deal Toggle */}
                     <button
                       onClick={() => toggleCustomDeal(item)}
-                      className={`w-full mt-2 flex items-center justify-center gap-1.5 text-[10px] font-bold px-2 py-1.5 rounded-lg transition-all border ${
+                      className={`w-full mt-2 flex items-center justify-center gap-1 text-[10px] font-bold px-2 py-1.5 rounded-lg transition-all border ${
                         item.customDeal
                           ? 'bg-amber-500/20 border-amber-500/40 text-amber-400'
                           : 'bg-krunch-black border-krunch-border text-krunch-gray hover:border-amber-500/40 hover:text-amber-400'
@@ -222,6 +258,7 @@ const AdminMenu = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
 
       {/* Add/Edit Form Modal */}
