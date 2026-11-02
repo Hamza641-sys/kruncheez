@@ -3,8 +3,11 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isAdmin() {
-      return request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return request.auth != null && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'manager' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+      );
     }
     function isLoggedIn() {
       return request.auth != null;
@@ -18,11 +21,15 @@ service cloud.firestore {
 
     // Orders
     match /orders/{orderId} {
-      allow create: if isLoggedIn();
+      allow create: if true; // Anyone can place order (guests + logged in)
       allow read: if isLoggedIn() && (
         resource.data.userId == request.auth.uid || isAdmin()
       );
-      allow update, delete: if isAdmin();
+      allow read: if resource.data.userId == null; // Guest orders readable by anyone with orderId
+      allow update: if isAdmin() || (
+        isLoggedIn() && resource.data.userId == request.auth.uid
+      );
+      allow delete: if isAdmin();
     }
 
     // Menu
