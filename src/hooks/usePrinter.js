@@ -47,12 +47,16 @@ const usePrinter = () => {
     try {
       await connectQZ();
       setQzStatus('connected');
-      // Load printers immediately after connect
-      await refreshPrinters();
+      // Load printers immediately
+      try {
+        const list = await getPrinters();
+        setPrinters(list);
+      } catch {}
     } catch (err) {
       setQzStatus('error');
-      // Auto-retry after 10s
-      reconnectTimer.current = setTimeout(connect, 10000);
+      console.warn('QZ Tray connect error:', err.message);
+      // Auto-retry after 15s
+      reconnectTimer.current = setTimeout(connect, 15000);
     }
   }, []);
 
