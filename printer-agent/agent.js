@@ -1,13 +1,16 @@
 // ═══════════════════════════════════════════════════════════════
-//   KRUNCHEEZ PRINTER AGENT v2.0
-//   Auto prints Bill + Kitchen Slip on new orders
+//   KRUNCHEEZ PRINTER AGENT v3.0
+//   Uses Windows print command — NO extra packages needed!
 //   Run: node agent.js  OR  double-click start.bat
 // ═══════════════════════════════════════════════════════════════
 
 const { initializeApp }  = require('firebase/app');
 const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
-const { getFirestore, collection, onSnapshot, query, where, orderBy, limit, doc, updateDoc, serverTimestamp } = require('firebase/firestore');
-const { ThermalPrinter, PrinterTypes, CharacterSet } = require('node-thermal-printer');
+const { getFirestore, collection, onSnapshot, query, where, orderBy, limit } = require('firebase/firestore');
+const { exec } = require('child_process');
+const fs   = require('fs');
+const path = require('path');
+const os   = require('os');
 const config = require('./config');
 
 // ── Init Firebase ─────────────────────────────────────────────
@@ -25,25 +28,20 @@ const log = (msg, type = 'info') => {
   console.log(`[${time}] ${icons[type] || 'ℹ️'} ${msg}`);
 };
 
-// ── ESC/POS helper: fixed-width row ──────────────────────────
-const row = (left, right, width = 42) => {
-  const space = Math.max(1, width - left.length - right.length);
-  return left + ' '.repeat(space) + right;
-};
-const line = (char = '-', width = 42) => char.repeat(width);
-
-// ══════════════════════════════════════════════════════════════
-//   PRINT CUSTOMER BILL — Counter Printer
-// ══════════════════════════════════════════════════════════════
-async function printCounterBill(order) {
-  const printer = new ThermalPrinter({
-    type:         PrinterTypes.EPSON,
-    interface:    `printer:${config.counterPrinter}`,
-    characterSet: CharacterSet.PC437_USA,
-    removeSpecialCharacters: true,
-    width:        config.charsPerLine,
+// ── Print text file to a Windows printer ─────────────────────
+function printTextFile(filePath, printerName) {
+  return new Promise((resolve) => {
+    // notepad /pt <file> <printer> — prints to specific printer
+    const cmd = `Start-Process -FilePath "notepad.exe" -ArgumentList "/pt","${filePath}","${printerName}" -WindowStyle Hidden`;
+    exec(`powershell -Command "${cmd}"`, { timeout: 15000 }, () => {
+      // Wait 2s for print job to spool
+      setTimeout(resolve, 2000);
+    });
   });
+}
 
+// ── Build counter bill text ───────────────────────────────────
+function buildCounterBill(order) {
   const date    = order.createdAt?.toDate?.() || new Date();
   const dateStr = date.toLocaleDateString('en-PK', { day: '2-digit', month: 'short', year: 'numeric' });
   const timeStr = date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' });
@@ -55,235 +53,154 @@ async function printCounterBill(order) {
     ? `Dine-In Table ${order.tableNumber}`
     : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery';
 
-  try {
-    // Header
-    printer.alignCenter();
-    printer.setTextSize(1, 1);
-    printer.bold(true);
-    printer.println(config.restaurant.name);
-    printer.bold(false);
-    printer.setTextNormal();
-    printer.println(config.restaurant.tagline);
-    printer.println(config.restaurant.address);
-    printer.drawLine();
-    printer.bold(true);
-    printer.println('CUSTOMER RECEIPT');
-    printer.bold(false);
-    printer.drawLine();
+  const W = 42;
+  const line  = (c = '-') => c.repeat(W);
+  const center = (t) => { const p = Math.max(0, Math.floor((W - t.length) / 2)); return ' '.repeat(p) + t; };
+  const row   = (l, r) => { const s = Math.max(1, W - l.length - r.length); return l + ' '.repeat(s) + r; };
 
-    // Order info
-    printer.alignLeft();
-    printer.tableCustom([
-      { text: 'Order:', align: 'LEFT', width: 0.5 },
-      { text: '#' + order.id.slice(0, 8).toUpperCase(), align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.tableCustom([
-      { text: 'Date:', align: 'LEFT', width: 0.5 },
-      { text: dateStr, align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.tableCustom([
-      { text: 'Time:', align: 'LEFT', width: 0.5 },
-      { text: timeStr, align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.tableCustom([
-      { text: 'Customer:', align: 'LEFT', width: 0.5 },
-      { text: (order.customer?.name || 'Guest').slice(0, 18), align: 'RIGHT', width: 0.5 },
-    ]);
-    if (order.customer?.phone) {
-      printer.tableCustom([
-        { text: 'Phone:', align: 'LEFT', width: 0.5 },
-        { text: order.customer.phone, align: 'RIGHT', width: 0.5 },
-      ]);
-    }
-    printer.tableCustom([
-      { text: 'Type:', align: 'LEFT', width: 0.5 },
-      { text: orderType, align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.tableCustom([
-      { text: 'Payment:', align: 'LEFT', width: 0.5 },
-      { text: order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash', align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.drawLine();
+  let t = '';
+  t += line('=') + '\n';
+  t += center('THE KRUNCHEEZ') + '\n';
+  t += center('Fast Food | Chinese | BBQ') + '\n';
+  t += center('Peshawar, Pakistan') + '\n';
+  t += line('=') + '\n';
+  t += center('CUSTOMER RECEIPT') + '\n';
+  t += line('-') + '\n';
+  t += row('Order:', '#' + order.id.slice(0, 8).toUpperCase()) + '\n';
+  t += row('Date:', dateStr) + '\n';
+  t += row('Time:', timeStr) + '\n';
+  t += row('Customer:', (order.customer?.name || 'Guest').slice(0, 18)) + '\n';
+  if (order.customer?.phone) t += row('Phone:', order.customer.phone) + '\n';
+  t += row('Type:', orderType) + '\n';
+  t += row('Payment:', order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash') + '\n';
+  t += line('-') + '\n';
+  t += row('Item', 'Qty     Amt') + '\n';
+  t += line('-') + '\n';
 
-    // Items header
-    printer.bold(true);
-    printer.tableCustom([
-      { text: 'Item', align: 'LEFT', width: 0.55 },
-      { text: 'Qty', align: 'CENTER', width: 0.15 },
-      { text: 'Amount', align: 'RIGHT', width: 0.30 },
-    ]);
-    printer.bold(false);
-    printer.drawLine();
-
-    // Items
-    (order.items || []).forEach(item => {
-      printer.tableCustom([
-        { text: item.name.substring(0, 22), align: 'LEFT', width: 0.55 },
-        { text: 'x' + item.quantity, align: 'CENTER', width: 0.15 },
-        { text: 'Rs.' + (item.price * item.quantity).toLocaleString(), align: 'RIGHT', width: 0.30 },
-      ]);
-    });
-
-    printer.drawLine();
-
-    // Totals
-    printer.tableCustom([
-      { text: 'Subtotal', align: 'LEFT', width: 0.6 },
-      { text: 'Rs.' + subtotal.toLocaleString(), align: 'RIGHT', width: 0.4 },
-    ]);
-    if (discount > 0) {
-      printer.tableCustom([
-        { text: 'Discount', align: 'LEFT', width: 0.6 },
-        { text: '- Rs.' + discount.toLocaleString(), align: 'RIGHT', width: 0.4 },
-      ]);
-    }
-    if (delivery > 0) {
-      printer.tableCustom([
-        { text: 'Delivery', align: 'LEFT', width: 0.6 },
-        { text: 'Rs.' + delivery.toLocaleString(), align: 'RIGHT', width: 0.4 },
-      ]);
-    }
-    printer.drawLine();
-    printer.bold(true);
-    printer.setTextSize(1, 1);
-    printer.tableCustom([
-      { text: 'TOTAL', align: 'LEFT', width: 0.5 },
-      { text: 'Rs.' + total.toLocaleString(), align: 'RIGHT', width: 0.5 },
-    ]);
-    printer.bold(false);
-    printer.setTextNormal();
-    printer.drawLine();
-
-    // Notes
-    if (order.notes) {
-      printer.println('Note: ' + order.notes);
-      printer.newLine();
-    }
-
-    // NTN + Footer
-    printer.alignCenter();
-    printer.bold(true);
-    printer.println('NTN: 1730144554693');
-    printer.bold(false);
-    printer.println('TAX INVOICE | RTO PESHAWAR');
-    printer.drawLine();
-    printer.bold(true);
-    printer.println('Thank you for dining with us!');
-    printer.bold(false);
-    printer.println(config.restaurant.website);
-    printer.newLine();
-    printer.cut();
-
-    await printer.execute();
-    log(`Counter bill printed — Order #${order.id.slice(0, 8).toUpperCase()}`, 'print');
-    return true;
-  } catch (err) {
-    log(`Counter bill FAILED: ${err.message}`, 'error');
-    return false;
-  }
-}
-
-// ══════════════════════════════════════════════════════════════
-//   PRINT KITCHEN SLIP — Kitchen Printer
-// ══════════════════════════════════════════════════════════════
-async function printKitchenSlip(order) {
-  const printer = new ThermalPrinter({
-    type:         PrinterTypes.EPSON,
-    interface:    `printer:${config.kitchenPrinter}`,
-    characterSet: CharacterSet.PC437_USA,
-    removeSpecialCharacters: true,
-    width:        config.charsPerLine,
-    lineCharacter: '=',
+  (order.items || []).forEach(item => {
+    const name = item.name.slice(0, 24);
+    const amt  = 'Rs.' + (item.price * item.quantity).toLocaleString();
+    t += name + '\n';
+    t += row('  x' + item.quantity, amt) + '\n';
   });
 
+  t += line('-') + '\n';
+  t += row('Subtotal:', 'Rs.' + subtotal.toLocaleString()) + '\n';
+  if (discount > 0) t += row('Discount:', '-Rs.' + discount.toLocaleString()) + '\n';
+  if (delivery > 0) t += row('Delivery:', 'Rs.' + delivery.toLocaleString()) + '\n';
+  t += line('=') + '\n';
+  t += row('TOTAL:', 'Rs.' + total.toLocaleString()) + '\n';
+  t += line('=') + '\n';
+  if (order.notes) t += 'Note: ' + order.notes + '\n\n';
+  t += center('NTN: 1730144554693') + '\n';
+  t += center('TAX INVOICE | RTO PESHAWAR') + '\n';
+  t += line('-') + '\n';
+  t += center('Thank you for dining with us!') + '\n';
+  t += center('kruncheez-pos.web.app') + '\n';
+  t += '\n\n\n';
+  return t;
+}
+
+// ── Build kitchen slip text ───────────────────────────────────
+function buildKitchenSlip(order) {
   const date    = order.createdAt?.toDate?.() || new Date();
   const timeStr = date.toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' });
   const orderType = order.tableNumber
-    ? `TABLE ${order.tableNumber}`
+    ? 'TABLE ' + order.tableNumber
     : order.orderType === 'pickup' ? 'PICKUP' : 'DELIVERY';
   const totalQty = (order.items || []).reduce((s, i) => s + (i.quantity || 1), 0);
 
+  const W = 42;
+  const line   = (c = '-') => c.repeat(W);
+  const center = (t) => { const p = Math.max(0, Math.floor((W - t.length) / 2)); return ' '.repeat(p) + t; };
+  const row    = (l, r) => { const s = Math.max(1, W - l.length - r.length); return l + ' '.repeat(s) + r; };
+
+  let t = '';
+  t += line('=') + '\n';
+  t += center('** KITCHEN ORDER **') + '\n';
+  t += line('=') + '\n';
+  t += center('#' + order.id.slice(0, 8).toUpperCase()) + '\n';
+  t += center('Time: ' + timeStr) + '\n';
+  t += line('-') + '\n';
+  t += center('*** ' + orderType + ' ***') + '\n';
+  if (order.customer?.name) t += center('Customer: ' + order.customer.name) + '\n';
+  t += line('-') + '\n';
+  t += 'ITEMS TO PREPARE:\n';
+  t += line('-') + '\n';
+
+  (order.items || []).forEach(item => {
+    t += row(item.name.slice(0, 30), 'x' + item.quantity) + '\n';
+    t += '\n';
+  });
+
+  t += line('=') + '\n';
+  if (order.notes) {
+    t += '!! SPECIAL INSTRUCTIONS:\n';
+    t += order.notes + '\n';
+    t += line('-') + '\n';
+  }
+  t += center('Total Items: ' + totalQty) + '\n';
+  t += '\n\n\n';
+  return t;
+}
+
+// ── Print both slips for an order ────────────────────────────
+async function printOrder(order) {
+  const tmpDir = os.tmpdir();
+  const billFile    = path.join(tmpDir, `krz_bill_${order.id}.txt`);
+  const kitchenFile = path.join(tmpDir, `krz_kitchen_${order.id}.txt`);
+
+  // Write temp files
+  fs.writeFileSync(billFile,    buildCounterBill(order),  'utf8');
+  fs.writeFileSync(kitchenFile, buildKitchenSlip(order), 'utf8');
+
+  const results = { counter: false, kitchen: false };
+
+  // Print counter bill
   try {
-    printer.alignCenter();
-    printer.bold(true);
-    printer.println('** KITCHEN ORDER **');
-    printer.bold(false);
-    printer.drawLine();
+    await printTextFile(billFile, config.counterPrinter);
+    results.counter = true;
+    log(`Counter bill printed — #${order.id.slice(0, 8).toUpperCase()}`, 'print');
+  } catch (err) {
+    log(`Counter bill FAILED: ${err.message}`, 'error');
+  }
 
-    // Order ID — large
-    printer.setTextSize(2, 2);
-    printer.bold(true);
-    printer.println('#' + order.id.slice(0, 8).toUpperCase());
-    printer.bold(false);
-    printer.setTextNormal();
-    printer.println('Time: ' + timeStr);
-    printer.drawLine();
-
-    // Order type — large
-    printer.setTextSize(1, 2);
-    printer.bold(true);
-    printer.println(orderType);
-    printer.bold(false);
-    printer.setTextNormal();
-
-    if (order.customer?.name) {
-      printer.println('Customer: ' + order.customer.name);
-    }
-
-    printer.drawLine();
-    printer.alignLeft();
-    printer.bold(true);
-    printer.println('ITEMS TO PREPARE:');
-    printer.bold(false);
-    printer.drawLine();
-
-    // Items — large text
-    (order.items || []).forEach(item => {
-      printer.setTextSize(1, 1);
-      printer.bold(true);
-      printer.tableCustom([
-        { text: item.name.substring(0, 26), align: 'LEFT', width: 0.75 },
-        { text: 'x' + item.quantity, align: 'RIGHT', width: 0.25, bold: true },
-      ]);
-      printer.bold(false);
-      printer.setTextNormal();
-    });
-
-    printer.drawLine();
-
-    // Special instructions
-    if (order.notes) {
-      printer.bold(true);
-      printer.println('!! SPECIAL INSTRUCTIONS:');
-      printer.bold(false);
-      printer.println(order.notes);
-      printer.drawLine();
-    }
-
-    printer.alignCenter();
-    printer.println('Total Items: ' + totalQty);
-    printer.newLine();
-    printer.cut();
-
-    await printer.execute();
-    log(`Kitchen slip printed — Order #${order.id.slice(0, 8).toUpperCase()}`, 'print');
-    return true;
+  // Print kitchen slip
+  try {
+    await printTextFile(kitchenFile, config.kitchenPrinter);
+    results.kitchen = true;
+    log(`Kitchen slip printed — #${order.id.slice(0, 8).toUpperCase()}`, 'print');
   } catch (err) {
     log(`Kitchen slip FAILED: ${err.message}`, 'error');
-    return false;
   }
+
+  // Cleanup temp files
+  try { fs.unlinkSync(billFile); } catch {}
+  try { fs.unlinkSync(kitchenFile); } catch {}
+
+  return results;
 }
 
 // ══════════════════════════════════════════════════════════════
-//   MAIN — Listen for new orders and print both
+//   MAIN — Listen for new orders and auto print
 // ══════════════════════════════════════════════════════════════
 async function startAgent() {
-  log('KrunchEez Printer Agent starting...');
+  console.log('');
+  console.log('  ██╗  ██╗██████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗███████╗███████╗███████╗');
+  console.log('  ██╔ ██╔╝██╔══██╗██║   ██║████╗  ██║██╔════╝██║  ██║██╔════╝██╔════╝╚══███╔╝');
+  console.log('  █████╔╝ ██████╔╝██║   ██║██╔██╗ ██║██║     ███████║█████╗  █████╗    ███╔╝ ');
+  console.log('  ██╔═██╗ ██╔══██╗██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██╔══╝   ███╔╝  ');
+  console.log('  ██║  ██╗██║  ██║╚██████╔╝██║ ╚████║╚██████╗██║  ██║███████╗███████╗███████╗');
+  console.log('  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝');
+  console.log('');
+  console.log('  PRINTER AGENT v3.0 — Auto Print System');
+  console.log('  =========================================');
+  console.log('');
 
   // Login to Firebase
   try {
     await signInWithEmailAndPassword(auth, 'kruncheez.admin@gmail.com', 'KrunchEez@2024!');
-    log('Firebase: Logged in');
+    log('Firebase: Connected');
   } catch (err) {
     log('Firebase login failed: ' + err.message, 'error');
     process.exit(1);
@@ -291,10 +208,11 @@ async function startAgent() {
 
   log(`Counter Printer: "${config.counterPrinter}"`);
   log(`Kitchen Printer: "${config.kitchenPrinter}"`);
-  log('Listening for new orders...');
-  log('─────────────────────────────────────────');
+  log('');
+  log('Listening for new orders... (Press Ctrl+C to stop)');
+  log('─────────────────────────────────────────────────');
 
-  // Listen for pending orders in real-time
+  // Listen for new pending orders
   const q = query(
     collection(db, 'orders'),
     where('status', '==', config.printOnStatus),
@@ -312,35 +230,35 @@ async function startAgent() {
       if (printedOrders.has(order.id)) return;
       printedOrders.add(order.id);
 
-      log(`New order: #${order.id.slice(0, 8).toUpperCase()} | ${order.customer?.name || 'Guest'} | Rs.${order.summary?.total?.toLocaleString() || 0}`);
+      log('');
+      log(`NEW ORDER: #${order.id.slice(0, 8).toUpperCase()}`);
+      log(`Customer: ${order.customer?.name || 'Guest'} | Rs.${order.summary?.total?.toLocaleString() || 0}`);
+      log(`Type: ${order.orderType || 'delivery'}${order.tableNumber ? ' | Table ' + order.tableNumber : ''}`);
 
-      // Print both simultaneously
-      const [counterOk, kitchenOk] = await Promise.all([
-        printCounterBill(order),
-        printKitchenSlip(order),
-      ]);
+      const results = await printOrder(order);
 
-      if (counterOk && kitchenOk) {
-        log(`Both printed successfully for #${order.id.slice(0, 8).toUpperCase()}`);
+      if (results.counter && results.kitchen) {
+        log('Both slips printed successfully!');
       } else {
-        if (!counterOk) log(`Counter print failed for #${order.id.slice(0, 8).toUpperCase()} — retry manually`, 'warn');
-        if (!kitchenOk) log(`Kitchen print failed for #${order.id.slice(0, 8).toUpperCase()} — retry manually`, 'warn');
+        log('Some prints failed — check printers', 'warn');
       }
+      log('─────────────────────────────────────────────────');
     });
   }, (err) => {
-    log('Firebase listener error: ' + err.message, 'error');
+    log('Firebase error: ' + err.message, 'error');
   });
 }
 
 // Start!
 startAgent();
 
-// Keep alive
+// Keep process alive
 process.on('SIGINT', () => {
+  log('');
   log('Printer agent stopped. Goodbye!');
   process.exit(0);
 });
 
 process.on('unhandledRejection', (err) => {
-  log('Unhandled error: ' + err.message, 'error');
+  log('Unhandled error: ' + (err?.message || err), 'error');
 });

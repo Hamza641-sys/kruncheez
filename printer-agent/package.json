@@ -1,16 +1,13 @@
 {
   "name": "kruncheez-printer-agent",
-  "version": "1.0.0",
-  "description": "Auto print agent for KrunchEez restaurant - prints bill + kitchen slip on new orders",
+  "version": "2.0.0",
+  "description": "Auto print agent for KrunchEez - prints bill + kitchen slip on new orders",
   "main": "agent.js",
   "scripts": {
     "start": "node agent.js",
-    "install-service": "node install-service.js"
+    "test-printers": "node list-printers.js"
   },
   "dependencies": {
-    "firebase": "^10.7.0",
-    "pdf-to-printer": "^5.0.1",
-    "pdfkit": "^0.14.0",
-    "node-thermal-printer": "^4.3.4"
+    "firebase": "^10.14.1"
   }
 }
