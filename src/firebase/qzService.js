@@ -62,11 +62,38 @@ export const isQZConnected = () => {
   catch { return false; }
 };
 
-// ── Get all available printers ──────────────────────────────────
+// ── Get all available printers — with full diagnostics ──────────
 export const getPrinters = async () => {
-  if (!isQZConnected()) await connectQZ();
-  const printers = await window.qz.printers.find();
-  return Array.isArray(printers) ? printers : [printers].filter(Boolean);
+  console.log('[QZ] getPrinters called, connected:', isQZConnected());
+
+  if (!isQZConnected()) {
+    console.log('[QZ] Not connected, connecting first...');
+    await connectQZ();
+  }
+
+  try {
+    // qz.printers.find() with no args returns ALL printers
+    const raw = await window.qz.printers.find();
+    console.log('[QZ] Raw printer response:', raw, typeof raw);
+
+    let list = [];
+    if (Array.isArray(raw)) {
+      list = raw;
+    } else if (typeof raw === 'string' && raw.trim()) {
+      // Single printer returned as string
+      list = [raw];
+    } else if (raw && typeof raw === 'object') {
+      list = Object.values(raw);
+    }
+
+    // Filter out empty/null values and trim
+    list = list.map(p => (p || '').trim()).filter(p => p.length > 0);
+    console.log('[QZ] Processed printer list:', list);
+    return list;
+  } catch (err) {
+    console.error('[QZ] getPrinters error:', err);
+    throw new Error('Failed to get printers: ' + err.message);
+  }
 };
 
 // ── ESC/POS helpers ─────────────────────────────────────────────

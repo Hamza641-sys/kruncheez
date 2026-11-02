@@ -40,22 +40,31 @@ const usePrinter = () => {
   const [printStatus, setPrintStatus] = useState({ counter: null, kitchen: null }); // null | printing | success | error
   const [printError, setPrintError]   = useState({ counter: null, kitchen: null });
   const reconnectTimer = useRef(null);
+  const [printerError, setPrinterError] = useState('');
 
   // ── Connect to QZ Tray ────────────────────────────────────────
   const connect = useCallback(async () => {
     setQzStatus('connecting');
+    setPrinterError('');
     try {
       await connectQZ();
       setQzStatus('connected');
-      // Load printers immediately
+      // Load printers immediately after connect
       try {
         const list = await getPrinters();
+        console.log('[usePrinter] Printers after connect:', list);
         setPrinters(list);
-      } catch {}
+        if (list.length === 0) {
+          setPrinterError('Connected but no printers found. Check Windows printers.');
+        }
+      } catch (pErr) {
+        console.error('[usePrinter] Printer load error:', pErr);
+        setPrinterError('Could not load printers: ' + pErr.message);
+      }
     } catch (err) {
       setQzStatus('error');
-      console.warn('QZ Tray connect error:', err.message);
-      // Auto-retry after 15s
+      setPrinterError('QZ Tray not running. Please start QZ Tray.');
+      console.warn('[usePrinter] QZ connect error:', err.message);
       reconnectTimer.current = setTimeout(connect, 15000);
     }
   }, []);
@@ -92,14 +101,24 @@ const usePrinter = () => {
     return () => clearInterval(interval);
   }, [config.autoPrint]);
 
-  // ── Refresh printer list ──────────────────────────────────────
+  // ── Refresh printer list ─────────────────────────────────────
   const refreshPrinters = useCallback(async () => {
+    setPrinterError('');
     try {
-      if (!isQZConnected()) await connectQZ();
+      if (!isQZConnected()) {
+        await connectQZ();
+        setQzStatus('connected');
+      }
       const list = await getPrinters();
-      setPrinters(list);
+      console.log('[usePrinter] refreshPrinters result:', list);
+      setPrinters([...list]); // force new array ref to trigger re-render
+      if (list.length === 0) {
+        setPrinterError('No printers found. Make sure printers are installed in Windows.');
+      }
       return list;
     } catch (err) {
+      console.error('[usePrinter] refreshPrinters error:', err);
+      setPrinterError('Refresh failed: ' + err.message);
       setPrinters([]);
       throw err;
     }
@@ -219,6 +238,7 @@ const usePrinter = () => {
     // State
     qzStatus,
     printers,
+    printerError,
     config,
     printStatus,
     printError,

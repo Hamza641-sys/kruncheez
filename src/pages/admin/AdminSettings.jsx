@@ -110,6 +110,7 @@ const AdminSettings = () => {  const { userData } = useAuth();
   // Printer hook
   const {
     qzStatus, printers, config: printerConfig,
+    printerError,
     connect: connectPrinter, refreshPrinters,
     updateConfig: updatePrinterConfig,
     testCounter, testKitchen,
@@ -414,6 +415,22 @@ const AdminSettings = () => {  const { userData } = useAuth();
               <p className="text-amber-400 font-body text-sm font-semibold">QZ Tray not running</p>
               <p className="text-krunch-gray font-body text-xs mt-1">
                 Download and install QZ Tray on this PC: <span className="text-blue-400">qz.io/download</span>
+              </p>
+            </div>
+          )}
+
+          {/* Printer error/diagnostic */}
+          {printerError && qzStatus === 'connected' && (
+            <div className="mb-4 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+              <p className="text-red-400 font-body text-xs">{printerError}</p>
+            </div>
+          )}
+
+          {/* Printer count */}
+          {qzStatus === 'connected' && printers.length > 0 && (
+            <div className="mb-4 bg-green-900/20 border border-green-700/30 rounded-xl px-4 py-2">
+              <p className="text-green-400 font-body text-xs font-semibold">
+                ✅ {printers.length} printer{printers.length > 1 ? 's' : ''} found: {printers.join(', ')}
               </p>
             </div>
           )}
