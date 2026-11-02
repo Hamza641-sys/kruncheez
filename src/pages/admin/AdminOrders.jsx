@@ -35,16 +35,17 @@ const printBill = (order) => {
       <title>Bill - #${order.id.slice(0,8).toUpperCase()}</title>
       <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: 'Courier New', monospace; width: 300px; margin: 0 auto; padding: 10px; font-size: 12px; }
+        body { font-family: 'Courier New', monospace; width: 300px; margin: 0 auto; padding: 10px; font-size: 14px; font-weight: bold; }
         .center { text-align: center; }
         .bold { font-weight: bold; }
-        .line { border-top: 1px dashed #000; margin: 8px 0; }
-        .logo { font-size: 20px; font-weight: bold; letter-spacing: 2px; }
-        .tagline { font-size: 10px; margin-top: 2px; }
+        .line { border-top: 2px dashed #000; margin: 8px 0; }
+        .logo { font-size: 22px; font-weight: bold; letter-spacing: 2px; }
+        .tagline { font-size: 12px; font-weight: bold; margin-top: 2px; }
         table { width: 100%; border-collapse: collapse; }
-        th { font-size: 11px; border-bottom: 1px dashed #000; padding-bottom: 4px; }
-        .total-row td { font-weight: bold; font-size: 14px; padding-top: 6px; }
-        .footer { font-size: 10px; margin-top: 4px; }
+        th { font-size: 13px; font-weight: bold; border-bottom: 2px dashed #000; padding-bottom: 4px; }
+        td { font-size: 13px; font-weight: bold; }
+        .total-row td { font-weight: bold; font-size: 16px; padding-top: 6px; }
+        .footer { font-size: 12px; font-weight: bold; margin-top: 4px; }
         @page { size: 80mm auto; margin: 2mm; }
         @media print { html, body { margin: 0 !important; padding: 0 !important; width: 80mm !important; } }
       </style>
