@@ -46,7 +46,7 @@ const AdminLayout = () => {
   const isOnline = onlineStaff.some(s => s.id === user?.uid);
 
   return (
-    <div className="min-h-screen bg-krunch-black flex">
+    <div className="min-h-screen bg-krunch-black flex overflow-x-hidden w-full max-w-full">
 
       {/* ── SIDEBAR ── */}
       <>
@@ -136,7 +136,7 @@ const AdminLayout = () => {
       </>
 
       {/* ── MAIN CONTENT ── */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0 overflow-x-hidden w-full">
         {/* Top Bar */}
         <header className="sticky top-0 z-30 bg-krunch-dark border-b border-krunch-border px-4 py-3 flex items-center justify-between">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-krunch-card text-krunch-gray hover:text-white transition-colors">
@@ -156,8 +156,10 @@ const AdminLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-4 lg:p-6 overflow-y-auto">
+        <main className="flex-1 p-4 lg:p-6 overflow-x-hidden overflow-y-auto w-full max-w-full">
+          <div className="w-full max-w-full overflow-x-hidden">
           <Outlet />
+          </div>
         </main>
       </div>
     </div>

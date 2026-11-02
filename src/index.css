@@ -14,11 +14,25 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Admin Panel Global Mobile Fix ─────────────────────────── */
+/* Prevent horizontal scroll on all admin pages */
+.admin-page-content,
+.admin-page-content * {
+  max-width: 100%;
+}
+
+/* Tables scroll internally but don't overflow page */
+.overflow-x-auto {
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
   background-color: #0A0A0A;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 ::-webkit-scrollbar {
