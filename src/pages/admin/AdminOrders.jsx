@@ -126,7 +126,8 @@ const printKitchen = (order) => {
         .line { border-top: 2px dashed #000; margin: 8px 0; }
         .order-id { font-size: 22px; font-weight: bold; letter-spacing: 2px; }
         table { width: 100%; border-collapse: collapse; }
-        @media print { body { margin: 0; } }
+        @page { size: 80mm auto; margin: 2mm; }
+        @media print { html, body { margin: 0 !important; padding: 0 !important; width: 80mm !important; } }
       </style>
     </head>
     <body>
