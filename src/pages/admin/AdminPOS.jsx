@@ -5,6 +5,7 @@ import { db } from '../../firebase/config';
 import { menuCategories } from '../../data/menuData';
 import { Plus, Minus, Trash2, Printer, X, CheckCircle, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { printBill, printKitchen } from '../../utils/printUtils';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
@@ -73,36 +74,6 @@ const AdminPOS = () => {
     finally { setPlacing(false); }
   };
 
-  const printReceipt = (order) => {
-    const win = window.open('', '_blank');
-    win.document.write(`<!DOCTYPE html><html><head><title>Receipt</title>
-    <style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:monospace;font-size:12px;max-width:300px;margin:auto;padding:20px;}
-    .center{text-align:center;}.bold{font-weight:bold;}.line{border-top:1px dashed #000;margin:8px 0;}.big{font-size:16px;font-weight:bold;}</style>
-    </head><body>
-    <div class="center big">THE KRUNCHEEZ</div>
-    <div class="center">Fast Food • Chinese • BBQ</div>
-    <div class="center">0317-7787648</div>
-    <div class="line"></div>
-    <div>Order: #${order.id.slice(0,8).toUpperCase()}</div>
-    <div>Date: ${new Date().toLocaleString('en-PK')}</div>
-    ${order.tableNumber ? `<div>Table: ${order.tableNumber}</div>` : ''}
-    ${order.customer?.name ? `<div>Customer: ${order.customer.name}</div>` : ''}
-    ${order.customer?.phone ? `<div>Phone: ${order.customer.phone}</div>` : ''}
-    <div>Type: ${order.orderType === 'dine-in' ? 'Dine-In' : order.orderType === 'delivery' ? 'Delivery' : 'Pickup'}</div>
-    <div class="line"></div>
-    ${order.items.map(i => `<div style="display:flex;justify-content:space-between"><span>${i.name} x${i.quantity}</span><span>Rs.${(i.price*i.quantity).toLocaleString()}</span></div>`).join('')}
-    <div class="line"></div>
-    <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span>Rs.${order.summary.subtotal.toLocaleString()}</span></div>
-    ${order.summary.discount > 0 ? `<div style="display:flex;justify-content:space-between"><span>Discount</span><span>-Rs.${order.summary.discount.toLocaleString()}</span></div>` : ''}
-    <div style="display:flex;justify-content:space-between" class="bold"><span>TOTAL</span><span>Rs.${order.summary.total.toLocaleString()}</span></div>
-    <div class="line"></div>
-    <div class="center">Payment: ${order.paymentMethod === 'cash' ? 'Cash' : 'Card'}</div>
-    <div class="center">Thank you for visiting!</div>
-    <div class="center">kruncheez-pos.web.app</div>
-    <script>window.onload=()=>{window.print();window.close();}</script>
-    </body></html>`);
-    win.document.close();
-  };
 
   return (
     <div>
@@ -294,9 +265,13 @@ const AdminPOS = () => {
               <p className="text-krunch-gray font-body text-sm mb-1">#{orderDone.id.slice(0,8).toUpperCase()}</p>
               <p className="text-krunch-red font-heading font-black text-3xl mb-6">Rs.{orderDone.summary.total.toLocaleString()}</p>
               <div className="flex gap-3">
-                <button onClick={() => printReceipt(orderDone)}
-                  className="flex-1 flex items-center justify-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl transition-all">
-                  <Printer size={16} /> Print Receipt
+                <button onClick={() => printBill(orderDone)}
+                  className="flex-1 flex items-center justify-center gap-2 bg-green-700 hover:bg-green-800 text-white font-heading font-bold py-3 rounded-xl transition-all text-sm">
+                  <Printer size={15} /> Counter
+                </button>
+                <button onClick={() => printKitchen(orderDone)}
+                  className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-heading font-bold py-3 rounded-xl transition-all text-sm">
+                  <Printer size={15} /> Kitchen
                 </button>
                 <button onClick={() => setOrderDone(null)}
                   className="flex-1 btn-outline text-sm py-3">New Order</button>
