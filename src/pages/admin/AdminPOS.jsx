@@ -15,6 +15,8 @@ const AdminPOS = () => {
   const [search, setSearch]       = useState('');
   const [tableNo, setTableNo]     = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
+  const [orderType, setOrderType] = useState('dine-in');
   const [payMethod, setPayMethod] = useState('cash');
   const [discount, setDiscount]   = useState(0);
   const [orderDone, setOrderDone] = useState(null);
@@ -53,11 +55,11 @@ const AdminPOS = () => {
     setPlacing(true);
     try {
       const orderData = {
-        customer:      { name: customerName || 'Walk-in Customer', phone: '' },
-        tableNumber:   tableNo || null,
+        customer:      { name: customerName || 'Walk-in Customer', phone: customerPhone || '' },
+        tableNumber:   orderType === 'dine-in' && tableNo ? tableNo : null,
         items:         cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.qty, subtotal: i.price * i.qty, category: i.category })),
         summary:       { subtotal, discount: discountAmt, deliveryFee: 0, total },
-        orderType:     tableNo ? 'dine-in' : 'pickup',
+        orderType:     orderType,
         paymentMethod: payMethod,
         status:        'confirmed',
         source:        'pos',
@@ -65,7 +67,7 @@ const AdminPOS = () => {
       };
       const ref = await addDoc(collection(db, 'orders'), orderData);
       setOrderDone({ id: ref.id, ...orderData });
-      setCart([]); setTableNo(''); setCustomerName(''); setDiscount(0);
+      setCart([]); setTableNo(''); setCustomerName(''); setCustomerPhone(''); setDiscount(0);
       toast.success('Order placed! 🎉', toastStyle);
     } catch { toast.error('Failed to place order', toastStyle); }
     finally { setPlacing(false); }
@@ -85,6 +87,8 @@ const AdminPOS = () => {
     <div>Date: ${new Date().toLocaleString('en-PK')}</div>
     ${order.tableNumber ? `<div>Table: ${order.tableNumber}</div>` : ''}
     ${order.customer?.name ? `<div>Customer: ${order.customer.name}</div>` : ''}
+    ${order.customer?.phone ? `<div>Phone: ${order.customer.phone}</div>` : ''}
+    <div>Type: ${order.orderType === 'dine-in' ? 'Dine-In' : order.orderType === 'delivery' ? 'Delivery' : 'Pickup'}</div>
     <div class="line"></div>
     ${order.items.map(i => `<div style="display:flex;justify-content:space-between"><span>${i.name} x${i.quantity}</span><span>Rs.${(i.price*i.quantity).toLocaleString()}</span></div>`).join('')}
     <div class="line"></div>
@@ -167,12 +171,32 @@ const AdminPOS = () => {
           <div className="card-dark p-4">
             <h3 className="font-heading font-bold text-white text-sm uppercase mb-3">Order Info</h3>
             <div className="flex flex-col gap-2">
+              {/* Order Type */}
+              <div className="grid grid-cols-3 gap-1.5 mb-1">
+                {[
+                  { k: 'dine-in',  l: '🪑 Dine-In' },
+                  { k: 'delivery', l: '🛵 Delivery' },
+                  { k: 'pickup',   l: '🏃 Pickup' },
+                ].map(t => (
+                  <button key={t.k} onClick={() => setOrderType(t.k)}
+                    className={`py-2 rounded-xl font-body font-bold text-xs transition-all ${
+                      orderType === t.k ? 'bg-krunch-red text-white' : 'bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white'
+                    }`}>
+                    {t.l}
+                  </button>
+                ))}
+              </div>
               <input type="text" placeholder="Customer Name (optional)" value={customerName}
                 onChange={e => setCustomerName(e.target.value)}
                 className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
-              <input type="text" placeholder="Table No. (optional)" value={tableNo}
-                onChange={e => setTableNo(e.target.value)}
+              <input type="tel" placeholder="Phone Number (optional)" value={customerPhone}
+                onChange={e => setCustomerPhone(e.target.value)}
                 className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors" />
+              {orderType === 'dine-in' && (
+                <input type="text" placeholder="Table No." value={tableNo}
+                  onChange={e => setTableNo(e.target.value)}
+                  className="w-full bg-krunch-black border border-amber-500/30 rounded-xl px-3 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-amber-500 transition-colors" />
+              )}
             </div>
           </div>
 
@@ -240,7 +264,7 @@ const AdminPOS = () => {
 
             {/* Payment */}
             <div className="grid grid-cols-2 gap-2 mb-3">
-              {[{k:'cash',l:'💵 Cash'},{k:'card',l:'💳 Card'}].map(p => (
+              {[{k:'cash',l:'💵 Cash'},{k:'easypaisa',l:'📱 Easypaisa'}].map(p => (
                 <button key={p.k} onClick={() => setPayMethod(p.k)}
                   className={`py-2 rounded-xl font-body font-bold text-sm transition-all ${payMethod === p.k ? 'bg-krunch-red text-white' : 'bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white'}`}>
                   {p.l}
