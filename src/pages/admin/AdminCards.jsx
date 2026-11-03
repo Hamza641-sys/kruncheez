@@ -152,7 +152,7 @@ const AdminCards = () => {
       '.qr-lbl{font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;}',
       '.qr-lbl{font-size:7px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-align:center;}',
       '.page-pair{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:640px;page-break-after:always;}',
-      '@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:0;gap:14px;}.page-pair{page-break-after:always;}.card{page-break-inside:avoid;}}',
+      '@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;padding:0;gap:14px;}.page-pair{page-break-after:always;}.card{page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}}',
     ].join('');
 
     const pairs = cardList.map(card => `
@@ -232,7 +232,7 @@ const AdminCards = () => {
     `).join('');
 
     const win = window.open('', '_blank');
-    win.document.write(`<!DOCTYPE html><html><head><title>KrunchEez Loyalty Cards</title><style>${css}</style></head><body>${pairs}<script>(function(){var imgs=document.querySelectorAll("img"),done=0,n=imgs.length;function go(){if(++done>=n)setTimeout(function(){window.print();window.close();},800);}if(!n){setTimeout(function(){window.print();window.close();},1000);return;}imgs.forEach(function(img){if(img.complete&&img.naturalHeight)go();else{img.onload=go;img.onerror=go;}});setTimeout(function(){window.print();window.close();},8000);})();<\/script></body></html>`);
+    win.document.write(`<!DOCTYPE html><html><head><title>KrunchEez Loyalty Cards</title><meta name="color-scheme" content="light"><style>${css}</style></head><body>${pairs}<script>(function(){var imgs=document.querySelectorAll("img"),done=0,n=imgs.length;function go(){if(++done>=n)setTimeout(function(){window.print();window.close();},800);}if(!n){setTimeout(function(){window.print();window.close();},1000);return;}imgs.forEach(function(img){if(img.complete&&img.naturalHeight)go();else{img.onload=go;img.onerror=go;}});setTimeout(function(){window.print();window.close();},8000);})();<\/script></body></html>`);
     win.document.close();
   };
 
