@@ -45,7 +45,10 @@ const CustomerBadge = ({ phone, allOrders }) => {
 };
 
 // Order type badge
-const OrderTypeBadge = ({ orderType, tableNumber }) => {
+const OrderTypeBadge = ({ orderType, tableNumber, source }) => {
+  if (source === 'pos') return (
+    <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded font-bold uppercase">POS Counter</span>
+  );
   if (orderType === 'dine-in' || tableNumber) return (
     <span className="inline-flex items-center gap-1 text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold uppercase">
       <QrCode size={9} /> {tableNumber ? `Table ${tableNumber}` : 'Dine-In'}
@@ -230,7 +233,7 @@ const AdminOrders = () => {
                     <td className="px-4 py-3 text-krunch-red font-heading font-black text-base whitespace-nowrap">Rs.{order.summary?.total?.toLocaleString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-1">
-                        <OrderTypeBadge orderType={order.orderType} tableNumber={order.tableNumber} />
+                        <OrderTypeBadge orderType={order.orderType} tableNumber={order.tableNumber} source={order.source} />
                         {order.loyaltyCard && (
                           <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">{order.loyaltyCard}</span>
                         )}
@@ -322,7 +325,7 @@ const AdminOrders = () => {
                   <p className="text-krunch-gray font-body text-sm">{selected.customer?.phone}</p>
                   {selected.customer?.address && <p className="text-krunch-gray font-body text-sm">{selected.customer.address}</p>}
                   <div className="flex items-center gap-2 mt-2">
-                    <OrderTypeBadge orderType={selected.orderType} tableNumber={selected.tableNumber} />
+                    <OrderTypeBadge orderType={selected.orderType} tableNumber={selected.tableNumber} source={selected.source} />
                     {selected.loyaltyCard && (
                       <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-bold">{selected.loyaltyCard}</span>
                     )}

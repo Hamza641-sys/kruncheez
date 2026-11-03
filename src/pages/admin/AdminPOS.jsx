@@ -60,11 +60,14 @@ const AdminPOS = () => {
         tableNumber:   orderType === 'dine-in' && tableNo ? tableNo : null,
         items:         cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.qty, subtotal: i.price * i.qty, category: i.category })),
         summary:       { subtotal, discount: discountAmt, deliveryFee: 0, total },
+        pricing:       { subtotal, discount: discountAmt, deliveryFee: 0, total },
         orderType:     orderType,
         paymentMethod: payMethod,
-        status:        'confirmed',
+        status:        'delivered', // POS orders are immediately delivered
         source:        'pos',
+        notes:         '',
         createdAt:     serverTimestamp(),
+        updatedAt:     serverTimestamp(),
       };
       const ref = await addDoc(collection(db, 'orders'), orderData);
       setOrderDone({ id: ref.id, ...orderData });
