@@ -116,8 +116,12 @@ const AdminOrders = () => {
     setPayConfirm(null);
   };
 
-  // Table orders quick view
-  const dineInOrders = orders.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+  // Table orders quick view — only valid tables 1-7
+  const VALID_TABLES = [1, 2, 3, 4, 5, 6, 7];
+  const dineInOrders = orders.filter(o =>
+    (o.orderType === 'dine-in' || o.tableNumber) &&
+    VALID_TABLES.includes(Number(o.tableNumber))
+  );
 
   const filters = [
     { key: 'all', label: 'All' },
