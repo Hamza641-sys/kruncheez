@@ -125,7 +125,7 @@ const MyOrdersPage = () => {
                       </div>
                       <div>
                         <p className="text-krunch-gray font-body text-[10px] uppercase">Payment</p>
-                        <p className="text-white font-body text-xs font-semibold capitalize">{order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}</p>
+                        <p className="text-white font-body text-xs font-semibold capitalize">{order.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
