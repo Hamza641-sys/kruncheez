@@ -93,10 +93,10 @@ const AdminCards = () => {
 
     const css = [
       '*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}',
-      '@page{size:A4 portrait;margin:8mm;}',
-      'body{background:#cdc5ba;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;gap:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
-      '.lbl{font-size:10px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;align-self:flex-start;width:100%;max-width:640px;}',
-      '.card{width:100%;max-width:640px;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 20px 60px rgba(0,0,0,0.5);}',
+      '@page{size:A4 portrait;margin:10mm;}',
+      'body{background:#cdc5ba;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:15px;gap:15px;width:100%;min-height:100vh;}',
+      '.lbl{font-size:10px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;align-self:flex-start;width:100%;max-width:190mm;}',
+      '.card{width:190mm;max-width:190mm;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 20px 60px rgba(0,0,0,0.5);}',
       '.dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px);background-size:20px 20px;}',
       '.front{height:340px;}',
       '.f-pizza{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;border-radius:20px;opacity:0.22;}',
@@ -151,8 +151,8 @@ const AdminCards = () => {
       '.qr-box img{display:block;width:72px;height:72px;border-radius:4px;}',
       '.qr-lbl{font-size:8px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;}',
       '.qr-lbl{font-size:7px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-align:center;}',
-      '.page-pair{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;max-width:640px;page-break-after:always;}',
-      '@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;padding:0;gap:14px;}.page-pair{page-break-after:always;}.card{page-break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;}}',
+      '.page-pair{display:flex;flex-direction:column;align-items:center;gap:8px;width:190mm;max-width:190mm;page-break-after:always;}',
+      '@media print{body{background:#cdc5ba;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;padding:5mm;gap:10px;}.page-pair{page-break-after:always;width:190mm;}.card{page-break-inside:avoid;width:190mm;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}',
     ].join('');
 
     const pairs = cardList.map(card => `
