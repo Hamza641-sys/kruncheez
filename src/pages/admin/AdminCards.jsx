@@ -92,9 +92,9 @@ const AdminCards = () => {
     } catch { qrDataUrl = ''; }
 
     const css = [
-      '*{margin:0;padding:0;box-sizing:border-box;}',
+      '*{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}',
       '@page{size:A4 portrait;margin:8mm;}',
-      'body{background:#cdc5ba;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;gap:18px;}',
+      'body{background:#cdc5ba;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px;gap:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
       '.lbl{font-size:10px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;align-self:flex-start;width:100%;max-width:640px;}',
       '.card{width:100%;max-width:640px;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 20px 60px rgba(0,0,0,0.5);}',
       '.dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px);background-size:20px 20px;}',
