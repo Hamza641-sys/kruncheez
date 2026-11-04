@@ -110,15 +110,21 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── Order Type breakdown ──────────────────────────────────────────────
-  // POS orders: source === 'pos' — further split by their orderType
-  const posOrders      = delivered.filter(o => o.source === 'pos');
+  // POS = source:'pos' field hai
+  // Online = website se aaya (source nahi ya source!='pos'), userId ya guest
+  const isPOS    = (o) => o.source === 'pos';
+  const isOnline = (o) => o.source !== 'pos';
+
+  const posOrders      = delivered.filter(isPOS);
   const posDineIn      = posOrders.filter(o => o.orderType === 'dine-in' || o.tableNumber);
-  const posPickup      = posOrders.filter(o => o.orderType === 'pickup' || (!o.orderType && !o.tableNumber));
-  // Online orders (website)
-  const onlineDelivery = delivered.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
-  const onlineDineIn   = delivered.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
-  const onlinePickup   = delivered.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
-  // Keep these for backward compat
+  const posPickup      = posOrders.filter(o => !o.tableNumber && o.orderType !== 'dine-in');
+
+  const onlineAll      = delivered.filter(isOnline);
+  const onlineDelivery = onlineAll.filter(o => o.orderType === 'delivery');
+  const onlineDineIn   = onlineAll.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+  const onlinePickup   = onlineAll.filter(o => o.orderType === 'pickup');
+
+  // For backward compat
   const deliveryOrders = onlineDelivery;
   const dineInOrders   = [...posDineIn, ...onlineDineIn];
   const pickupOrders   = [...posPickup, ...onlinePickup];
@@ -441,9 +447,10 @@ const AdminReports = () => {
     const posO           = deliveredO.filter(o => o.source === 'pos');
     const posDineInO     = posO.filter(o => o.orderType === 'dine-in' || o.tableNumber);
     const posPickupO     = posO.filter(o => !o.tableNumber && o.orderType !== 'dine-in');
-    const onlineDelivO   = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'delivery');
-    const onlineDineInO  = deliveredO.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
-    const onlinePickupO  = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'pickup');
+    const onlineAllO     = deliveredO.filter(o => o.source !== 'pos');
+    const onlineDelivO   = onlineAllO.filter(o => o.orderType === 'delivery');
+    const onlineDineInO  = onlineAllO.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+    const onlinePickupO  = onlineAllO.filter(o => o.orderType === 'pickup');
     const pendingO       = fOrders.filter(o => o.status === 'pending');
     const rejectedO      = fOrders.filter(o => o.status === 'rejected');
     const dailyExpAmt = fExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
