@@ -105,7 +105,16 @@ const AdminCards = () => {
     toast.loading('Generating image...', { id: 'dl', ...toastStyle });
     try {
       const html2canvas = (await import('html2canvas')).default;
+      const QRCode = (await import('qrcode')).default;
       const pizzaUrl = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=90&auto=format&fit=crop';
+      const followUrl = 'https://kruncheez-pos.web.app/follow';
+
+      // Generate QR code as data URL
+      const qrDataUrl = await QRCode.toDataURL(followUrl, {
+        width: 160, margin: 1,
+        color: { dark: '#000000', light: '#ffffff' },
+        errorCorrectionLevel: 'H',
+      });
 
       const CARD_W = 720;
       const CARD_H = 340;
@@ -147,7 +156,7 @@ const AdminCards = () => {
         <div style="width:${CARD_W}px;height:${CARD_H}px;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(135deg,#1a0505,#2a0a0a,#1a0505);flex-shrink:0;">
           <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;"></div>
           <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;"></div>
-          <div style="position:relative;z-index:4;display:flex;height:100%;padding:18px 22px 80px;gap:20px;">
+          <div style="position:relative;z-index:4;display:flex;height:100%;padding:18px 22px 90px;gap:20px;">
             <div style="flex:1;">
               <div style="font-size:28px;font-weight:900;color:#E31E24;letter-spacing:2px;text-transform:uppercase;">KRUNCHEEZ</div>
               <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:10px;">Crunch in Every Bite</div>
@@ -171,7 +180,13 @@ const AdminCards = () => {
           <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95),rgba(0,0,0,0.7),transparent);display:flex;justify-content:space-between;align-items:center;">
             <div>
               <div style="font-size:16px;color:#E31E24;letter-spacing:5px;font-weight:900;">${card.cardId}</div>
-              <div style="font-size:9px;color:rgba(255,255,255,0.4);">Valid on Custom Deal only • Keep this card safe</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:3px;">Valid on Custom Deal only • Keep this card safe</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
+              <div style="background:white;border-radius:8px;padding:5px;">
+                <img src="${qrDataUrl}" width="72" height="72" style="display:block;border-radius:4px;"/>
+              </div>
+              <div style="font-size:7px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;">SCAN &amp; FOLLOW</div>
             </div>
           </div>
         </div>
@@ -179,13 +194,16 @@ const AdminCards = () => {
 
       document.body.appendChild(container);
 
-      // Wait for image to load
+      // Wait for all images to load
       await new Promise(resolve => {
-        const img = container.querySelector('img');
-        if (!img || img.complete) return resolve();
-        img.onload = resolve;
-        img.onerror = resolve;
-        setTimeout(resolve, 3000);
+        const imgs = container.querySelectorAll('img');
+        if (!imgs.length) return resolve();
+        let loaded = 0;
+        imgs.forEach(img => {
+          if (img.complete) { loaded++; if (loaded === imgs.length) resolve(); return; }
+          img.onload = img.onerror = () => { loaded++; if (loaded === imgs.length) resolve(); };
+        });
+        setTimeout(resolve, 4000);
       });
 
       const canvas = await html2canvas(container, {
