@@ -29,7 +29,11 @@ export const printBill = (order) => {
   const itemsHtml = (order.items || []).map(item => {
     const qty = item.quantity || item.qty || 1;
     const amt = (item.price * qty).toLocaleString();
-    return '<tr><td style="padding:5px 0;font-size:13px;font-weight:bold;">' + item.name + '</td><td style="padding:5px 0;font-size:13px;font-weight:bold;text-align:center;">x' + qty + '</td><td style="padding:5px 0;font-size:13px;font-weight:bold;text-align:right;">Rs.' + amt + '</td></tr>';
+    return '<tr>'
+      + '<td style="padding:3px 0;font-size:12px;">' + item.name + '</td>'
+      + '<td style="padding:3px 0;font-size:12px;text-align:center;">x' + qty + '</td>'
+      + '<td style="padding:3px 0;font-size:12px;text-align:right;">Rs.' + amt + '</td>'
+      + '</tr>';
   }).join('');
 
   const orderType = order.tableNumber
@@ -42,62 +46,68 @@ export const printBill = (order) => {
   const total = (order.summary?.total || 0).toLocaleString();
 
   let discountRow = '';
-  if (discount > 0) discountRow = '<tr><td style="font-size:13px;">Discount</td><td style="text-align:right;font-size:13px;">- Rs.' + discount.toLocaleString() + '</td></tr>';
+  if (discount > 0) discountRow = '<tr><td style="font-size:12px;">Discount</td><td style="text-align:right;font-size:12px;">- Rs.' + discount.toLocaleString() + '</td></tr>';
 
   let deliveryRow = '';
-  if ((order.summary?.deliveryFee || 0) > 0) deliveryRow = '<tr><td style="font-size:13px;">Delivery</td><td style="text-align:right;font-size:13px;">Rs.' + order.summary.deliveryFee.toLocaleString() + '</td></tr>';
+  if ((order.summary?.deliveryFee || 0) > 0) deliveryRow = '<tr><td style="font-size:12px;">Delivery</td><td style="text-align:right;font-size:12px;">Rs.' + order.summary.deliveryFee.toLocaleString() + '</td></tr>';
 
   let phoneRow = '';
   if (order.customer?.phone) phoneRow = '<tr><td style="font-size:12px;">Phone</td><td style="text-align:right;font-size:12px;">' + order.customer.phone + '</td></tr>';
 
   let notesRow = '';
-  if (order.notes) notesRow = '<div style="font-size:12px;font-weight:bold;margin-bottom:6px;">Note: ' + order.notes + '</div>';
+  if (order.notes) notesRow = '<div style="font-size:11px;margin:4px 0;">Note: ' + order.notes + '</div>';
 
   const html = '<!DOCTYPE html><html><head><title>Bill</title><style>'
     + '* { margin:0; padding:0; box-sizing:border-box; }'
-    + 'body { font-family: Courier New, monospace; width:300px; margin:0 auto; padding:10px; font-size:14px; font-weight:bold; }'
-    + '.center { text-align:center; } .bold { font-weight:bold; }'
-    + '.line { border-top:2px dashed #000; margin:8px 0; }'
-    + '.logo { font-size:22px; font-weight:bold; letter-spacing:2px; }'
-    + '.tagline { font-size:12px; font-weight:bold; margin-top:2px; }'
+    + 'body { font-family: Courier New, monospace; width:300px; margin:0 auto; padding:8px; font-size:12px; }'
+    + '.center { text-align:center; }'
+    + '.line { border-top:1px dashed #000; margin:6px 0; }'
     + 'table { width:100%; border-collapse:collapse; }'
-    + 'th { font-size:13px; font-weight:bold; border-bottom:2px dashed #000; padding-bottom:4px; }'
-    + 'td { font-size:13px; font-weight:bold; }'
-    + '.total-row td { font-weight:bold; font-size:16px; padding-top:6px; }'
-    + '.footer { font-size:12px; font-weight:bold; margin-top:4px; }'
+    + 'th { font-size:11px; font-weight:bold; border-bottom:1px dashed #000; padding-bottom:3px; }'
+    + 'td { font-size:12px; }'
     + '@page { size:80mm auto; margin:2mm; }'
     + '@media print { html,body { margin:0!important; padding:0!important; width:80mm!important; } }'
     + '</style></head><body>'
-    + '<div class="center"><div class="logo">THE KRUNCHEEZ</div>'
-    + '<div class="tagline">Fast Food - Chinese - BBQ</div>'
-    + '<div class="tagline">Peshawar, Pakistan</div></div>'
+
+    // Header
+    + '<div class="center"><div style="font-size:20px;font-weight:bold;letter-spacing:2px;">THE KRUNCHEEZ</div>'
+    + '<div style="font-size:11px;margin-top:2px;">Fast Food - Chinese - BBQ</div>'
+    + '<div style="font-size:11px;">Peshawar, Pakistan</div></div>'
     + '<div class="line"></div>'
-    + '<div class="center bold" style="font-size:13px;">CUSTOMER RECEIPT</div>'
-    + '<div class="line"></div>'
+
+    // Order info
     + '<table>'
-    + '<tr><td style="font-size:12px;">Order ID</td><td style="text-align:right;font-size:12px;">' + orderId + '</td></tr>'
-    + '<tr><td style="font-size:12px;">Date</td><td style="text-align:right;font-size:12px;">' + dateStr + '</td></tr>'
-    + '<tr><td style="font-size:12px;">Time</td><td style="text-align:right;font-size:12px;">' + timeStr + '</td></tr>'
-    + '<tr><td style="font-size:12px;">Customer</td><td style="text-align:right;font-size:12px;">' + (order.customer?.name || 'Walk-in') + '</td></tr>'
+    + '<tr><td style="font-size:11px;">Order ID</td><td style="text-align:right;font-size:11px;font-weight:bold;">' + orderId + '</td></tr>'
+    + '<tr><td style="font-size:11px;">Date</td><td style="text-align:right;font-size:11px;">' + dateStr + ' ' + timeStr + '</td></tr>'
+    + '<tr><td style="font-size:11px;">Customer</td><td style="text-align:right;font-size:11px;">' + (order.customer?.name || 'Walk-in') + '</td></tr>'
     + phoneRow
-    + '<tr><td style="font-size:12px;">Type</td><td style="text-align:right;font-size:12px;">' + orderType + '</td></tr>'
-    + '<tr><td style="font-size:12px;">Payment</td><td style="text-align:right;font-size:12px;">' + payment + '</td></tr>'
+    + '<tr><td style="font-size:11px;">Type</td><td style="text-align:right;font-size:11px;">' + orderType + '</td></tr>'
+    + '<tr><td style="font-size:11px;">Payment</td><td style="text-align:right;font-size:11px;">' + payment + '</td></tr>'
     + '</table>'
     + '<div class="line"></div>'
-    + '<table><thead><tr><th style="text-align:left;">Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Amount</th></tr></thead>'
-    + '<tbody>' + itemsHtml + '</tbody></table>'
+
+    // Items
+    + '<table><thead><tr>'
+    + '<th style="text-align:left;">Item</th>'
+    + '<th style="text-align:center;">Qty</th>'
+    + '<th style="text-align:right;">Amount</th>'
+    + '</tr></thead><tbody>' + itemsHtml + '</tbody></table>'
     + '<div class="line"></div>'
+
+    // Totals
     + '<table>'
-    + '<tr><td style="font-size:13px;">Subtotal</td><td style="text-align:right;font-size:13px;">Rs.' + subtotal + '</td></tr>'
+    + '<tr><td style="font-size:12px;">Subtotal</td><td style="text-align:right;font-size:12px;">Rs.' + subtotal + '</td></tr>'
     + discountRow + deliveryRow
-    + '<tr class="total-row"><td>TOTAL</td><td style="text-align:right;">Rs.' + total + '</td></tr>'
+    + '<tr><td style="font-size:14px;font-weight:bold;padding-top:4px;">TOTAL</td><td style="text-align:right;font-size:14px;font-weight:bold;padding-top:4px;">Rs.' + total + '</td></tr>'
     + '</table>'
     + '<div class="line"></div>'
+
     + notesRow
-    + '<div class="center" style="font-size:12px;font-weight:bold;">NTN: 1730144554693</div>'
-    + '<div class="center" style="font-size:11px;">TAX INVOICE | RTO PESHAWAR</div>'
+    + '<div class="center" style="font-size:11px;">NTN: 1730144554693</div>'
+    + '<div class="center" style="font-size:10px;">TAX INVOICE | RTO PESHAWAR</div>'
     + '<div class="line"></div>'
-    + '<div class="center footer"><div class="bold">Thank you for dining with us!</div></div>'
+
+    + '<div class="center" style="font-size:12px;">Thank you for dining with us!</div>'
     + '<div style="border-top:1px dashed #000;margin:8px 0;"></div>'
     + '<div style="font-size:8px;color:#777;margin-bottom:1px;">Software Developed by</div>'
     + '<div style="font-size:11px;font-weight:900;letter-spacing:1px;">DKIM TECH</div>'
