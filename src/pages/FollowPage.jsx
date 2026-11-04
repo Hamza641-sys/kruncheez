@@ -6,9 +6,10 @@ import { db } from '../firebase/config';
 // Social links - admin can update from Firebase
 const DEFAULT_LINKS = {
   instagram: 'https://www.instagram.com/thekruncheez.peshawer/',
-  tiktok:    'https://www.tiktok.com/@thekruncheez',   // update when available
-  youtube:   '',
-  facebook:  '',
+  facebook:  'https://www.facebook.com/thekruncheez',
+  tiktok:    'https://www.tiktok.com/@thekruncheez',
+  youtube:   'https://www.youtube.com/@thekruncheez',
+  menu:      'https://kruncheez-pos.web.app/menu',
 };
 
 const FollowPage = () => {
@@ -50,6 +51,21 @@ const FollowPage = () => {
 
   const platforms = [
     {
+      id: 'menu',
+      name: 'Order Online',
+      handle: 'kruncheez-pos.web.app/menu',
+      url: links.menu,
+      color: 'from-krunch-red to-red-700',
+      hoverShadow: '0 8px 30px rgba(227,30,36,0.5)',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
+          <path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>
+        </svg>
+      ),
+      cta: 'Order Now 🍔',
+      sub: 'Browse our full menu & place order',
+    },
+    {
       id: 'instagram',
       name: 'Instagram',
       handle: '@thekruncheez.peshawer',
@@ -65,6 +81,21 @@ const FollowPage = () => {
       sub: 'See our latest food pics & videos',
     },
     {
+      id: 'facebook',
+      name: 'Facebook',
+      handle: '@thekruncheez',
+      url: links.facebook,
+      color: 'from-blue-700 to-blue-500',
+      hoverShadow: '0 8px 30px rgba(59,130,246,0.5)',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      ),
+      cta: 'Like on Facebook',
+      sub: 'Stay updated with our latest news',
+    },
+    {
       id: 'tiktok',
       name: 'TikTok',
       handle: '@thekruncheez',
@@ -78,6 +109,21 @@ const FollowPage = () => {
       ),
       cta: 'Follow on TikTok',
       sub: 'Watch our viral food content',
+    },
+    {
+      id: 'youtube',
+      name: 'YouTube',
+      handle: '@thekruncheez',
+      url: links.youtube,
+      color: 'from-red-700 to-red-500',
+      hoverShadow: '0 8px 30px rgba(239,68,68,0.5)',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7">
+          <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+      ),
+      cta: 'Subscribe on YouTube',
+      sub: 'Watch our food videos & vlogs',
     },
   ];
 
