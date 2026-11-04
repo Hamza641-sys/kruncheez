@@ -234,20 +234,18 @@ export const menuItems = {
     { id: 'd10', name: 'Deal 10', price: 3800, badge: 'MEGA DEAL', description: '3 Large Pizza + 1.5 Ltr Drink', category: 'deals',
       img: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400&q=80&auto=format&fit=crop' },
   ],
+  drinks: [
+    { id: 'dr1', name: 'Regular Cold Drink', price: 80, badge: '', description: 'Pepsi / 7Up / Mirinda — Regular can', category: 'drinks',
+      img: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80&auto=format&fit=crop' },
+    { id: 'dr2', name: 'Cold Drink (500ml)', price: 100, badge: 'POPULAR', description: 'Pepsi / 7Up / Mirinda — 500ml bottle', category: 'drinks',
+      img: 'https://images.unsplash.com/photo-1624552184280-9e48b37d89a1?w=400&q=80&auto=format&fit=crop' },
+    { id: 'dr3', name: 'Cold Drink (1 Ltr)', price: 160, badge: '', description: 'Pepsi / 7Up / Mirinda — 1 litre bottle', category: 'drinks',
+      img: 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&q=80&auto=format&fit=crop' },
+    { id: 'dr4', name: 'Cold Drink (1.5 Ltr)', price: 200, badge: 'BEST VALUE', description: 'Pepsi / 7Up / Mirinda — 1.5 litre bottle', category: 'drinks',
+      img: 'https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80&auto=format&fit=crop' },
+    { id: 'dr5', name: 'Sting Energy Drink', price: 130, badge: 'ENERGY', description: 'Sting energy drink — refreshing & energizing', category: 'drinks',
+      img: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&q=80&auto=format&fit=crop' },
+  ],
 };
 
 export const allMenuItems = Object.values(menuItems).flat();
-
-// ── PATCH: add drinks to menuItems ──
-menuItems.drinks = [
-  { id: 'dr1', name: 'Regular Cold Drink', price: 80, badge: '', description: 'Pepsi / 7Up / Mirinda — Regular can', category: 'drinks',
-    img: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80&auto=format&fit=crop' },
-  { id: 'dr2', name: 'Cold Drink (500ml)', price: 100, badge: 'POPULAR', description: 'Pepsi / 7Up / Mirinda — 500ml bottle', category: 'drinks',
-    img: 'https://images.unsplash.com/photo-1624552184280-9e48b37d89a1?w=400&q=80&auto=format&fit=crop' },
-  { id: 'dr3', name: 'Cold Drink (1 Ltr)', price: 160, badge: '', description: 'Pepsi / 7Up / Mirinda — 1 litre bottle', category: 'drinks',
-    img: 'https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&q=80&auto=format&fit=crop' },
-  { id: 'dr4', name: 'Cold Drink (1.5 Ltr)', price: 200, badge: 'BEST VALUE', description: 'Pepsi / 7Up / Mirinda — 1.5 litre bottle', category: 'drinks',
-    img: 'https://images.unsplash.com/photo-1527960471264-932f39eb5846?w=400&q=80&auto=format&fit=crop' },
-  { id: 'dr5', name: 'Sting Energy Drink', price: 130, badge: 'ENERGY', description: 'Sting energy drink — refreshing & energizing', category: 'drinks',
-    img: 'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&q=80&auto=format&fit=crop' },
-];
