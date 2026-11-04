@@ -23,7 +23,7 @@ const DEFAULT_SETTINGS = {
   phone3: '0335-6609178',
   openTime: '11:00',
   closeTime: '02:00',
-  address: 'New Officers Housing Society, Boatclub Road, Rawalpindi',
+  address: 'New Officers Housing Society, Northern Bypass, Dalazak Road, Peshawar',
   deliveryFee: '100',
   minOrder: '200',
   whatsappNotify: true,

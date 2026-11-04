@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Phone, MapPin, Clock, ArrowRight } from 'lucide-react';
 import LogoCircle from './LogoCircle';
+import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 
 const quickLinks = [
   { label: 'Home', path: '/' },
@@ -21,6 +22,8 @@ const menuHighlights = [
 ];
 
 const Footer = () => {
+  const s = useRestaurantSettings();
+  const phones = [s.phone1, s.phone2, s.phone3].filter(Boolean);
   return (
     <footer className="bg-krunch-dark border-t border-krunch-border">
 
@@ -64,7 +67,7 @@ const Footer = () => {
             </div>
 
             <p className="text-krunch-gray font-body text-sm leading-relaxed mb-5">
-              The ultimate destination for bold flavors, fresh ingredients, and unforgettable food experiences in Rawalpindi.
+              The ultimate destination for bold flavors, fresh ingredients, and unforgettable food experiences in Peshawar.
             </p>
 
             {/* Social */}
@@ -135,41 +138,29 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-heading font-bold text-white uppercase text-sm tracking-widest mb-5">Our Locations</h4>
+            <h4 className="font-heading font-bold text-white uppercase text-sm tracking-widest mb-5">Location</h4>
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-2.5">
                 <MapPin size={14} className="text-krunch-red flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-white font-body text-xs font-semibold">Main Branch</p>
-                  <p className="text-krunch-gray font-body text-xs leading-relaxed">New Officers Housing Society, Boatclub Road, Rawalpindi</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <MapPin size={14} className="text-krunch-red flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-white font-body text-xs font-semibold">Bahria Town</p>
-                  <p className="text-krunch-gray font-body text-xs">Bahria Town, Rawalpindi</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <MapPin size={14} className="text-krunch-red flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-white font-body text-xs font-semibold">Chaklala</p>
-                  <p className="text-krunch-gray font-body text-xs">Chaklala, Rawalpindi</p>
+                  <p className="text-krunch-gray font-body text-xs leading-relaxed">{s.address}</p>
                 </div>
               </div>
               <div className="h-px bg-krunch-border" />
               <div className="flex items-center gap-2.5">
                 <Phone size={14} className="text-krunch-red flex-shrink-0" />
                 <div className="flex flex-col gap-0.5">
-                  {['0317-7787648', '0308-4509090', '0335-6609178'].map(p => (
+                  {phones.map(p => (
                     <a key={p} href={`tel:${p.replace(/-/g,'')}`} className="text-krunch-gray hover:text-white font-body text-xs transition-colors">{p}</a>
                   ))}
                 </div>
               </div>
               <div className="flex items-center gap-2.5">
                 <Clock size={14} className="text-krunch-red flex-shrink-0" />
-                <p className="text-krunch-gray font-body text-xs">11:00 AM – 2:00 AM (Daily)</p>
+                <p className="text-krunch-gray font-body text-xs">
+                  {s.openTime ? `${s.openTime} – ${s.closeTime} (Daily)` : '11:00 AM – 2:00 AM (Daily)'}
+                </p>
               </div>
             </div>
           </div>

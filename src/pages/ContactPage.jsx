@@ -3,15 +3,18 @@ import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
-
-const contactInfo = [
-  { icon: <Phone size={20} className="text-krunch-red" />, label: 'Phone', values: ['0317-7787648', '0308-4509090', '0335-6609178'], links: true },
-  { icon: <MapPin size={20} className="text-krunch-red" />, label: 'Address', values: ['New Officers Housing Society,', 'Boatclub Road, Rawalpindi'], links: false },
-  { icon: <Clock size={20} className="text-krunch-red" />, label: 'Hours', values: ['Monday – Sunday', '11:00 AM – 2:00 AM'], links: false },
-  { icon: <Mail size={20} className="text-krunch-red" />, label: 'Social', values: ['@thekruncheez', 'TikTok & YouTube'], links: false },
-];
+import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 
 const ContactPage = () => {
+  const s = useRestaurantSettings();
+  const phones = [s.phone1, s.phone2, s.phone3].filter(Boolean);
+
+  const contactInfo = [
+    { icon: <Phone size={20} className="text-krunch-red" />, label: 'Phone', values: phones, links: true },
+    { icon: <MapPin size={20} className="text-krunch-red" />, label: 'Address', values: [s.address], links: false },
+    { icon: <Clock size={20} className="text-krunch-red" />, label: 'Hours', values: ['Monday – Sunday', `${s.openTime || '11:00 AM'} – ${s.closeTime || '2:00 AM'}`], links: false },
+    { icon: <Mail size={20} className="text-krunch-red" />, label: 'Social', values: ['@thekruncheez', 'TikTok & YouTube'], links: false },
+  ];
   const [form, setForm] = useState({ name: '', phone: '', subject: 'General Inquiry', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);

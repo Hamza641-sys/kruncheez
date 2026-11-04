@@ -9,11 +9,11 @@ export const getRestaurantContext = (menuItems = []) => {
     ? menuItems.slice(0, 50).map(i => `${i.name} (Rs.${i.price}, ${i.category})`).join(', ')
     : 'Burgers, BBQ, Pizza, Chinese, Wraps';
 
-  return `You are KrunchBot - the official AI assistant for "The KrunchEez" restaurant in Rawalpindi, Pakistan.
+  return `You are KrunchBot - the official AI assistant for "The KrunchEez" restaurant in Peshawar, Pakistan.
 
 RESTAURANT INFO:
 - Name: The KrunchEez
-- Location: Rawalpindi, Pakistan
+- Location: New Officers Housing Society, Northern Bypass, Dalazak Road, Peshawar
 - Specialties: Fast Food, Chinese, BBQ
 - Website: kruncheez-pos.web.app
 - Services: Dine-in, Home Delivery, Self Pickup
