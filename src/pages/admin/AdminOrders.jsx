@@ -43,6 +43,20 @@ const CustomerBadge = ({ phone, allOrders }) => {
   );
 };
 
+// ── Customer Type Badge (Guest vs Registered) ──────────────────────────────
+const CustomerTypeBadge = ({ userId }) => {
+  if (!userId) return (
+    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap text-orange-400 bg-orange-400/10 border-orange-400/20">
+      👤 Guest
+    </span>
+  );
+  return (
+    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap text-green-400 bg-green-400/10 border-green-400/20">
+      ✅ Member
+    </span>
+  );
+};
+
 // Order type badge
 const OrderTypeBadge = ({ orderType, tableNumber, source }) => {
   if (source === 'pos') return (
@@ -80,9 +94,11 @@ const AdminOrders = () => {
   const filtered = orders.filter(o => {
     const matchFilter = filter === 'all' || o.status === filter;
     const matchType   = typeFilter === 'all' ||
-      (typeFilter === 'dine-in' && (o.orderType === 'dine-in' || o.tableNumber)) ||
+      (typeFilter === 'dine-in'  && (o.orderType === 'dine-in' || o.tableNumber)) ||
       (typeFilter === 'delivery' && o.orderType === 'delivery') ||
-      (typeFilter === 'pickup' && o.orderType === 'pickup');
+      (typeFilter === 'pickup'   && o.orderType === 'pickup') ||
+      (typeFilter === 'guest'    && !o.userId) ||
+      (typeFilter === 'member'   && !!o.userId);
     const matchSearch = !search || o.id.includes(search) ||
       o.customer?.name?.toLowerCase().includes(search.toLowerCase()) ||
       o.customer?.phone?.includes(search) ||
@@ -174,17 +190,26 @@ const AdminOrders = () => {
         <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {[
             { key: 'all',      label: 'All Types' },
-            { key: 'dine-in',  label: 'Dine-In' },
-            { key: 'delivery', label: 'Delivery' },
-            { key: 'pickup',   label: 'Pickup' },
+            { key: 'dine-in',  label: '🍽️ Dine-In' },
+            { key: 'delivery', label: '🚗 Delivery' },
+            { key: 'pickup',   label: '🏃 Pickup' },
+            { key: 'guest',    label: '👤 Guest' },
+            { key: 'member',   label: '✅ Member' },
           ].map(t => (
             <button key={t.key} onClick={() => setTypeFilter(t.key)}
               className={`flex-shrink-0 px-3 py-2 rounded-xl font-body font-semibold text-xs transition-all border ${
                 typeFilter === t.key
-                  ? 'bg-amber-600 border-amber-600 text-white'
+                  ? t.key === 'guest'  ? 'bg-orange-600 border-orange-600 text-white'
+                  : t.key === 'member' ? 'bg-green-700 border-green-700 text-white'
+                  : 'bg-amber-600 border-amber-600 text-white'
                   : 'bg-krunch-card border-krunch-border text-krunch-gray hover:text-white'
               }`}>
               {t.label}
+              {(t.key === 'guest' || t.key === 'member') && (
+                <span className="ml-1 opacity-70">
+                  ({t.key === 'guest' ? orders.filter(o => !o.userId).length : orders.filter(o => !!o.userId).length})
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -228,7 +253,8 @@ const AdminOrders = () => {
                     <td className="px-4 py-3">
                       <p className="text-white font-body text-sm">{order.customer?.name || 'â€”'}</p>
                       <p className="text-krunch-gray font-body text-xs">{order.customer?.phone || 'â€”'}</p>
-                      <div className="mt-1">
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <CustomerTypeBadge userId={order.userId} />
                         <CustomerBadge phone={order.customer?.phone} allOrders={orders} />
                       </div>
                     </td>
@@ -323,6 +349,7 @@ const AdminOrders = () => {
                   <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Customer</p>
                   <div className="flex items-center gap-2 mb-1">
                     <p className="text-white font-body font-semibold">{selected.customer?.name}</p>
+                    <CustomerTypeBadge userId={selected.userId} />
                     <CustomerBadge phone={selected.customer?.phone} allOrders={orders} />
                   </div>
                   <p className="text-krunch-gray font-body text-sm">{selected.customer?.phone}</p>
