@@ -338,11 +338,10 @@ const AdminExpenses = () => {
                 {/* Payment Method */}
                 <div>
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Payment</label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {[
-                      { k: 'cash',  l: '💵 Cash' },
-                      { k: 'bank',  l: '🏦 Bank' },
-                      { k: 'credit',l: '📋 Credit' },
+                      { k: 'cash',      l: '💵 Cash' },
+                      { k: 'easypaisa', l: '📱 Easypaisa' },
                     ].map(m => (
                       <button key={m.k} type="button"
                         onClick={() => setForm({ ...form, paymentMethod: m.k })}
