@@ -18,8 +18,8 @@ const AdminCards = () => {
   const [bulkCount, setBulkCount] = useState(10);
   const [bulkLoading, setBulkLoading] = useState(false);
 
-  // Sequential card ID: KC-001, KC-002 ...
-  const formatCardId = (num) => `KC-${String(num).padStart(3, '0')}`;
+  // Sequential card ID: KC-0001, KC-0002 ...
+  const formatCardId = (num) => `KC-${String(num).padStart(4, '0')}`;
 
   const fetchCards = async () => {
     setLoading(true);
@@ -63,8 +63,8 @@ const AdminCards = () => {
 
   // ── BULK GENERATE CARDS ────────────────────────────────────────────────────
   const handleBulkGenerate = async () => {
-    if (bulkCount < 1 || bulkCount > 1000) {
-      toast.error('Enter between 1 and 1000', toastStyle); return;
+    if (bulkCount < 1 || bulkCount > 9999) {
+      toast.error('Enter between 1 and 9999', toastStyle); return;
     }
     setBulkLoading(true);
     try {
@@ -385,8 +385,8 @@ const AdminCards = () => {
           {/* Generate Cards */}
           <div className="flex items-center gap-2 bg-krunch-card border border-krunch-border rounded-xl px-3 py-2">
             <input
-              type="number" min={1} max={1000} value={bulkCount}
-              onChange={e => setBulkCount(Math.max(1, Math.min(1000, Number(e.target.value))))}
+              type="number" min={1} max={9999} value={bulkCount}
+              onChange={e => setBulkCount(Math.max(1, Math.min(9999, Number(e.target.value))))}
               className="w-14 bg-transparent text-white font-body text-sm text-center focus:outline-none"
             />
             <span className="text-krunch-gray text-xs font-body">cards</span>
