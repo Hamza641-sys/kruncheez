@@ -2,12 +2,11 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed, Pencil, Plus, Minus, Trash2 } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
-import { updateDoc, doc } from 'firebase/firestore';
+import { updateDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
 import { printBill, printKitchen } from '../../utils/printUtils';
-import { allMenuItems } from '../../data/menuData';
 
 
 const statusConfig = {
@@ -87,16 +86,25 @@ const AdminOrders = () => {
   // Payment confirm modal
   const [payConfirm, setPayConfirm] = useState(null);
   // Edit order modal
-  const [editOrder, setEditOrder]   = useState(null); // order being edited
-  const [editItems, setEditItems]   = useState([]);   // working copy of items
+  const [editOrder, setEditOrder]   = useState(null);
+  const [editItems, setEditItems]   = useState([]);
   const [editSearch, setEditSearch] = useState('');
   const [editSaving, setEditSaving] = useState(false);
+  // Firestore menu items (live)
+  const [liveMenu, setLiveMenu]     = useState([]);
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
 
   useEffect(() => {
     const unsub = getAllOrders(setOrders);
     return () => unsub();
+  }, []);
+
+  // Load live menu from Firestore once
+  useEffect(() => {
+    getDocs(collection(db, 'menu')).then(snap => {
+      setLiveMenu(snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(i => i.available !== false));
+    });
   }, []);
 
   const filtered = orders.filter(o => {
@@ -605,9 +613,8 @@ const AdminOrders = () => {
                     onChange={e => setEditSearch(e.target.value)}
                     className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors mb-2" />
                   <div className="max-h-44 overflow-y-auto flex flex-col gap-1 pr-1">
-                    {allMenuItems
+                    {liveMenu
                       .filter(m => !editSearch || m.name.toLowerCase().includes(editSearch.toLowerCase()))
-                      .slice(0, 30)
                       .map(m => (
                         <button key={m.id} onClick={() => editAddItem(m)}
                           className="flex items-center justify-between px-3 py-2 rounded-xl bg-krunch-black border border-krunch-border hover:border-krunch-red/50 hover:bg-krunch-red/5 transition-all text-left">
