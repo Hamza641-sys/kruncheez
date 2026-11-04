@@ -25,9 +25,12 @@ const FollowPage = () => {
         const snap = await getDoc(ref);
         if (snap.exists()) {
           const data = snap.data();
-          setLinks({ ...DEFAULT_LINKS, ...data.links });
+          // Only override defaults with non-empty values from Firestore
+          const saved = data.links || {};
+          const merged = { ...DEFAULT_LINKS };
+          Object.keys(saved).forEach(k => { if (saved[k]) merged[k] = saved[k]; });
+          setLinks(merged);
           setScans(data.scanCount || 0);
-          // Atomic increment - no race condition
           await updateDoc(ref, { scanCount: increment(1) });
         } else {
           // Create doc if doesn't exist
