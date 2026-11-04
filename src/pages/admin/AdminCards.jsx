@@ -100,7 +100,25 @@ const AdminCards = () => {
     finally { setBulkLoading(false); }
   };
 
-  // ── DOWNLOAD CARD AS PNG ────────────────────────────────────────────────────
+  // ── EXPORT CSV ──────────────────────────────────────────────────────────────
+  const exportCSV = () => {
+    const rows = [
+      ['Card ID', 'Status', 'Customer', 'Phone'],
+      ...cards.map(c => [
+        c.cardId,
+        c.active ? 'Active' : 'Inactive',
+        c.userName || '',
+        c.phone || '',
+      ])
+    ];
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `kruncheez-loyalty-cards-${cards.length}.csv`;
+    a.click();
+    toast.success(`${cards.length} cards exported!`, toastStyle);
+  };
   const downloadCard = async (card) => {
     toast.loading('Generating image...', { id: 'dl', ...toastStyle });
     try {
@@ -420,6 +438,13 @@ const AdminCards = () => {
             </button>
           </div>
           {/* Delete All button removed - cards are permanent */}
+          {/* Export CSV */}
+          {cards.length > 0 && (
+            <button onClick={exportCSV}
+              className="flex items-center gap-2 border border-green-700/40 hover:border-green-500 text-green-400 hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all whitespace-nowrap">
+              📥 Export CSV ({cards.length})
+            </button>
+          )}
           {/* Download All */}
           {cards.length > 0 && (
             <button onClick={() => cards.forEach((c, i) => setTimeout(() => downloadCard(c), i * 800))}
