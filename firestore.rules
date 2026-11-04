@@ -141,5 +141,10 @@ service cloud.firestore {
     match /analytics/{doc} {
       allow read, write: if isAdmin();
     }
+
+    // Order Edit Logs
+    match /orderEdits/{editId} {
+      allow read, write: if isAdmin();
+    }
   }
 }
