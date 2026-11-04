@@ -419,12 +419,7 @@ const AdminCards = () => {
               {bulkLoading ? '...' : <><Gift size={13} /> Generate</>}
             </button>
           </div>
-          {cards.length > 0 && (
-            <button onClick={handleDeleteAll}
-              className="flex items-center gap-2 border border-red-700/40 hover:border-red-500 text-red-400 hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all whitespace-nowrap">
-              🗑️ Delete All ({cards.length})
-            </button>
-          )}
+          {/* Delete All button removed - cards are permanent */}
           {/* Download All */}
           {cards.length > 0 && (
             <button onClick={() => cards.forEach((c, i) => setTimeout(() => downloadCard(c), i * 800))}
