@@ -10,6 +10,21 @@ const generateCardId = () => {
   return `KC-${num}`;
 };
 
+// Get next sequential card number from existing cards
+export const getNextCardNumber = async () => {
+  const snap = await getDocs(collection(db, 'loyaltyCards'));
+  let max = 0;
+  snap.docs.forEach(d => {
+    const id = d.data().cardId || '';
+    const match = id.match(/^KC-(\d+)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num > max) max = num;
+    }
+  });
+  return max + 1;
+};
+
 // Issue new loyalty card to customer
 export const issueCard = async (userId, userName, phone = '') => {
   // Check if user already has a card

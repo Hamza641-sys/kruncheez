@@ -4,7 +4,7 @@ import {
   Search, ToggleLeft, ToggleRight,
   Users, Gift, Printer, Download
 } from 'lucide-react';
-import { getAllCards, toggleCard } from '../../firebase/cardService';
+import { getAllCards, toggleCard, getNextCardNumber } from '../../firebase/cardService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import toast from 'react-hot-toast';
@@ -18,11 +18,8 @@ const AdminCards = () => {
   const [bulkCount, setBulkCount] = useState(10);
   const [bulkLoading, setBulkLoading] = useState(false);
 
-  // Auto-generate card ID
-  const generateCardId = () => {
-    const num = Math.floor(10000 + Math.random() * 90000);
-    return `KC-${num}`;
-  };
+  // Sequential card ID: KC-001, KC-002 ...
+  const formatCardId = (num) => `KC-${String(num).padStart(3, '0')}`;
 
   const fetchCards = async () => {
     setLoading(true);
@@ -53,10 +50,13 @@ const AdminCards = () => {
     }
     setBulkLoading(true);
     try {
+      // Get next sequential number from Firestore
+      const startNum = await getNextCardNumber();
       const batch = [];
       for (let i = 0; i < bulkCount; i++) {
+        const cardId = formatCardId(startNum + i);
         batch.push(addDoc(collection(db, 'loyaltyCards'), {
-          cardId: generateCardId(),
+          cardId,
           userId: null, userName: '', phone: '',
           visits: 0, totalVisits: 0, totalSaved: 0,
           discountPercent: 10, visitsForDiscount: 10,
@@ -66,7 +66,7 @@ const AdminCards = () => {
         }));
       }
       await Promise.all(batch);
-      toast.success(`${bulkCount} cards generated!`, toastStyle);
+      toast.success(`${bulkCount} cards generated! (${formatCardId(startNum)} – ${formatCardId(startNum + bulkCount - 1)})`, toastStyle);
       await fetchCards();
     } catch { toast.error('Failed', toastStyle); }
     finally { setBulkLoading(false); }
@@ -79,25 +79,27 @@ const AdminCards = () => {
       const html2canvas = (await import('html2canvas')).default;
       const pizzaUrl = 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=90&auto=format&fit=crop';
 
-      // Create hidden container
+      const CARD_W = 720;
+      const CARD_H = 340;
+
       const container = document.createElement('div');
-      container.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:640px;background:#cdc5ba;padding:20px;display:flex;flex-direction:column;gap:15px;font-family:Arial,sans-serif;';
+      container.style.cssText = `position:fixed;left:-9999px;top:0;width:${CARD_W}px;background:#cdc5ba;padding:20px;display:flex;flex-direction:column;gap:16px;font-family:Arial,sans-serif;`;
 
       container.innerHTML = `
-        <div style="font-size:11px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">FRONT SIDE — ${card.cardId}</div>
-        <div style="width:640px;height:340px;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+        <div style="font-size:10px;font-weight:700;color:#555;letter-spacing:2px;text-transform:uppercase;">FRONT — ${card.cardId}</div>
+        <div style="width:${CARD_W}px;height:${CARD_H}px;border-radius:18px;overflow:hidden;position:relative;background:#111;flex-shrink:0;">
           <div style="position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px);background-size:20px 20px;"></div>
           <div style="position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:#E31E24;border-radius:50%;z-index:3;"></div>
           <div style="position:absolute;bottom:-60px;left:-60px;width:170px;height:170px;background:#E31E24;border-radius:50%;z-index:3;opacity:0.5;"></div>
-          <img src="${pizzaUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;opacity:0.22;border-radius:20px;"/>
+          <img src="${pizzaUrl}" crossorigin="anonymous" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;opacity:0.22;"/>
           <div style="position:absolute;top:18px;right:18px;width:112px;height:112px;background:#E31E24;border-radius:50%;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.5);">
-            <div style="font-size:10px;font-weight:900;color:white;letter-spacing:2px;line-height:1;">GET</div>
+            <div style="font-size:10px;font-weight:900;color:white;letter-spacing:2px;">GET</div>
             <div style="font-size:36px;font-weight:900;color:white;line-height:1;">10%</div>
             <div style="font-size:14px;font-weight:900;color:white;">OFF</div>
             <div style="font-size:7.5px;font-weight:700;color:rgba(255,255,255,0.8);text-align:center;line-height:1.4;margin-top:3px;">ON CUSTOM<br/>DEAL</div>
           </div>
           <div style="position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <div style="font-size:46px;font-weight:900;color:#E31E24;letter-spacing:3px;text-transform:uppercase;text-shadow:0 3px 12px rgba(0,0,0,0.6);">KRUNCHEEZ</div>
+            <div style="font-size:46px;font-weight:900;color:#E31E24;letter-spacing:3px;text-shadow:0 3px 12px rgba(0,0,0,0.6);">KRUNCHEEZ</div>
             <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:4px;">Crunch in Every Bite</div>
             <div style="font-size:30px;font-weight:900;color:white;letter-spacing:7px;margin-top:8px;">LOYALTY <span style="color:#E31E24;">CARD</span></div>
             <div style="display:flex;align-items:center;gap:12px;margin-top:7px;">
@@ -108,25 +110,25 @@ const AdminCards = () => {
               <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">ENJOY</span>
             </div>
           </div>
-          <div style="position:absolute;bottom:0;left:0;right:0;z-index:6;padding:12px 24px;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 100%);display:flex;justify-content:center;">
-            <div style="font-size:16px;font-weight:900;color:#E31E24;letter-spacing:5px;">${card.cardId}</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:6;padding:12px 24px;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);display:flex;justify-content:center;">
+            <div style="font-size:18px;font-weight:900;color:#E31E24;letter-spacing:6px;">${card.cardId}</div>
           </div>
         </div>
 
-        <div style="font-size:11px;font-weight:700;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">BACK SIDE — ${card.cardId}</div>
-        <div style="width:640px;height:340px;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(135deg,#1a0505 0%,#2a0a0a 40%,#1a0505 100%);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-          <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,#E31E24 0%,rgba(227,30,36,0.3) 70%,transparent 100%);border-radius:50%;z-index:2;"></div>
-          <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,#E31E24 0%,rgba(227,30,36,0.3) 70%,transparent 100%);border-radius:50%;z-index:2;"></div>
-          <div style="position:relative;z-index:4;display:flex;height:100%;padding:18px 22px 70px;gap:20px;">
-            <div style="flex:1;display:flex;flex-direction:column;">
-              <div style="font-size:28px;font-weight:900;color:#E31E24;line-height:1.1;letter-spacing:2px;text-transform:uppercase;">KRUNCHEEZ</div>
+        <div style="font-size:10px;font-weight:700;color:#555;letter-spacing:2px;text-transform:uppercase;">BACK — ${card.cardId}</div>
+        <div style="width:${CARD_W}px;height:${CARD_H}px;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(135deg,#1a0505,#2a0a0a,#1a0505);flex-shrink:0;">
+          <div style="position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;"></div>
+          <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;"></div>
+          <div style="position:relative;z-index:4;display:flex;height:100%;padding:18px 22px 80px;gap:20px;">
+            <div style="flex:1;">
+              <div style="font-size:28px;font-weight:900;color:#E31E24;letter-spacing:2px;text-transform:uppercase;">KRUNCHEEZ</div>
               <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:10px;">Crunch in Every Bite</div>
             </div>
             <div style="width:210px;display:flex;flex-direction:column;gap:10px;">
               <div style="text-align:right;">
-                <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;">Good Food</div>
-                <div style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.5;">Brings People</div>
-                <div style="font-size:26px;color:white;line-height:1.2;">Together <span style="color:#E31E24;">♥</span></div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.45);">Good Food</div>
+                <div style="font-size:13px;color:rgba(255,255,255,0.45);">Brings People</div>
+                <div style="font-size:26px;color:white;">Together <span style="color:#E31E24;">♥</span></div>
               </div>
               <div style="background:linear-gradient(135deg,#E31E24,#c01a1f);border-radius:8px;padding:12px 16px;">
                 <div style="display:flex;align-items:baseline;gap:3px;">
@@ -138,10 +140,10 @@ const AdminCards = () => {
               </div>
             </div>
           </div>
-          <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.7) 60%,transparent 100%);display:flex;justify-content:space-between;align-items:center;">
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95),rgba(0,0,0,0.7),transparent);display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <div style="font-size:14px;color:#E31E24;letter-spacing:4px;font-weight:900;">${card.cardId}</div>
-              <div style="font-size:9px;color:rgba(255,255,255,0.4);">Valid on Custom Deal orders only • Keep this card safe</div>
+              <div style="font-size:16px;color:#E31E24;letter-spacing:5px;font-weight:900;">${card.cardId}</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.4);">Valid on Custom Deal only • Keep this card safe</div>
             </div>
           </div>
         </div>
@@ -149,17 +151,27 @@ const AdminCards = () => {
 
       document.body.appendChild(container);
 
+      // Wait for image to load
+      await new Promise(resolve => {
+        const img = container.querySelector('img');
+        if (!img || img.complete) return resolve();
+        img.onload = resolve;
+        img.onerror = resolve;
+        setTimeout(resolve, 3000);
+      });
+
       const canvas = await html2canvas(container, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#cdc5ba',
         logging: false,
+        width: CARD_W + 40,
+        windowWidth: CARD_W + 40,
       });
 
       document.body.removeChild(container);
 
-      // Download as PNG
       const link = document.createElement('a');
       link.download = `loyalty-card-${card.cardId}.png`;
       link.href = canvas.toDataURL('image/png', 1.0);
