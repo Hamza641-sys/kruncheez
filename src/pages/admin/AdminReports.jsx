@@ -72,8 +72,14 @@ const AdminReports = () => {
   const delivered  = filteredOrders.filter(o => o.status === 'delivered');
   const totalRev   = delivered.reduce((s,o) => s + (o.summary?.total||0), 0);
   const avgOrder   = delivered.length ? Math.round(totalRev/delivered.length) : 0;
-  const pending    = filteredOrders.filter(o => o.status === 'pending').length;
+  const pendingCount = filteredOrders.filter(o => o.status === 'pending').length;
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
+
+  // ── Order Type breakdown ──────────────────────────────────────────────
+  const deliveryOrders = delivered.filter(o => o.orderType === 'delivery' && !o.tableNumber && o.source !== 'pos');
+  const dineInOrders   = delivered.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+  const pickupOrders   = delivered.filter(o => o.orderType === 'pickup');
+  const posOrders      = delivered.filter(o => o.source === 'pos');
 
   // ── PAID vs PENDING payment breakdown ────────────────────────────────
   const paidOrders    = delivered.filter(o => o.paymentStatus === 'paid');
@@ -169,7 +175,7 @@ const AdminReports = () => {
       [],
       ['=== REVENUE SUMMARY ==='],
       ['Total Revenue', `Rs.${totalRev}`, 'Delivered Orders', delivered.length],
-      ['Avg Order Value', `Rs.${avgOrder}`, 'Pending', pending, 'Rejected', rejected],
+      ['Avg Order Value', `Rs.${avgOrder}`, 'Pending', pendingCount, 'Rejected', rejected],
       [],
       ['=== EXPENSE SUMMARY ==='],
       ['Total Expenses', `Rs.${totalExp}`],
@@ -390,6 +396,12 @@ const AdminReports = () => {
     const date = new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' });
     const time = new Date().toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
     const deliveredO = fOrders.filter(o => o.status === 'delivered');
+    const dineInO    = deliveredO.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+    const deliveryO  = deliveredO.filter(o => o.orderType === 'delivery' && !o.tableNumber && o.source !== 'pos');
+    const pickupO    = deliveredO.filter(o => o.orderType === 'pickup');
+    const posO       = deliveredO.filter(o => o.source === 'pos');
+    const pendingO   = fOrders.filter(o => o.status === 'pending');
+    const rejectedO  = fOrders.filter(o => o.status === 'rejected');
     const dailyExpAmt = fExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
       .reduce((s,e) => s + Number(e.amount||0), 0);
 
@@ -423,9 +435,15 @@ const AdminReports = () => {
 
     <div class="section-title">Sales Summary</div>
     <table>
-      <tr><td>Total Orders</td><td class="amount">${fOrders.length}</td></tr>
-      <tr><td>Delivered Orders</td><td class="amount">${deliveredO.length}</td></tr>
-      <tr><td>Total Revenue</td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
+      <tr><td>Total Orders (All)</td><td class="amount">${fOrders.length}</td></tr>
+      <tr><td>✅ Delivered Orders</td><td class="amount">${deliveredO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🚗 Home Delivery</td><td class="amount">${deliveryO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🍽️ Dine-In</td><td class="amount">${dineInO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🏃 Pickup</td><td class="amount">${pickupO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🖥️ POS Counter</td><td class="amount">${posO.length}</td></tr>
+      <tr><td>⏳ Pending Orders</td><td class="amount">${pendingO.length}</td></tr>
+      <tr><td>❌ Rejected Orders</td><td class="amount">${rejectedO.length}</td></tr>
+      <tr><td><b>Total Revenue</b></td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
       <tr><td>💵 Cash Collected</td><td class="amount">Rs. ${cash.toLocaleString()}</td></tr>
       <tr><td>📱 Easypaisa Collected</td><td class="amount">Rs. ${easypaisa.toLocaleString()}</td></tr>
       <tr class="pending"><td>⏳ Pending Payment (${pendCount} orders)</td><td class="amount">Rs. ${pendAmt.toLocaleString()}</td></tr>
