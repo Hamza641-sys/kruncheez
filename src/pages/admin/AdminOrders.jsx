@@ -1,10 +1,13 @@
 ﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed } from 'lucide-react';
+import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed, Pencil, Plus, Minus, Trash2 } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
+import { updateDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
 import { printBill, printKitchen } from '../../utils/printUtils';
+import { allMenuItems } from '../../data/menuData';
 
 
 const statusConfig = {
@@ -83,6 +86,11 @@ const AdminOrders = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   // Payment confirm modal
   const [payConfirm, setPayConfirm] = useState(null);
+  // Edit order modal
+  const [editOrder, setEditOrder]   = useState(null); // order being edited
+  const [editItems, setEditItems]   = useState([]);   // working copy of items
+  const [editSearch, setEditSearch] = useState('');
+  const [editSaving, setEditSaving] = useState(false);
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
 
@@ -129,6 +137,63 @@ const AdminOrders = () => {
     }
     toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? 'Cash' : 'Easypaisa'}`, toastStyle);
     setPayConfirm(null);
+  };
+
+  // ── Open Edit Modal ──
+  const openEdit = (order) => {
+    setEditItems(order.items.map(i => ({ ...i, quantity: i.quantity || i.qty || 1 })));
+    setEditOrder(order);
+    setEditSearch('');
+    setSelected(null);
+  };
+
+  // ── Edit: change qty ──
+  const editQty = (idx, delta) => {
+    setEditItems(prev => prev.map((it, i) => {
+      if (i !== idx) return it;
+      const newQty = (it.quantity || 1) + delta;
+      return newQty < 1 ? null : { ...it, quantity: newQty };
+    }).filter(Boolean));
+  };
+
+  // ── Edit: remove item ──
+  const editRemove = (idx) => {
+    setEditItems(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  // ── Edit: add item from menu ──
+  const editAddItem = (menuItem) => {
+    setEditItems(prev => {
+      const existing = prev.findIndex(it => it.id === menuItem.id);
+      if (existing >= 0) {
+        return prev.map((it, i) => i === existing ? { ...it, quantity: it.quantity + 1 } : it);
+      }
+      return [...prev, { id: menuItem.id, name: menuItem.name, price: menuItem.price, quantity: 1, category: menuItem.category, subtotal: menuItem.price }];
+    });
+  };
+
+  // ── Edit: compute totals ──
+  const editSubtotal = editItems.reduce((s, it) => s + it.price * it.quantity, 0);
+  const editDelivery = editOrder?.summary?.deliveryFee || 0;
+  const editTotal    = editSubtotal + editDelivery;
+
+  // ── Edit: save to Firestore ──
+  const handleEditSave = async () => {
+    if (editItems.length === 0) { toast.error('Order must have at least 1 item', toastStyle); return; }
+    setEditSaving(true);
+    try {
+      const updatedItems = editItems.map(it => ({ ...it, subtotal: it.price * it.quantity }));
+      await updateDoc(doc(db, 'orders', editOrder.id), {
+        items: updatedItems,
+        'summary.subtotal': editSubtotal,
+        'summary.total': editTotal,
+      });
+      toast.success('Order updated! ✅', toastStyle);
+      setEditOrder(null);
+    } catch (e) {
+      toast.error('Failed to save: ' + e.message, toastStyle);
+    }
+    setEditSaving(false);
   };
 
   // Table orders quick view — only valid tables 1-7
@@ -284,6 +349,11 @@ const AdminOrders = () => {
                           className="w-7 h-7 rounded-lg bg-krunch-black border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white hover:border-krunch-red/50 transition-all">
                           <Eye size={12} />
                         </button>
+                        <button onClick={() => openEdit(order)}
+                          title="Edit Order"
+                          className="w-7 h-7 rounded-lg bg-blue-900/20 border border-blue-700/30 flex items-center justify-center text-blue-400 hover:bg-blue-600 hover:text-white transition-all">
+                          <Pencil size={12} />
+                        </button>
                         <button onClick={() => printBill(order)}
                           title="Print Counter Bill"
                           className="flex items-center gap-1 px-2 py-1 rounded-lg bg-green-900/20 border border-green-700/30 text-green-400 hover:bg-green-600 hover:text-white font-body text-[10px] font-bold transition-all whitespace-nowrap">
@@ -339,6 +409,10 @@ const AdminOrders = () => {
                   <button onClick={() => printKitchen(selected)}
                     className="flex items-center gap-1.5 bg-orange-900/20 border border-orange-700/30 hover:bg-orange-600 text-orange-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
                     <UtensilsCrossed size={13} /> Kitchen
+                  </button>
+                  <button onClick={() => openEdit(selected)}
+                    className="flex items-center gap-1.5 bg-blue-900/20 border border-blue-700/30 hover:bg-blue-600 text-blue-400 hover:text-white font-body font-bold text-xs px-3 py-1.5 rounded-xl transition-all">
+                    <Pencil size={13} /> Edit
                   </button>
                   <button onClick={() => setSelected(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
                 </div>
@@ -463,6 +537,116 @@ const AdminOrders = () => {
                   className="w-full mt-3 text-krunch-gray hover:text-white font-body text-xs text-center transition-colors py-2"
                 >
                   Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* ── EDIT ORDER MODAL ── */}
+      <AnimatePresence>
+        {editOrder && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.92, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.92 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg bg-krunch-dark border border-krunch-border rounded-2xl flex flex-col max-h-[90vh]">
+
+              {/* Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
+                <div>
+                  <h3 className="font-heading font-bold text-white uppercase">Edit Order</h3>
+                  <p className="text-krunch-gray font-body text-xs mt-0.5">#{editOrder.id.slice(0,8).toUpperCase()} — {editOrder.customer?.name}</p>
+                </div>
+                <button onClick={() => setEditOrder(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
+              </div>
+
+              <div className="overflow-y-auto flex-1 p-5 flex flex-col gap-4">
+
+                {/* Current Items */}
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Current Items</p>
+                  {editItems.length === 0 && (
+                    <p className="text-krunch-gray font-body text-sm text-center py-4">No items — add from menu below</p>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    {editItems.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-3 bg-krunch-black border border-krunch-border rounded-xl px-3 py-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white font-body text-sm truncate">{item.name}</p>
+                          <p className="text-krunch-red font-body text-xs">Rs.{item.price} each</p>
+                        </div>
+                        {/* Qty controls */}
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => editQty(idx, -1)}
+                            className="w-7 h-7 rounded-lg bg-krunch-card border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white transition-all">
+                            <Minus size={12} />
+                          </button>
+                          <span className="text-white font-body font-bold text-sm w-6 text-center">{item.quantity}</span>
+                          <button onClick={() => editQty(idx, +1)}
+                            className="w-7 h-7 rounded-lg bg-krunch-card border border-krunch-border flex items-center justify-center text-krunch-gray hover:text-white transition-all">
+                            <Plus size={12} />
+                          </button>
+                        </div>
+                        <p className="text-white font-body font-bold text-sm w-16 text-right">Rs.{(item.price * item.quantity).toLocaleString()}</p>
+                        <button onClick={() => editRemove(idx)}
+                          className="w-7 h-7 rounded-lg bg-red-900/20 border border-red-700/30 flex items-center justify-center text-red-400 hover:bg-red-700/40 transition-all">
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Add from Menu */}
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Add Item from Menu</p>
+                  <input type="text" placeholder="Search menu item..." value={editSearch}
+                    onChange={e => setEditSearch(e.target.value)}
+                    className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm placeholder-krunch-gray/40 focus:outline-none focus:border-krunch-red transition-colors mb-2" />
+                  <div className="max-h-44 overflow-y-auto flex flex-col gap-1 pr-1">
+                    {allMenuItems
+                      .filter(m => !editSearch || m.name.toLowerCase().includes(editSearch.toLowerCase()))
+                      .slice(0, 30)
+                      .map(m => (
+                        <button key={m.id} onClick={() => editAddItem(m)}
+                          className="flex items-center justify-between px-3 py-2 rounded-xl bg-krunch-black border border-krunch-border hover:border-krunch-red/50 hover:bg-krunch-red/5 transition-all text-left">
+                          <span className="text-white font-body text-sm truncate flex-1">{m.name}</span>
+                          <span className="text-krunch-red font-body text-xs ml-2 flex-shrink-0">Rs.{m.price}</span>
+                          <Plus size={13} className="text-krunch-gray ml-2 flex-shrink-0" />
+                        </button>
+                      ))}
+                  </div>
+                </div>
+
+                {/* Updated Total */}
+                <div className="bg-krunch-black border border-krunch-border rounded-xl p-4">
+                  <div className="flex justify-between text-sm font-body mb-1">
+                    <span className="text-krunch-gray">Subtotal</span>
+                    <span className="text-white">Rs.{editSubtotal.toLocaleString()}</span>
+                  </div>
+                  {editDelivery > 0 && (
+                    <div className="flex justify-between text-sm font-body mb-1">
+                      <span className="text-krunch-gray">Delivery</span>
+                      <span className="text-white">Rs.{editDelivery}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-heading font-black text-lg border-t border-krunch-border pt-2 mt-1">
+                    <span className="text-white">New Total</span>
+                    <span className="text-krunch-red">Rs.{editTotal.toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 py-4 border-t border-krunch-border flex gap-3">
+                <button onClick={() => setEditOrder(null)}
+                  className="flex-1 bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl transition-all text-sm">
+                  Cancel
+                </button>
+                <button onClick={handleEditSave} disabled={editSaving}
+                  className="flex-1 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl transition-all text-sm disabled:opacity-60">
+                  {editSaving ? 'Saving...' : '✅ Save Changes'}
                 </button>
               </div>
             </motion.div>
