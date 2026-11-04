@@ -23,6 +23,27 @@ export const sendWhatsAppOrderNotification = (order, orderId) => {
   window.open(url, '_blank');
 };
 
+export const sendWhatsAppEditAlert = (editedBy, order, oldItems, newItems) => {
+  const orderId = order.id?.slice(0,8).toUpperCase() || 'N/A';
+
+  const itemLine = (arr) => arr?.map(i => `• ${i.name} x${i.quantity || 1} = Rs.${(i.price * (i.quantity||1)).toLocaleString()}`).join('\n') || '—';
+
+  const oldTotal = oldItems?.reduce((s,i) => s + i.price*(i.quantity||1), 0) || 0;
+  const newTotal = newItems?.reduce((s,i) => s + i.price*(i.quantity||1), 0) || 0;
+
+  const message =
+    `⚠️ *ORDER EDITED - The KrunchEez*\n\n` +
+    `Order ID: #${orderId}\n` +
+    `Customer: ${order.customer?.name || '—'}\n` +
+    `Edited by: ${editedBy || 'Manager'}\n` +
+    `Time: ${new Date().toLocaleString('en-PK')}\n\n` +
+    `*Before:*\n${itemLine(oldItems)}\nTotal: Rs.${oldTotal.toLocaleString()}\n\n` +
+    `*After:*\n${itemLine(newItems)}\nTotal: Rs.${newTotal.toLocaleString()}`;
+
+  const url = `https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+};
+
 export const sendWhatsAppStatusUpdate = (customerPhone, orderId, status) => {
   const statusMessages = {
     confirmed:        '✅ Your order has been *confirmed*!',

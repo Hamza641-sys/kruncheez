@@ -7,7 +7,7 @@ import {
   LayoutDashboard, ShoppingBag, UtensilsCrossed, Users,
   BarChart3, Settings, LogOut, Menu, X,
   QrCode, CreditCard, Receipt,
-  Truck, TrendingDown, UserCheck, LineChart, MessageSquare
+  Truck, TrendingDown, UserCheck, LineChart, MessageSquare, ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import NotificationPanel from '../../components/admin/NotificationPanel';
@@ -16,6 +16,7 @@ import LogoCircle from '../../components/LogoCircle';
 const navItems = [
   { path: '/admin',           label: 'Dashboard',        icon: <LayoutDashboard size={17} /> },
   { path: '/admin/orders',    label: 'Orders',           icon: <ShoppingBag size={17} /> },
+  { path: '/admin/editlogs',  label: 'Edit Logs',        icon: <ClipboardList size={17} /> },
   { path: '/admin/pos',       label: 'POS / Billing',    icon: <Receipt size={17} /> },
   { path: '/admin/menu',      label: 'Menu',             icon: <UtensilsCrossed size={17} /> },
   { path: '/admin/reports',   label: 'Sales + Reports',  icon: <BarChart3 size={17} /> },

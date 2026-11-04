@@ -2,9 +2,10 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed, Pencil, Plus, Minus, Trash2 } from 'lucide-react';
 import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
-import { updateDoc, doc, getDocs, collection } from 'firebase/firestore';
+import { updateDoc, doc, getDocs, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
+import { sendWhatsAppStatusUpdate, sendWhatsAppEditAlert } from '../../firebase/whatsappService';
+import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import { printBill, printKitchen } from '../../utils/printUtils';
 
@@ -78,6 +79,7 @@ const OrderTypeBadge = ({ orderType, tableNumber, source }) => {
 };
 
 const AdminOrders = () => {
+  const { userData } = useAuth();
   const [orders, setOrders]       = useState([]);
   const [filter, setFilter]       = useState('all');
   const [search, setSearch]       = useState('');
@@ -190,13 +192,36 @@ const AdminOrders = () => {
     if (editItems.length === 0) { toast.error('Order must have at least 1 item', toastStyle); return; }
     setEditSaving(true);
     try {
+      const oldItems = editOrder.items;
       const updatedItems = editItems.map(it => ({ ...it, subtotal: it.price * it.quantity }));
+      const editorName = userData?.name || userData?.email || 'Manager';
+
+      // 1. Update order in Firestore
       await updateDoc(doc(db, 'orders', editOrder.id), {
         items: updatedItems,
         'summary.subtotal': editSubtotal,
         'summary.total': editTotal,
+        lastEditedBy: editorName,
+        lastEditedAt: serverTimestamp(),
       });
-      toast.success('Order updated! ✅', toastStyle);
+
+      // 2. Save edit log to orderEdits collection
+      await addDoc(collection(db, 'orderEdits'), {
+        orderId:    editOrder.id,
+        orderShortId: editOrder.id.slice(0,8).toUpperCase(),
+        customer:   editOrder.customer?.name || '—',
+        editedBy:   editorName,
+        editedAt:   serverTimestamp(),
+        oldItems,
+        newItems:   updatedItems,
+        oldTotal:   editOrder.summary?.total || 0,
+        newTotal:   editTotal,
+      });
+
+      // 3. WhatsApp alert to owner
+      try { sendWhatsAppEditAlert(editorName, editOrder, oldItems, updatedItems); } catch {}
+
+      toast.success('Order updated! Owner notified ✅', toastStyle);
       setEditOrder(null);
     } catch (e) {
       toast.error('Failed to save: ' + e.message, toastStyle);
