@@ -110,10 +110,18 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── Order Type breakdown ──────────────────────────────────────────────
+  // POS orders: source === 'pos' — further split by their orderType
   const posOrders      = delivered.filter(o => o.source === 'pos');
-  const dineInOrders   = delivered.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
-  const pickupOrders   = delivered.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
-  const deliveryOrders = delivered.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
+  const posDineIn      = posOrders.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+  const posPickup      = posOrders.filter(o => o.orderType === 'pickup' || (!o.orderType && !o.tableNumber));
+  // Online orders (website)
+  const onlineDelivery = delivered.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
+  const onlineDineIn   = delivered.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
+  const onlinePickup   = delivered.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
+  // Keep these for backward compat
+  const deliveryOrders = onlineDelivery;
+  const dineInOrders   = [...posDineIn, ...onlineDineIn];
+  const pickupOrders   = [...posPickup, ...onlinePickup];
 
   // ── PAID vs PENDING payment breakdown ────────────────────────────────
   const paidOrders    = delivered.filter(o => o.paymentStatus === 'paid');
@@ -429,13 +437,15 @@ const AdminReports = () => {
     const isP = prof >= 0;
     const date = new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' });
     const time = new Date().toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
-    const deliveredO = fOrders.filter(o => o.status === 'delivered');
-    const posO       = deliveredO.filter(o => o.source === 'pos');
-    const dineInO    = deliveredO.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
-    const pickupO    = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
-    const deliveryO  = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
-    const pendingO   = fOrders.filter(o => o.status === 'pending');
-    const rejectedO  = fOrders.filter(o => o.status === 'rejected');
+    const deliveredO     = fOrders.filter(o => o.status === 'delivered');
+    const posO           = deliveredO.filter(o => o.source === 'pos');
+    const posDineInO     = posO.filter(o => o.orderType === 'dine-in' || o.tableNumber);
+    const posPickupO     = posO.filter(o => !o.tableNumber && o.orderType !== 'dine-in');
+    const onlineDelivO   = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'delivery');
+    const onlineDineInO  = deliveredO.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
+    const onlinePickupO  = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'pickup');
+    const pendingO       = fOrders.filter(o => o.status === 'pending');
+    const rejectedO      = fOrders.filter(o => o.status === 'rejected');
     const dailyExpAmt = fExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
       .reduce((s,e) => s + Number(e.amount||0), 0);
 
@@ -470,12 +480,15 @@ const AdminReports = () => {
     <div class="section-title">Sales Summary</div>
     <table>
       <tr><td><b>Total Orders</b></td><td class="amount"><b>${fOrders.length}</b></td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;🍽️ Dine-In</td><td class="amount">${dineInO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;🚗 Home Delivery</td><td class="amount">${deliveryO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;🏃 Pickup</td><td class="amount">${pickupO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;🖥️ POS Counter</td><td class="amount">${posO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;⏳ Processing (not closed yet)</td><td class="amount">${pendingO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;❌ Rejected</td><td class="amount">${rejectedO.length}</td></tr>
+      <tr><td><b>🖥️ POS Counter Total</b></td><td class="amount"><b>${posO.length}</b></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ Dine-In (Table)</td><td class="amount">${posDineInO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ Counter Pickup</td><td class="amount">${posPickupO.length}</td></tr>
+      <tr><td><b>🌐 Online Orders Total</b></td><td class="amount"><b>${onlineDelivO.length + onlineDineInO.length + onlinePickupO.length}</b></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🚗 Home Delivery</td><td class="amount">${onlineDelivO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🍽️ Dine-In (QR)</td><td class="amount">${onlineDineInO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🏃 Pickup</td><td class="amount">${onlinePickupO.length}</td></tr>
+      <tr><td>⏳ Processing (not closed yet)</td><td class="amount">${pendingO.length}</td></tr>
+      <tr><td>❌ Rejected</td><td class="amount">${rejectedO.length}</td></tr>
       <tr><td><b>Total Revenue</b></td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
       <tr><td>💵 Cash Collected</td><td class="amount">Rs. ${cash.toLocaleString()}</td></tr>
       <tr><td>📱 Easypaisa Collected</td><td class="amount">Rs. ${easypaisa.toLocaleString()}</td></tr>
