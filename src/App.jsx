@@ -40,6 +40,7 @@ import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminEditLogs from './pages/admin/AdminEditLogs';
+import AdminCustomerDB from './pages/admin/AdminCustomerDB';
 import AdminMenu from './pages/admin/AdminMenu';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminSettings from './pages/admin/AdminSettings';
@@ -114,7 +115,8 @@ const AppLayout = () => {
         <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
           <Route index element={<AdminDashboard />} />
           <Route path="orders"    element={<AdminOrders />} />
-          <Route path="editlogs"  element={<AdminEditLogs />} />
+          <Route path="editlogs"   element={<AdminEditLogs />} />
+          <Route path="customerdb" element={<AdminCustomerDB />} />
           <Route path="pos"       element={<AdminPOS />} />
           <Route path="menu"      element={<AdminMenu />} />
           <Route path="qr"        element={<AdminQR />} />

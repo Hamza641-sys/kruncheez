@@ -75,6 +75,17 @@ const AdminReports = () => {
   const pending    = filteredOrders.filter(o => o.status === 'pending').length;
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
+  // ── PAID vs PENDING payment breakdown ────────────────────────────────
+  const paidOrders    = delivered.filter(o => o.paymentStatus === 'paid');
+  const pendingPayOrders = filteredOrders.filter(o =>
+    (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected'
+  );
+  const paidAmount    = paidOrders.reduce((s,o) => s + (o.summary?.total||0), 0);
+  const pendingPayAmt = pendingPayOrders.reduce((s,o) => s + (o.summary?.total||0), 0);
+  // Cash vs Easypaisa (from paid orders)
+  const cashAmount    = delivered.filter(o => o.paymentMethod !== 'easypaisa').reduce((s,o) => s + (o.summary?.total||0), 0);
+  const easypaisaAmt  = delivered.filter(o => o.paymentMethod === 'easypaisa').reduce((s,o) => s + (o.summary?.total||0), 0);
+
   // ── Filter salaries by period ─────────────────────────────────────────
   const filteredSalaries = filterByPeriod(salaries, period);
 
@@ -373,6 +384,89 @@ const AdminReports = () => {
     win.document.close();
   };
 
+  // ── Daily Closing Report ─────────────────────────────────────────────
+  const printDailyClose = (fOrders, fExpenses, per, rev, exp, prof, cash, easypaisa, pendAmt, pendCount) => {
+    const isP = prof >= 0;
+    const date = new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' });
+    const time = new Date().toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
+    const deliveredO = fOrders.filter(o => o.status === 'delivered');
+    const dailyExpAmt = fExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
+      .reduce((s,e) => s + Number(e.amount||0), 0);
+
+    const win2 = window.open('', '_blank');
+    win2.document.write(`<!DOCTYPE html><html><head><title>Daily Closing Report</title>
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      @page{size:A4;margin:15mm;}
+      body{font-family:Arial,sans-serif;font-size:12px;color:#000;background:#fff;}
+      .header{text-align:center;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:16px;}
+      .title{font-size:18px;font-weight:bold;margin:6px 0;}
+      .sub{font-size:11px;color:#555;}
+      .section-title{font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;background:#f5f5f5;padding:6px 8px;margin:14px 0 6px;}
+      table{width:100%;border-collapse:collapse;margin:4px 0;}
+      td,th{border:1px solid #ddd;padding:7px 10px;font-size:11px;}
+      th{background:#f0f0f0;font-weight:bold;text-transform:uppercase;}
+      .amount{text-align:right;font-weight:bold;}
+      .big{font-size:15px;font-weight:bold;}
+      .profit{background:${isP?'#e8f5e9':'#ffebee'};color:${isP?'#2e7d32':'#c62828'};}
+      .pending{background:#fff8e1;color:#f57f17;}
+      .sign-row{display:flex;justify-content:space-between;margin-top:30px;}
+      .sign-box{text-align:center;width:45%;}
+      .sign-line{border-top:1px solid #000;padding-top:4px;margin-top:30px;font-size:10px;}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+    </style></head><body>
+    <div class="header">
+      <div class="sub">THE KRUNCHEEZ RESTAURANT — PESHAWAR</div>
+      <div class="title">DAILY CLOSING REPORT</div>
+      <div class="sub">Period: <b>${per.toUpperCase()}</b> &nbsp;|&nbsp; Date: ${date} at ${time}</div>
+    </div>
+
+    <div class="section-title">Sales Summary</div>
+    <table>
+      <tr><td>Total Orders</td><td class="amount">${fOrders.length}</td></tr>
+      <tr><td>Delivered Orders</td><td class="amount">${deliveredO.length}</td></tr>
+      <tr><td>Total Revenue</td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
+      <tr><td>💵 Cash Collected</td><td class="amount">Rs. ${cash.toLocaleString()}</td></tr>
+      <tr><td>📱 Easypaisa Collected</td><td class="amount">Rs. ${easypaisa.toLocaleString()}</td></tr>
+      <tr class="pending"><td>⏳ Pending Payment (${pendCount} orders)</td><td class="amount">Rs. ${pendAmt.toLocaleString()}</td></tr>
+    </table>
+
+    <div class="section-title">Expenses Summary</div>
+    <table>
+      <tr><td>Daily Operational Expenses</td><td class="amount">Rs. ${dailyExpAmt.toLocaleString()}</td></tr>
+      <tr><td>Total Expenses</td><td class="amount big">Rs. ${exp.toLocaleString()}</td></tr>
+    </table>
+
+    <div class="section-title">Net Profit / Loss</div>
+    <table>
+      <tr><td>Total Revenue</td><td class="amount">+ Rs. ${rev.toLocaleString()}</td></tr>
+      <tr><td>Total Expenses</td><td class="amount">- Rs. ${exp.toLocaleString()}</td></tr>
+      <tr class="profit"><td class="big">${isP?'NET PROFIT':'NET LOSS'}</td><td class="amount big">${isP?'+':'-'} Rs. ${Math.abs(prof).toLocaleString()}</td></tr>
+    </table>
+
+    <div class="section-title">Delivered Orders List</div>
+    <table>
+      <tr><th>#</th><th>Order ID</th><th>Customer</th><th>Items</th><th>Method</th><th>Pay Status</th><th>Amount</th></tr>
+      ${deliveredO.map((o,i) => `<tr>
+        <td>${i+1}</td>
+        <td>#${o.id.slice(0,8).toUpperCase()}</td>
+        <td>${o.customer?.name||'Walk-in'} ${o.customer?.phone?'<br/><small>'+o.customer.phone+'</small>':''}</td>
+        <td>${o.items?.length||0} items</td>
+        <td>${o.paymentMethod==='easypaisa'?'Easypaisa':'Cash'}</td>
+        <td style="color:${o.paymentStatus==='paid'?'#2e7d32':'#f57f17'}">${o.paymentStatus==='paid'?'✅ Paid':'⏳ Pending'}</td>
+        <td class="amount">Rs.${(o.summary?.total||0).toLocaleString()}</td>
+      </tr>`).join('')}
+    </table>
+
+    <div class="sign-row">
+      <div class="sign-box"><div class="sign-line">Manager Signature</div></div>
+      <div class="sign-box"><div class="sign-line">Owner: Hamid Ali</div></div>
+    </div>
+    <script>window.onload=()=>{window.print();window.close();}<\/script>
+    </body></html>`);
+    win2.document.close();
+  };
+
   return (
     <div>
       {/* Header */}
@@ -385,6 +479,10 @@ const AdminReports = () => {
           <button onClick={printAnnualTaxReport}
             className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all shadow-red-glow">
             <Download size={15} /> Annual Tax Report (PDF)
+          </button>
+          <button onClick={() => printDailyClose(filteredOrders, filteredExpenses, period, totalRev, totalExp, profit, cashAmount, easypaisaAmt, pendingPayAmt, pendingPayOrders.length)}
+            className="flex items-center gap-2 bg-amber-700 hover:bg-amber-600 text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
+            🧾 Daily Closing Report
           </button>
           <button onClick={downloadCSV}
             className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
@@ -456,6 +554,42 @@ const AdminReports = () => {
               </div>
             </div>
           </motion.div>
+
+          {/* ══════════ PAID vs PENDING PAYMENT BREAKDOWN ══════════ */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="card-dark p-5 border border-green-700/30">
+              <div className="w-11 h-11 bg-green-400/10 rounded-xl flex items-center justify-center mb-3">
+                <span className="text-xl">✅</span>
+              </div>
+              <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1">Paid Amount</p>
+              <p className="font-heading font-black text-2xl text-green-400">Rs.{paidAmount.toLocaleString()}</p>
+              <p className="text-krunch-gray font-body text-xs mt-1">{paidOrders.length} orders paid</p>
+            </div>
+            <div className="card-dark p-5 border border-amber-700/30">
+              <div className="w-11 h-11 bg-amber-400/10 rounded-xl flex items-center justify-center mb-3">
+                <span className="text-xl">⏳</span>
+              </div>
+              <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1">Pending Amount</p>
+              <p className="font-heading font-black text-2xl text-amber-400">Rs.{pendingPayAmt.toLocaleString()}</p>
+              <p className="text-krunch-gray font-body text-xs mt-1">{pendingPayOrders.length} orders pending</p>
+            </div>
+            <div className="card-dark p-5 border border-krunch-border">
+              <div className="w-11 h-11 bg-krunch-card rounded-xl flex items-center justify-center mb-3">
+                <span className="text-xl">💵</span>
+              </div>
+              <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1">Cash Collected</p>
+              <p className="font-heading font-black text-2xl text-white">Rs.{cashAmount.toLocaleString()}</p>
+              <p className="text-krunch-gray font-body text-xs mt-1">from delivered orders</p>
+            </div>
+            <div className="card-dark p-5 border border-green-700/30">
+              <div className="w-11 h-11 bg-green-400/10 rounded-xl flex items-center justify-center mb-3">
+                <span className="text-xl">📱</span>
+              </div>
+              <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1">Easypaisa</p>
+              <p className="font-heading font-black text-2xl text-green-400">Rs.{easypaisaAmt.toLocaleString()}</p>
+              <p className="text-krunch-gray font-body text-xs mt-1">from delivered orders</p>
+            </div>
+          </div>
 
           {/* ══════════ MAIN STATS ══════════ */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

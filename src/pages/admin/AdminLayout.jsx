@@ -27,6 +27,7 @@ const navItems = [
   { path: '/admin/qr',        label: 'QR Codes',         icon: <QrCode size={17} /> },
   { path: '/admin/cards',     label: 'Loyalty Cards',    icon: <CreditCard size={17} /> },
   { path: '/admin/customers', label: 'Customers',        icon: <Users size={17} /> },
+  { path: '/admin/customerdb',label: 'Customer Database', icon: <LayoutDashboard size={17} /> },
   { path: '/admin/settings',  label: 'Settings',         icon: <Settings size={17} /> },
   { path: '/admin/messages',  label: 'Messages',          icon: <MessageSquare size={17} /> },
 ];
