@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import { doc, getDoc, updateDoc, increment, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 
 // Social links - admin can update from Firebase
 const DEFAULT_LINKS = {
@@ -13,6 +14,7 @@ const DEFAULT_LINKS = {
 };
 
 const FollowPage = () => {
+  const { logoUrl, restaurantName } = useRestaurantSettings();
   const [links, setLinks]     = useState(DEFAULT_LINKS);
   const [scans, setScans]     = useState(0);
   const [clicked, setClicked] = useState(null);
@@ -141,7 +143,11 @@ const FollowPage = () => {
             className="w-20 h-20 rounded-full border-3 border-krunch-red flex items-center justify-center bg-krunch-black mx-auto mb-4 shadow-red-glow"
             style={{ border: '3px solid #E31E24' }}
           >
-            <span className="text-krunch-red font-heading font-black text-3xl">K</span>
+            {logoUrl ? (
+              <img src={logoUrl} alt="KrunchEez Logo" className="w-full h-full object-contain rounded-full" />
+            ) : (
+              <span className="text-krunch-red font-heading font-black text-3xl">K</span>
+            )}
           </motion.div>
           <h1 className="font-heading font-black text-3xl text-white uppercase tracking-wider">
             THE <span className="text-krunch-red">KRUNCHEEZ</span>
