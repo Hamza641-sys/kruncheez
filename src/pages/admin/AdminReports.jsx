@@ -435,18 +435,17 @@ const AdminReports = () => {
 
     <div class="section-title">Sales Summary</div>
     <table>
-      <tr><td>Total Orders (All)</td><td class="amount">${fOrders.length}</td></tr>
-      <tr><td>✅ Delivered Orders</td><td class="amount">${deliveredO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🚗 Home Delivery</td><td class="amount">${deliveryO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🍽️ Dine-In</td><td class="amount">${dineInO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🏃 Pickup</td><td class="amount">${pickupO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;↳ 🖥️ POS Counter</td><td class="amount">${posO.length}</td></tr>
-      <tr><td>⏳ Pending Orders</td><td class="amount">${pendingO.length}</td></tr>
-      <tr><td>❌ Rejected Orders</td><td class="amount">${rejectedO.length}</td></tr>
+      <tr><td><b>Total Orders</b></td><td class="amount"><b>${fOrders.length}</b></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;🍽️ Dine-In</td><td class="amount">${dineInO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;🚗 Home Delivery</td><td class="amount">${deliveryO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;🏃 Pickup</td><td class="amount">${pickupO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;🖥️ POS Counter</td><td class="amount">${posO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;⏳ Still Pending</td><td class="amount">${pendingO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;❌ Rejected</td><td class="amount">${rejectedO.length}</td></tr>
       <tr><td><b>Total Revenue</b></td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
       <tr><td>💵 Cash Collected</td><td class="amount">Rs. ${cash.toLocaleString()}</td></tr>
       <tr><td>📱 Easypaisa Collected</td><td class="amount">Rs. ${easypaisa.toLocaleString()}</td></tr>
-      <tr class="pending"><td>⏳ Pending Payment (${pendCount} orders)</td><td class="amount">Rs. ${pendAmt.toLocaleString()}</td></tr>
+      <tr class="pending"><td>⏳ Payment Baki (${pendCount} orders)</td><td class="amount">Rs. ${pendAmt.toLocaleString()}</td></tr>
     </table>
 
     <div class="section-title">Expenses Summary</div>
