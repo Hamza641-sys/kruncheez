@@ -101,7 +101,7 @@ export const printBill = (order) => {
     + '<div style="border-top:1px dashed #000;margin:8px 0;"></div>'
     + '<div style="font-size:8px;color:#777;margin-bottom:1px;">Software Developed by</div>'
     + '<div style="font-size:11px;font-weight:900;letter-spacing:1px;">DKIM TECH</div>'
-    + '<div style="font-size:9px;font-weight:bold;color:#555;">0348-9386552</div>'
+    + '<div style="font-size:10px;font-weight:bold;">+923489386552</div>'
     + '</body></html>';
 
   printViaIframe(html);
