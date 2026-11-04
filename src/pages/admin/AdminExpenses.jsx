@@ -25,10 +25,12 @@ const categories = [
 ];
 
 const periods = [
-  { k: 'today', l: 'Today' },
-  { k: 'week',  l: 'This Week' },
-  { k: 'month', l: 'This Month' },
-  { k: 'all',   l: 'All Time' },
+  { k: 'shift',  l: '🍽️ Today Shift (11am–3am)' },
+  { k: 'today',  l: 'Today' },
+  { k: 'week',   l: 'This Week' },
+  { k: 'month',  l: 'This Month' },
+  { k: 'all',    l: 'All Time' },
+  { k: 'custom', l: '📅 Custom Range' },
 ];
 
 const AdminExpenses = () => {
@@ -36,9 +38,14 @@ const AdminExpenses = () => {
   const [loading, setLoading]     = useState(true);
   const [search, setSearch]       = useState('');
   const [catFilter, setCatFilter] = useState('all');
-  const [period, setPeriod]       = useState('today');
+  const [period, setPeriod]       = useState('shift');
   const [showForm, setShowForm]   = useState(false);
   const [saving, setSaving]       = useState(false);
+
+  // Custom range
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [customFrom, setCustomFrom] = useState(todayStr + 'T11:00');
+  const [customTo,   setCustomTo]   = useState(todayStr + 'T03:00');
 
   const [form, setForm] = useState({
     category: 'other',
@@ -67,7 +74,13 @@ const AdminExpenses = () => {
 
   // Period filter
   const getStart = (p) => {
-    const now = new Date();
+    if (p === 'shift') {
+      const now = new Date();
+      const shiftStart = new Date();
+      if (now.getHours() < 3) shiftStart.setDate(shiftStart.getDate() - 1);
+      shiftStart.setHours(11, 0, 0, 0);
+      return shiftStart;
+    }
     if (p === 'today') { const d = new Date(); d.setHours(0,0,0,0); return d; }
     if (p === 'week')  { const d = new Date(); d.setDate(d.getDate()-7); return d; }
     if (p === 'month') { const d = new Date(); d.setMonth(d.getMonth()-1); return d; }
@@ -75,9 +88,17 @@ const AdminExpenses = () => {
   };
 
   const periodExp = expenses.filter(e => {
+    const d = e.createdAt?.toDate?.() || new Date(e.date || 0);
+    if (period === 'custom') {
+      const from = customFrom ? new Date(customFrom) : null;
+      const to   = customTo   ? new Date(customTo)   : null;
+      if (from && to && to < from) to.setDate(to.getDate() + 1);
+      if (from && d < from) return false;
+      if (to   && d > to)   return false;
+      return true;
+    }
     const start = getStart(period);
     if (!start) return true;
-    const d = e.createdAt?.toDate?.() || new Date(e.date || 0);
     return d >= start;
   });
 
@@ -170,7 +191,7 @@ const AdminExpenses = () => {
       </div>
 
       {/* Period Tabs */}
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+      <div className="flex gap-2 mb-3 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
         {periods.map(p => (
           <button key={p.k} onClick={() => setPeriod(p.k)}
             className={`flex-shrink-0 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
@@ -181,6 +202,24 @@ const AdminExpenses = () => {
         ))}
       </div>
 
+      {/* Custom Range inputs */}
+      {period === 'custom' && (
+        <div className="flex flex-col sm:flex-row gap-3 mb-4 card-dark p-4">
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">From</label>
+            <input type="datetime-local" value={customFrom}
+              onChange={e => setCustomFrom(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">To</label>
+            <input type="datetime-local" value={customTo}
+              onChange={e => setCustomTo(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+        </div>
+      )}
+
       {/* Total + Breakdown */}
       <div className="grid lg:grid-cols-3 gap-4 mb-6">
         {/* Total card */}
@@ -188,7 +227,7 @@ const AdminExpenses = () => {
           <div className="flex items-center gap-2 mb-2">
             <TrendingDown size={18} className="text-red-400" />
             <span className="text-krunch-gray font-body text-xs uppercase tracking-wider">
-            {period === 'today' ? "Today's" : period === 'week' ? "This Week's" : period === 'month' ? "This Month's" : 'Total'} Expenses
+            {period === 'shift' ? "Today Shift's" : period === 'today' ? "Today's" : period === 'week' ? "This Week's" : period === 'month' ? "This Month's" : period === 'custom' ? 'Custom Range' : 'Total'} Expenses
             </span>
           </div>
           <p className="font-heading font-black text-3xl text-red-400">Rs.{totalExp.toLocaleString()}</p>
