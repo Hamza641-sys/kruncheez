@@ -50,25 +50,35 @@ const AdminCards = () => {
     }
     setBulkLoading(true);
     try {
-      // Get next sequential number from Firestore
       const startNum = await getNextCardNumber();
-      const batch = [];
-      for (let i = 0; i < bulkCount; i++) {
-        const cardId = formatCardId(startNum + i);
-        batch.push(addDoc(collection(db, 'loyaltyCards'), {
-          cardId,
-          userId: null, userName: '', phone: '',
-          visits: 0, totalVisits: 0, totalSaved: 0,
-          discountPercent: 10, visitsForDiscount: 10,
-          active: true, tier: 'Bronze',
-          createdAt: serverTimestamp(),
-          issuedByAdmin: true,
-        }));
+      // Process in batches of 50 to avoid Firestore rate limits
+      const BATCH_SIZE = 50;
+      for (let b = 0; b < bulkCount; b += BATCH_SIZE) {
+        const batchEnd = Math.min(b + BATCH_SIZE, bulkCount);
+        const promises = [];
+        for (let i = b; i < batchEnd; i++) {
+          const cardId = formatCardId(startNum + i);
+          promises.push(addDoc(collection(db, 'loyaltyCards'), {
+            cardId,
+            userId: null, userName: '', phone: '',
+            visits: 0, totalVisits: 0, totalSaved: 0,
+            discountPercent: 10, visitsForDiscount: 10,
+            active: true, tier: 'Bronze',
+            createdAt: serverTimestamp(),
+            issuedByAdmin: true,
+          }));
+        }
+        await Promise.all(promises);
+        toast.loading(`Generating... ${Math.min(b + BATCH_SIZE, bulkCount)}/${bulkCount}`, { id: 'gen', ...toastStyle });
       }
-      await Promise.all(batch);
-      toast.success(`${bulkCount} cards generated! (${formatCardId(startNum)} – ${formatCardId(startNum + bulkCount - 1)})`, toastStyle);
+      toast.success(
+        `✅ ${bulkCount} cards generated! (${formatCardId(startNum)} – ${formatCardId(startNum + bulkCount - 1)})`,
+        { id: 'gen', ...toastStyle }
+      );
       await fetchCards();
-    } catch { toast.error('Failed', toastStyle); }
+    } catch(e) {
+      toast.error('Failed: ' + (e?.message || 'Unknown error'), toastStyle);
+    }
     finally { setBulkLoading(false); }
   };
 
