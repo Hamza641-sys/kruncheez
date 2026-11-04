@@ -5,15 +5,28 @@ import { db } from '../../firebase/config';
 import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Download, Calendar, Package, Users, Star, ArrowUp, ArrowDown, Truck } from 'lucide-react';
 
 const periods = [
-  { key: 'today', label: 'Today' },
-  { key: 'week',  label: 'This Week' },
-  { key: 'month', label: 'This Month' },
-  { key: 'year',  label: 'This Year' },
-  { key: 'all',   label: 'All Time' },
+  { key: 'shift',  label: '🍽️ Today Shift (11am–3am)' },
+  { key: 'today',  label: 'Today' },
+  { key: 'week',   label: 'This Week' },
+  { key: 'month',  label: 'This Month' },
+  { key: 'year',   label: 'This Year' },
+  { key: 'all',    label: 'All Time' },
+  { key: 'custom', label: '📅 Custom Range' },
 ];
 
 const getStartDate = (period) => {
   const now = new Date();
+  if (period === 'shift') {
+    // Restaurant shift: today 11am to tomorrow 3am
+    // If current time is before 3am, shift started yesterday 11am
+    const h = now.getHours();
+    const shiftStart = new Date();
+    if (h < 3) {
+      shiftStart.setDate(shiftStart.getDate() - 1); // yesterday
+    }
+    shiftStart.setHours(11, 0, 0, 0);
+    return shiftStart;
+  }
   if (period === 'today') { const d = new Date(); d.setHours(0,0,0,0); return d; }
   if (period === 'week')  { const d = new Date(); d.setDate(d.getDate()-7); return d; }
   if (period === 'month') { const d = new Date(); d.setMonth(d.getMonth()-1); return d; }
@@ -31,12 +44,18 @@ const filterByPeriod = (items, period, dateField = 'createdAt') => {
 };
 
 const AdminReports = () => {
-  const [period, setPeriod]   = useState('today');
+  const [period, setPeriod]   = useState('shift');
   const [orders, setOrders]   = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [purchases, setPurchases] = useState([]);
   const [salaries, setSalaries] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Custom range state
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const [customFrom, setCustomFrom] = useState(todayStr + 'T11:00');
+  const [customTo,   setCustomTo]   = useState(todayStr + 'T03:00');
 
   useEffect(() => {
     const load = async () => {
@@ -64,9 +83,24 @@ const AdminReports = () => {
   }, []);
 
   // ── Filter by period ──────────────────────────────────────────────────
-  const filteredOrders   = filterByPeriod(orders,    period);
-  const filteredExpenses = filterByPeriod(expenses,  period);
-  const filteredPurchases= filterByPeriod(purchases, period);
+  const filterCustom = (items, dateField = 'createdAt') => {
+    if (period !== 'custom') return filterByPeriod(items, period, dateField);
+    const from = customFrom ? new Date(customFrom) : null;
+    const to   = customTo   ? new Date(customTo)   : null;
+    // If "to" time is before "from" time (e.g. next day 3am), add 1 day
+    if (from && to && to < from) to.setDate(to.getDate() + 1);
+    return items.filter(i => {
+      const d = i[dateField]?.toDate?.() || (i[dateField] ? new Date(i[dateField]) : null);
+      if (!d) return false;
+      if (from && d < from) return false;
+      if (to   && d > to)   return false;
+      return true;
+    });
+  };
+
+  const filteredOrders   = filterCustom(orders);
+  const filteredExpenses = filterCustom(expenses);
+  const filteredPurchases= filterCustom(purchases);
 
   // ── REVENUE calculations ──────────────────────────────────────────────
   const delivered  = filteredOrders.filter(o => o.status === 'delivered');
@@ -93,7 +127,7 @@ const AdminReports = () => {
   const easypaisaAmt  = delivered.filter(o => o.paymentMethod === 'easypaisa').reduce((s,o) => s + (o.summary?.total||0), 0);
 
   // ── Filter salaries by period ─────────────────────────────────────────
-  const filteredSalaries = filterByPeriod(salaries, period);
+  const filteredSalaries = period === 'custom' ? filterCustom(salaries) : filterByPeriod(salaries, period);
 
   // ── EXPENSE calculations ──────────────────────────────────────────────
   // Daily expenses ONLY (exclude salary category)
@@ -430,7 +464,7 @@ const AdminReports = () => {
     <div class="header">
       <div class="sub">THE KRUNCHEEZ RESTAURANT — PESHAWAR</div>
       <div class="title">DAILY CLOSING REPORT</div>
-      <div class="sub">Period: <b>${per.toUpperCase()}</b> &nbsp;|&nbsp; Date: ${date} at ${time}</div>
+      <div class="sub">Period: <b>${per === 'shift' ? 'TODAY SHIFT (11am–3am)' : per === 'custom' ? 'CUSTOM RANGE' : per.toUpperCase()}</b> &nbsp;|&nbsp; Date: ${date} at ${time}</div>
     </div>
 
     <div class="section-title">Sales Summary</div>
@@ -509,7 +543,7 @@ const AdminReports = () => {
       </div>
 
       {/* Period Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6" style={{ scrollbarWidth:'none' }}>
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-3" style={{ scrollbarWidth:'none' }}>
         {periods.map(p => (
           <button key={p.key} onClick={() => setPeriod(p.key)}
             className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
@@ -519,6 +553,29 @@ const AdminReports = () => {
           </button>
         ))}
       </div>
+
+      {/* Custom Range inputs */}
+      {period === 'custom' && (
+        <div className="flex flex-col sm:flex-row gap-3 mb-6 card-dark p-4">
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">From (Date & Time)</label>
+            <input type="datetime-local" value={customFrom}
+              onChange={e => setCustomFrom(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">To (Date & Time)</label>
+            <input type="datetime-local" value={customTo}
+              onChange={e => setCustomTo(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+          <div className="flex items-end">
+            <div className="bg-krunch-red/10 border border-krunch-red/30 rounded-xl px-4 py-3 text-krunch-gray font-body text-xs">
+              💡 For 3am closing: set "To" as next day 3:00am
+            </div>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
