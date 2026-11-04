@@ -118,11 +118,15 @@ export const applyCardDiscount = async (cardDocId, orderTotal) => {
   return { eligible: true, discountAmount, discountPercent: card.discountPercent };
 };
 
-// Get all cards (Admin)
+// Get all cards (Admin) - sorted by card number KC-0001 first
 export const getAllCards = async () => {
   const snap = await getDocs(collection(db, 'loyaltyCards'));
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => (b.totalVisits || 0) - (a.totalVisits || 0));
+    .sort((a, b) => {
+      const numA = parseInt((a.cardId || '').replace('KC-', ''), 10) || 0;
+      const numB = parseInt((b.cardId || '').replace('KC-', ''), 10) || 0;
+      return numA - numB;
+    });
 };
 
 // Toggle card active status
