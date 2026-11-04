@@ -10,7 +10,7 @@ import { menuItems as localMenuItems } from '../data/menuData';
 import FoodCard from '../components/FoodCard';
 
 const features = [
-  { icon: <Truck className="text-krunch-red" size={22} />, title: 'Free Delivery', desc: 'Free home delivery on all orders across Rawalpindi' },
+  { icon: <Truck className="text-krunch-red" size={22} />, title: 'Free Delivery', desc: 'Free home delivery on all orders across Peshawar' },
   { icon: <Zap className="text-krunch-red" size={22} />, title: 'Fast Service', desc: '30-45 min delivery. Get it hot, get it fast.' },
   { icon: <Star className="text-krunch-red" size={22} />, title: 'Premium Quality', desc: 'Better food, happier you. Every single time.' },
   { icon: <Shield className="text-krunch-red" size={22} />, title: 'Halal Certified', desc: '100% halal. Eat with full trust & confidence.' },
@@ -249,7 +249,7 @@ const HomePage = () => {
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {[
-              { name: 'Ali Hassan', text: "Best burgers in Rawalpindi, hands down! The zinger burger is absolutely FIRE 🔥", stars: 5, item: 'Zinger Burger' },
+              { name: 'Ali Hassan', text: "Best burgers in Peshawar, hands down! The zinger burger is absolutely FIRE 🔥", stars: 5, item: 'Zinger Burger' },
               { name: 'Sarah Malik', text: "The KrunchEez Special pizza is mind-blowing. Cheesy, fresh, and loaded. Ordered 3 times this week!", stars: 5, item: 'KrunchEez Special Pizza' },
               { name: 'Ahmed Raza', text: "BBQ platters are incredible. The Karachi Angara is the spiciest and most delicious thing I've had!", stars: 5, item: 'Karachi Angara' },
             ].map((r, i) => (
@@ -294,7 +294,7 @@ const HomePage = () => {
               HUNGER CAN'T <span className="text-krunch-red">WAIT.</span>
             </h2>
             <p className="text-krunch-gray font-body text-base mb-8 max-w-md mx-auto">
-              Order now and experience the boldest flavors Rawalpindi has to offer. Fresh. Hot. Delivered to your door.
+              Order now and experience the boldest flavors Peshawar has to offer. Fresh. Hot. Delivered to your door.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/menu" className="btn-primary btn-shine flex items-center gap-2 text-base px-8 py-4 shadow-red-glow">

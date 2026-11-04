@@ -104,7 +104,7 @@ const AddressesPage = () => {
 
               {/* Fields */}
               {[
-                { key: 'area', label: 'Area / Sector', placeholder: 'e.g. Bahria Town, Rawalpindi' },
+                { key: 'area', label: 'Area / Sector', placeholder: 'e.g. Hayatabad, Peshawar' },
                 { key: 'street', label: 'Street / Road', placeholder: 'e.g. Street 5, Block B' },
                 { key: 'house', label: 'House / Flat No.', placeholder: 'e.g. House 42' },
               ].map(f => (

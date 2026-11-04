@@ -233,7 +233,7 @@ const FollowPage = () => {
             </p>
             <div className="mt-3 pt-3 border-t border-krunch-border">
               <p className="text-krunch-gray font-body text-xs">
-                📍 Rawalpindi &nbsp;•&nbsp; 🕐 11am–2am &nbsp;•&nbsp; 🛵 Free Delivery
+                📍 Peshawar &nbsp;•&nbsp; 🕐 11am–2am &nbsp;•&nbsp; 🛵 Free Delivery
               </p>
             </div>
           </div>

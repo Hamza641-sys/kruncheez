@@ -448,13 +448,15 @@ const CheckoutPage = () => {
                         className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red appearance-none cursor-pointer">
                         <option value="">Select your area</option>
                         <option>New Officers Housing Society</option>
-                        <option>Bahria Town Rawalpindi</option>
-                        <option>Chaklala</option>
-                        <option>Satellite Town</option>
-                        <option>Gulraiz Housing Society</option>
-                        <option>Askari</option>
-                        <option>Westridge</option>
-                        <option>Saddar Rawalpindi</option>
+                        <option>Northern Bypass</option>
+                        <option>Dalazak Road</option>
+                        <option>Hayatabad</option>
+                        <option>University Town</option>
+                        <option>Saddar Peshawar</option>
+                        <option>Cantt Peshawar</option>
+                        <option>Board Bazaar</option>
+                        <option>Gulbahar</option>
+                        <option>Tehkal</option>
                         <option>Other</option>
                       </select>
                     </div>

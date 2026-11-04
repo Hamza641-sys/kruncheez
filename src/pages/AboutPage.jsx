@@ -55,7 +55,7 @@ const AboutPage = () => {
                 The KrunchEez was born from a simple obsession - making food that doesn't just fill your stomach, but blows your mind. We combined the finest fast food, authentic Chinese, and bold BBQ under one roof to create something truly one-of-a-kind.
               </p>
               <p className="text-krunch-gray font-body text-base leading-relaxed mb-6">
-                Based in Rawalpindi, we've quickly become the go-to destination for food lovers who refuse to settle for ordinary. Every item on our menu is a statement - fresh ingredients, bold flavors, and unmatched quality.
+                Based in Peshawar, we've quickly become the go-to destination for food lovers who refuse to settle for ordinary. Every item on our menu is a statement - fresh ingredients, bold flavors, and unmatched quality.
               </p>
               <Link to="/menu" className="btn-primary inline-flex items-center gap-2">
                 Explore Menu <ArrowRight size={18} />
