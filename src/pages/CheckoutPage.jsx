@@ -146,8 +146,8 @@ const CheckoutPage = () => {
         try { await addVisitAndPoints(cardResult.id, finalTotal); } catch {}
       }
 
-      // WhatsApp notification to admin
-      try { sendWhatsAppOrderNotification(orderData, newOrderId); } catch {}
+      // WhatsApp notification disabled — no auto-open
+      // try { sendWhatsAppOrderNotification(orderData, newOrderId); } catch {}
 
       setOrderId(newOrderId);
       setOrdered(true);

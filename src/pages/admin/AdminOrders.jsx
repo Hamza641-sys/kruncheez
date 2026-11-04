@@ -132,9 +132,6 @@ const AdminOrders = () => {
       return;
     }
     await updateOrderStatus(orderId, status);
-    if (order?.customer?.phone) {
-      try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, status); } catch {}
-    }
     toast.success(`Order marked: ${status.replace(/_/g, ' ')}!`, toastStyle);
   };
   // Confirm delivery with payment method
@@ -142,9 +139,6 @@ const AdminOrders = () => {
     if (!payConfirm) return;
     const { orderId, order } = payConfirm;
     await updateOrderStatus(orderId, 'delivered', { paymentMethod });
-    if (order?.customer?.phone) {
-      try { sendWhatsAppStatusUpdate(order.customer.phone, orderId, 'delivered'); } catch {}
-    }
     toast.success(`Order delivered! Payment: ${paymentMethod === 'cash' ? 'Cash' : 'Easypaisa'}`, toastStyle);
     setPayConfirm(null);
   };
@@ -218,10 +212,10 @@ const AdminOrders = () => {
         newTotal:   editTotal,
       });
 
-      // 3. WhatsApp alert to owner
-      try { sendWhatsAppEditAlert(editorName, editOrder, oldItems, updatedItems); } catch {}
+      // 3. Edit log Firestore mein save ho gaya — WhatsApp alert removed
+      // (owner edit logs page se dekh sakta hai)
 
-      toast.success('Order updated! Owner notified ✅', toastStyle);
+      toast.success('Order updated! ✅', toastStyle);
       setEditOrder(null);
     } catch (e) {
       toast.error('Failed to save: ' + e.message, toastStyle);
