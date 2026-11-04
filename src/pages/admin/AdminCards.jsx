@@ -5,7 +5,7 @@ import {
   Users, Gift, Printer, Download
 } from 'lucide-react';
 import { getAllCards, toggleCard, getNextCardNumber } from '../../firebase/cardService';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import toast from 'react-hot-toast';
 
@@ -41,6 +41,24 @@ const AdminCards = () => {
     await toggleCard(card.id, !card.active);
     toast.success(`Card ${card.active ? 'deactivated' : 'activated'}!`, toastStyle);
     await fetchCards();
+  };
+
+  // ── DELETE ALL CARDS ──────────────────────────────────────────────────────
+  const handleDeleteAll = async () => {
+    if (!confirm(`Delete ALL ${cards.length} cards? This cannot be undone!`)) return;
+    try {
+      toast.loading('Deleting all cards...', { id: 'del', ...toastStyle });
+      const snap = await getDocs(collection(db, 'loyaltyCards'));
+      const BATCH = 50;
+      const docs = snap.docs;
+      for (let i = 0; i < docs.length; i += BATCH) {
+        await Promise.all(docs.slice(i, i + BATCH).map(d => deleteDoc(doc(db, 'loyaltyCards', d.id))));
+      }
+      toast.success('All cards deleted!', { id: 'del', ...toastStyle });
+      await fetchCards();
+    } catch(e) {
+      toast.error('Delete failed: ' + e.message, { id: 'del', ...toastStyle });
+    }
   };
 
   // ── BULK GENERATE CARDS ────────────────────────────────────────────────────
@@ -377,6 +395,12 @@ const AdminCards = () => {
               {bulkLoading ? '...' : <><Gift size={13} /> Generate</>}
             </button>
           </div>
+          {cards.length > 0 && (
+            <button onClick={handleDeleteAll}
+              className="flex items-center gap-2 border border-red-700/40 hover:border-red-500 text-red-400 hover:text-white font-body font-semibold text-sm px-4 py-2 rounded-xl transition-all whitespace-nowrap">
+              🗑️ Delete All ({cards.length})
+            </button>
+          )}
           {/* Download All */}
           {cards.length > 0 && (
             <button onClick={() => cards.forEach((c, i) => setTimeout(() => downloadCard(c), i * 800))}
