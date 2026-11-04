@@ -23,7 +23,6 @@ import CheckoutPage from './pages/CheckoutPage';
 
 // Auth Pages
 import LoginPage from './pages/auth/LoginPage';
-import SignupPage from './pages/auth/SignupPage';
 
 // Customer Pages
 import DashboardPage from './pages/customer/DashboardPage';
@@ -96,7 +95,6 @@ const AppLayout = () => {
 
         {/* ── AUTH ROUTES (no navbar) ── */}
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-        <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
 
         {/* ── SOCIAL FOLLOW PAGE (no auth needed) ── */}
         <Route path="/follow" element={<FollowPage />} />
