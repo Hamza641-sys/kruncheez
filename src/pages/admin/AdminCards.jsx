@@ -177,10 +177,16 @@ const AdminCards = () => {
               </div>
             </div>
           </div>
-          <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95),rgba(0,0,0,0.7),transparent);display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <div style="font-size:16px;color:#E31E24;letter-spacing:5px;font-weight:900;">${card.cardId}</div>
-              <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-top:3px;">Valid on Custom Deal only • Keep this card safe</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 22px;background:linear-gradient(to top,rgba(0,0,0,0.95),rgba(0,0,0,0.7),transparent);display:flex;justify-content:space-between;align-items:flex-end;gap:12px;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:16px;color:#E31E24;letter-spacing:5px;font-weight:900;display:block;margin-bottom:4px;">${card.cardId}</div>
+              <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1px;margin-bottom:3px;">Terms &amp; Conditions:</div>
+              <ul style="list-style:none;margin:0;padding:0;">
+                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Valid on Custom Deal orders only</li>
+                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• One card per customer</li>
+                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Not valid with other offers</li>
+                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Keep this card safe</li>
+              </ul>
             </div>
             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;">
               <div style="background:white;border-radius:8px;padding:5px;">
