@@ -37,7 +37,7 @@ const FollowPage = () => {
           });
         }
       } catch (err) {
-        console.log('Using default links');
+        // use default links
       }
     };
     load();

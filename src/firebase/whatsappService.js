@@ -12,7 +12,7 @@ export const sendWhatsAppOrderNotification = (order, orderId) => {
     `Address: ${order.customer?.address || 'Pickup'}\n\n` +
     `*Items:*\n${items}\n\n` +
     `*Total: Rs.${order.summary?.total?.toLocaleString()}*\n` +
-    `Payment: ${order.paymentMethod === 'cash' ? 'Cash on Delivery' : 'Card'}\n` +
+    `Payment: ${order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash on Delivery'}\n` +
     `Type: ${order.orderType || 'Delivery'}\n\n` +
     `${order.notes ? `Notes: ${order.notes}` : ''}`;
 

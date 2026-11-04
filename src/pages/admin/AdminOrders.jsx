@@ -6,7 +6,6 @@ import { sendWhatsAppStatusUpdate } from '../../firebase/whatsappService';
 import toast from 'react-hot-toast';
 import { printBill, printKitchen } from '../../utils/printUtils';
 
-const printBoth = (order) => { printBill(order); setTimeout(() => printKitchen(order), 1000); };
 
 const statusConfig = {
   pending:          { label: 'Pending',        color: 'text-yellow-400', bg: 'bg-yellow-400/10  border-yellow-400/20', icon: <Clock size={12} /> },
