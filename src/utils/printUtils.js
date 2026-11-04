@@ -99,9 +99,9 @@ export const printBill = (order) => {
     + '<div class="line"></div>'
     + '<div class="center footer"><div class="bold">Thank you for dining with us!</div></div>'
     + '<div style="border-top:1px dashed #000;margin:8px 0;"></div>'
-    + '<div class="center" style="font-size:9px;color:#555;margin-bottom:1px;">Software Developed by</div>'
-    + '<div class="center" style="font-size:12px;font-weight:900;letter-spacing:2px;">DKIM TECH</div>'
-    + '<div class="center" style="font-size:11px;font-weight:bold;">0348-9386552</div>'
+    + '<div style="font-size:8px;color:#777;margin-bottom:1px;">Software Developed by</div>'
+    + '<div style="font-size:11px;font-weight:900;letter-spacing:1px;">DKIM TECH</div>'
+    + '<div style="font-size:9px;font-weight:bold;color:#555;">0348-9386552</div>'
     + '</body></html>';
 
   printViaIframe(html);
