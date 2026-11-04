@@ -110,10 +110,10 @@ const AdminReports = () => {
   const rejected   = filteredOrders.filter(o => o.status === 'rejected').length;
 
   // ── Order Type breakdown ──────────────────────────────────────────────
-  const deliveryOrders = delivered.filter(o => o.orderType === 'delivery' && !o.tableNumber && o.source !== 'pos');
-  const dineInOrders   = delivered.filter(o => o.orderType === 'dine-in' || o.tableNumber);
-  const pickupOrders   = delivered.filter(o => o.orderType === 'pickup');
   const posOrders      = delivered.filter(o => o.source === 'pos');
+  const dineInOrders   = delivered.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
+  const pickupOrders   = delivered.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
+  const deliveryOrders = delivered.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
 
   // ── PAID vs PENDING payment breakdown ────────────────────────────────
   const paidOrders    = delivered.filter(o => o.paymentStatus === 'paid');
@@ -430,10 +430,10 @@ const AdminReports = () => {
     const date = new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' });
     const time = new Date().toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
     const deliveredO = fOrders.filter(o => o.status === 'delivered');
-    const dineInO    = deliveredO.filter(o => o.orderType === 'dine-in' || o.tableNumber);
-    const deliveryO  = deliveredO.filter(o => o.orderType === 'delivery' && !o.tableNumber && o.source !== 'pos');
-    const pickupO    = deliveredO.filter(o => o.orderType === 'pickup');
     const posO       = deliveredO.filter(o => o.source === 'pos');
+    const dineInO    = deliveredO.filter(o => o.source !== 'pos' && (o.orderType === 'dine-in' || o.tableNumber));
+    const pickupO    = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'pickup' && !o.tableNumber);
+    const deliveryO  = deliveredO.filter(o => o.source !== 'pos' && o.orderType === 'delivery' && !o.tableNumber);
     const pendingO   = fOrders.filter(o => o.status === 'pending');
     const rejectedO  = fOrders.filter(o => o.status === 'rejected');
     const dailyExpAmt = fExpenses.filter(e => e.category !== 'Supplier Payment' && e.category !== 'salary')
@@ -474,7 +474,7 @@ const AdminReports = () => {
       <tr><td>&nbsp;&nbsp;&nbsp;🚗 Home Delivery</td><td class="amount">${deliveryO.length}</td></tr>
       <tr><td>&nbsp;&nbsp;&nbsp;🏃 Pickup</td><td class="amount">${pickupO.length}</td></tr>
       <tr><td>&nbsp;&nbsp;&nbsp;🖥️ POS Counter</td><td class="amount">${posO.length}</td></tr>
-      <tr><td>&nbsp;&nbsp;&nbsp;⏳ Still Pending</td><td class="amount">${pendingO.length}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;⏳ Processing (not closed yet)</td><td class="amount">${pendingO.length}</td></tr>
       <tr><td>&nbsp;&nbsp;&nbsp;❌ Rejected</td><td class="amount">${rejectedO.length}</td></tr>
       <tr><td><b>Total Revenue</b></td><td class="amount big">Rs. ${rev.toLocaleString()}</td></tr>
       <tr><td>💵 Cash Collected</td><td class="amount">Rs. ${cash.toLocaleString()}</td></tr>
