@@ -9,6 +9,7 @@ export const placeOrder = async (orderData) => {
   const ref = await addDoc(collection(db, 'orders'), {
     ...orderData,
     status: 'pending',
+    paymentStatus: 'pending', // pending | paid
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -23,6 +24,19 @@ export const placeOrder = async (orderData) => {
     });
   }
   return ref.id;
+};
+
+// ── Update Payment (Admin) ───────────────────────────────────────
+export const updateOrderPayment = async (orderId, paymentMethod, paymentStatus) => {
+  const data = {
+    paymentMethod,
+    paymentStatus,
+    updatedAt: serverTimestamp(),
+  };
+  if (paymentStatus === 'paid') {
+    data.clearedAt = serverTimestamp();
+  }
+  await updateDoc(doc(db, 'orders', orderId), data);
 };
 
 // ── Get Customer Orders ──────────────────────────────────────────

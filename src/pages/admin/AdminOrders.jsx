@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed, Pencil, Plus, Minus, Trash2 } from 'lucide-react';
-import { getAllOrders, updateOrderStatus } from '../../firebase/orderService';
+import { Search, Clock, CheckCircle, ChefHat, Truck, XCircle, Eye, X, QrCode, Printer, UtensilsCrossed, Pencil, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react';
+import { getAllOrders, updateOrderStatus, updateOrderPayment } from '../../firebase/orderService';
 import { updateDoc, doc, getDocs, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { sendWhatsAppStatusUpdate, sendWhatsAppEditAlert } from '../../firebase/whatsappService';
@@ -85,8 +85,14 @@ const AdminOrders = () => {
   const [search, setSearch]       = useState('');
   const [selected, setSelected]   = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
+  const [mainTab, setMainTab]     = useState('orders'); // 'orders' | 'pendingBills'
   // Payment confirm modal
   const [payConfirm, setPayConfirm] = useState(null);
+  // Payment edit modal
+  const [payEdit, setPayEdit]     = useState(null); // { order }
+  const [payEditMethod, setPayEditMethod] = useState('cash');
+  const [payEditStatus, setPayEditStatus] = useState('pending');
+  const [payEditSaving, setPayEditSaving] = useState(false);
   // Edit order modal
   const [editOrder, setEditOrder]   = useState(null);
   const [editItems, setEditItems]   = useState([]);
@@ -223,6 +229,28 @@ const AdminOrders = () => {
     setEditSaving(false);
   };
 
+  // ── Open Payment Edit ──
+  const openPayEdit = (order) => {
+    setPayEditMethod(order.paymentMethod || 'cash');
+    setPayEditStatus(order.paymentStatus || 'pending');
+    setPayEdit({ order });
+    setSelected(null);
+  };
+
+  // ── Save Payment Edit ──
+  const handlePayEditSave = async () => {
+    if (!payEdit) return;
+    setPayEditSaving(true);
+    try {
+      await updateOrderPayment(payEdit.order.id, payEditMethod, payEditStatus);
+      toast.success('Payment updated! ✅', toastStyle);
+      setPayEdit(null);
+    } catch(e) {
+      toast.error('Failed: ' + e.message, toastStyle);
+    }
+    setPayEditSaving(false);
+  };
+
   // Table orders quick view — only valid tables 1-7
   const VALID_TABLES = [1, 2, 3, 4, 5, 6, 7];
   const dineInOrders = orders.filter(o =>
@@ -241,6 +269,94 @@ const AdminOrders = () => {
         <h2 className="font-heading font-black text-2xl text-white uppercase">Orders Management</h2>
         <p className="text-krunch-gray font-body text-sm mt-1">{orders.length} total orders</p>
       </div>
+
+      {/* Main Tabs */}
+      <div className="flex gap-3 mb-6">
+        <button onClick={() => setMainTab('orders')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all ${
+            mainTab === 'orders' ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
+          }`}>
+          <ShoppingBag size={15} /> All Orders ({orders.length})
+        </button>
+        <button onClick={() => setMainTab('pendingBills')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all ${
+            mainTab === 'pendingBills' ? 'bg-amber-600 text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
+          }`}>
+          ⏳ Pending Bills ({orders.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length})
+        </button>
+      </div>
+
+      {/* ── PENDING BILLS SECTION ── */}
+      {mainTab === 'pendingBills' && (
+        <div>
+          <div className="card-dark overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-krunch-border">
+                    {['Order ID','Customer','Total','Payment Method','Order Status','Days Pending','Action'].map(h => (
+                      <th key={h} className="px-4 py-3 text-left text-krunch-gray font-body text-xs uppercase tracking-wider whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length === 0 ? (
+                    <tr><td colSpan={7} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">
+                      ✅ No pending bills
+                    </td></tr>
+                  ) : orders
+                    .filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected')
+                    .map((order, i) => {
+                      const daysPending = order.createdAt?.toDate
+                        ? Math.floor((new Date() - order.createdAt.toDate()) / 86400000)
+                        : 0;
+                      return (
+                        <motion.tr key={order.id}
+                          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                          transition={{ delay: i * 0.03 }}
+                          className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors">
+                          <td className="px-4 py-3 font-body font-bold text-white text-sm">#{order.id.slice(0,8).toUpperCase()}</td>
+                          <td className="px-4 py-3">
+                            <p className="text-white font-body text-sm">{order.customer?.name || '—'}</p>
+                            <p className="text-krunch-gray font-body text-xs">{order.customer?.phone || '—'}</p>
+                          </td>
+                          <td className="px-4 py-3 text-krunch-red font-heading font-black text-base whitespace-nowrap">
+                            Rs.{order.summary?.total?.toLocaleString()}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
+                              {order.paymentMethod === 'easypaisa' ? '📱 Easypaisa' : '💵 Cash'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${
+                              statusConfig[order.status]?.color || 'text-yellow-400'
+                            } ${statusConfig[order.status]?.bg || 'bg-yellow-400/10 border-yellow-400/20'}`}>
+                              {statusConfig[order.status]?.label || order.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs font-bold ${daysPending > 1 ? 'text-red-400' : 'text-krunch-gray'}`}>
+                              {daysPending === 0 ? 'Today' : `${daysPending} day${daysPending > 1 ? 's' : ''}`}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <button onClick={() => openPayEdit(order)}
+                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-900/20 border border-amber-700/30 text-amber-400 hover:bg-amber-600 hover:text-white font-body text-xs font-bold transition-all whitespace-nowrap">
+                              💳 Update Payment
+                            </button>
+                          </td>
+                        </motion.tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mainTab === 'orders' && (<>
 
       {/* Dine-In Quick View */}
       {dineInOrders.filter(o => o.status !== 'delivered' && o.status !== 'rejected').length > 0 && (
@@ -364,6 +480,15 @@ const AdminOrders = () => {
                       <span className={`text-xs font-body font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
                         {order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}
                       </span>
+                      <div className="mt-0.5">
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${
+                          order.paymentStatus === 'paid'
+                            ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                            : 'text-amber-400 bg-amber-400/10 border-amber-400/20'
+                        }`}>
+                          {order.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className={`inline-flex items-center gap-1.5 ${st.color} ${st.bg} border px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap`}>
@@ -380,6 +505,11 @@ const AdminOrders = () => {
                           title="Edit Order"
                           className="w-7 h-7 rounded-lg bg-blue-900/20 border border-blue-700/30 flex items-center justify-center text-blue-400 hover:bg-blue-600 hover:text-white transition-all">
                           <Pencil size={12} />
+                        </button>
+                        <button onClick={() => openPayEdit(order)}
+                          title="Update Payment"
+                          className="w-7 h-7 rounded-lg bg-amber-900/20 border border-amber-700/30 flex items-center justify-center text-amber-400 hover:bg-amber-600 hover:text-white transition-all">
+                          💳
                         </button>
                         <button onClick={() => printBill(order)}
                           title="Print Counter Bill"
@@ -496,7 +626,8 @@ const AdminOrders = () => {
           </>
         )}
       </AnimatePresence>
-      {/* â”€â”€ PAYMENT CONFIRM MODAL â”€â”€ */}
+      </>)}
+      {/* PAYMENT CONFIRM MODAL */}
       <AnimatePresence>
         {payConfirm && (
           <motion.div
@@ -674,6 +805,95 @@ const AdminOrders = () => {
                   className="flex-1 bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl transition-all text-sm disabled:opacity-60">
                   {editSaving ? 'Saving...' : '✅ Save Changes'}
                 </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── PAYMENT EDIT MODAL ── */}
+      <AnimatePresence>
+        {payEdit && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
+              className="w-full max-w-sm bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
+                <div>
+                  <h3 className="font-heading font-bold text-white uppercase">Update Payment</h3>
+                  <p className="text-krunch-gray font-body text-xs mt-0.5">
+                    #{payEdit.order.id.slice(0,8).toUpperCase()} — {payEdit.order.customer?.name}
+                  </p>
+                </div>
+                <button onClick={() => setPayEdit(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
+              </div>
+              <div className="p-6 flex flex-col gap-5">
+
+                {/* Amount */}
+                <div className="bg-krunch-black border border-krunch-border rounded-xl p-4 text-center">
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1">Order Total</p>
+                  <p className="text-krunch-red font-heading font-black text-2xl">Rs.{payEdit.order.summary?.total?.toLocaleString()}</p>
+                </div>
+
+                {/* Payment Method */}
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Payment Method</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { k: 'cash',      l: '💵 Cash' },
+                      { k: 'easypaisa', l: '📱 Easypaisa' },
+                    ].map(m => (
+                      <button key={m.k} type="button"
+                        onClick={() => setPayEditMethod(m.k)}
+                        className={`py-3 rounded-xl font-body font-bold text-sm transition-all border ${
+                          payEditMethod === m.k
+                            ? 'bg-krunch-red border-krunch-red text-white'
+                            : 'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'
+                        }`}>
+                        {m.l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Payment Status */}
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Payment Status</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { k: 'pending', l: '⏳ Pending' },
+                      { k: 'paid',    l: '✅ Paid' },
+                    ].map(s => (
+                      <button key={s.k} type="button"
+                        onClick={() => setPayEditStatus(s.k)}
+                        className={`py-3 rounded-xl font-body font-bold text-sm transition-all border ${
+                          payEditStatus === s.k
+                            ? s.k === 'paid'
+                              ? 'bg-green-700 border-green-700 text-white'
+                              : 'bg-amber-700 border-amber-700 text-white'
+                            : 'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'
+                        }`}>
+                        {s.l}
+                      </button>
+                    ))}
+                  </div>
+                  {payEditStatus === 'paid' && (
+                    <p className="text-green-400 font-body text-xs mt-2 text-center">
+                      ✅ Current date/time will be saved as payment cleared date
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button onClick={() => setPayEdit(null)}
+                    className="bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl transition-all text-sm">
+                    Cancel
+                  </button>
+                  <button onClick={handlePayEditSave} disabled={payEditSaving}
+                    className="bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl transition-all text-sm disabled:opacity-60">
+                    {payEditSaving ? 'Saving...' : 'Save'}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
