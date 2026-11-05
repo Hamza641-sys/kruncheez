@@ -13,10 +13,8 @@ const DEFAULT_SLIDES = [
     headline2: 'CHEESY.',
     headline3: 'AMAZING.',
     sub: 'From 5" to XL - Chicken Tikka BBQ, Fajita, Supreme, Hot & Spicy, KrunchEez Special & more. Made fresh every time.',
-    tag1: 'Cheesy',
-    tag2: 'Fresh',
-    tag3: 'Loaded',
-    bgImg: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=90&auto=format&fit=crop',
+    tag1: 'Cheesy', tag2: 'Fresh', tag3: 'Loaded',
+    bgImg: '',
   },
   {
     id: 2,
@@ -25,10 +23,8 @@ const DEFAULT_SLIDES = [
     headline2: 'TENDER.',
     headline3: 'PERFECT.',
     sub: 'Authentic BBQ platters for 1 to 8 people - Angara, Tikka, Kabab, Malai Boti & more. All on one table.',
-    tag1: 'Smoky',
-    tag2: 'Grilled',
-    tag3: 'Fresh',
-    bgImg: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=1920&q=90&auto=format&fit=crop',
+    tag1: 'Smoky', tag2: 'Grilled', tag3: 'Fresh',
+    bgImg: '',
   },
   {
     id: 3,
@@ -37,10 +33,8 @@ const DEFAULT_SLIDES = [
     headline2: 'BITE.',
     headline3: 'OBSESSION.',
     sub: 'The ultimate destination for crispy chicken burgers. Zinger, Tower, Parmesan Cheese & more. Bold flavors. Always.',
-    tag1: 'Crispy',
-    tag2: 'Hot',
-    tag3: 'Juicy',
-    bgImg: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1920&q=90&auto=format&fit=crop',
+    tag1: 'Crispy', tag2: 'Hot', tag3: 'Juicy',
+    bgImg: '',
   },
   {
     id: 4,
@@ -49,10 +43,8 @@ const DEFAULT_SLIDES = [
     headline2: 'FIRED.',
     headline3: 'FLAVOR.',
     sub: 'Chicken Chowmein, Special Chowmein, Fried Rice & more - wok-fired Chinese classics made fresh to order.',
-    tag1: 'Wok Fired',
-    tag2: 'Fresh',
-    tag3: 'Spicy',
-    bgImg: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1920&q=90&auto=format&fit=crop',
+    tag1: 'Wok Fired', tag2: 'Fresh', tag3: 'Spicy',
+    bgImg: '',
   },
 ];
 
@@ -121,12 +113,16 @@ const Hero = () => {
           className="absolute inset-0 z-0"
         >
           {/* The food image - full screen */}
-          <img
-            src={slide.bgImg}
-            alt=""
-            className="w-full h-full object-cover object-center"
-            loading="eager"
-          />
+          {slide.bgImg ? (
+            <img
+              src={slide.bgImg}
+              alt=""
+              className="w-full h-full object-cover object-center"
+              loading="eager"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-krunch-dark via-black to-krunch-dark" />
+          )}
 
           {/* Dark overlay - left heavy so text is readable */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/70 to-black/40" />
