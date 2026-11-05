@@ -34,7 +34,10 @@ export const printBill = (order) => {
 
   const orderType = order.tableNumber
     ? 'Dine-In (Table ' + order.tableNumber + ')'
-    : order.orderType === 'pickup' ? 'Self Pickup' : 'Home Delivery';
+    : order.orderType === 'dine-in' ? 'Dine-In'
+    : order.orderType === 'pickup'  ? 'Self Pickup'
+    : order.source === 'pos'        ? 'Counter / POS'
+    : 'Home Delivery';
 
   const payment = order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash';
   const orderId = '#' + (order.id || 'POS').slice(0,8).toUpperCase();
@@ -111,7 +114,10 @@ export const printKitchen = (order) => {
 
   const orderType = order.tableNumber
     ? 'TABLE ' + order.tableNumber
-    : order.orderType === 'pickup' ? 'PICKUP' : 'DELIVERY';
+    : order.orderType === 'dine-in' ? 'DINE-IN'
+    : order.orderType === 'pickup'  ? 'PICKUP'
+    : order.source === 'pos'        ? 'COUNTER/POS'
+    : 'DELIVERY';
 
   const itemsHtml = (order.items || []).map(item => {
     const qty = item.quantity || item.qty || 1;
