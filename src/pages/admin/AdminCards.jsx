@@ -70,7 +70,7 @@ const ViewCardIframe = ({ card }) => {
     <div class="badge"><div class="g">GET</div><div class="p">10%</div><div class="o">OFF</div><div class="s">ON CUSTOMIZE<br/>DEAL</div></div>
     <div class="fcnt">
       <div class="fb">KRUNCHEEZ</div>
-      <div class="ft">Crunch in Every Bite</div>
+      <div class="ft">Crunch and Cheese in Every Bite</div>
       <div class="fl">LOYALTY <span style="color:#E31E24">CARD</span></div>
       <div class="fe"><span>FAST FOOD</span><div class="fd"></div><span>CHINESE</span><div class="fd"></div><span>BBQ</span></div>
     </div>
@@ -80,7 +80,7 @@ const ViewCardIframe = ({ card }) => {
   <div class="card back">
     <div class="dots"></div><div class="y3"></div><div class="y4"></div>
     <div class="bi">
-      <div class="bl"><div class="blb">KRUNCHEEZ</div><div class="blt">Crunch in Every Bite</div></div>
+      <div class="bl"><div class="blb">KRUNCHEEZ</div><div class="blt">Crunch and Cheese in Every Bite</div></div>
       <div class="br">
         <div class="gf"><div class="gf1">Good Food Brings People</div><div class="gf3">Together <span style="color:#E31E24">&#9829;</span></div></div>
         <div class="ob">
@@ -263,7 +263,7 @@ const AdminCards = () => {
           </div>
           <div style="position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;">
             <div style="font-size:46px;font-weight:900;color:#E31E24;letter-spacing:3px;text-shadow:0 3px 12px rgba(0,0,0,0.6);">KRUNCHEEZ</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:4px;">Crunch in Every Bite</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:4px;">Crunch and Cheese in Every Bite</div>
             <div style="font-size:30px;font-weight:900;color:white;letter-spacing:7px;margin-top:8px;">LOYALTY <span style="color:#E31E24;">CARD</span></div>
             <div style="display:flex;align-items:center;gap:12px;margin-top:7px;">
               <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">FAST FOOD</span>
@@ -285,7 +285,7 @@ const AdminCards = () => {
           <div style="position:relative;z-index:4;display:flex;height:100%;padding:18px 22px 90px;gap:20px;">
             <div style="flex:1;">
               <div style="font-size:28px;font-weight:900;color:#E31E24;letter-spacing:2px;text-transform:uppercase;">KRUNCHEEZ</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:10px;">Crunch in Every Bite</div>
+              <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:10px;">Crunch and Cheese in Every Bite</div>
             </div>
             <div style="width:210px;display:flex;flex-direction:column;gap:10px;">
               <div style="text-align:right;">
@@ -455,7 +455,7 @@ const AdminCards = () => {
           </div>
           <div class="f-cnt">
             <div class="f-brand">KRUNCHEEZ</div>
-            <div class="f-tag">Crunch in Every Bite</div>
+            <div class="f-tag">Crunch and Cheese in Every Bite</div>
             <div class="f-lc">LOYALTY <span style="color:#E31E24">CARD</span></div>
             <div class="f-eat">
               <span>FAST FOOD</span><div class="f-dot"></div>
@@ -478,7 +478,7 @@ const AdminCards = () => {
           <div class="b-inner">
             <div class="b-left">
               <div class="bl-brand">KRUNCHEEZ</div>
-              <div class="bl-tag">Crunch in Every Bite</div>
+              <div class="bl-tag">Crunch and Cheese in Every Bite</div>
               <div class="ty">
                 <div class="ty1">Thank You</div>
                 <div class="ty2">for being a part of</div>
@@ -689,3 +689,4 @@ const AdminCards = () => {
 };
 
 export default AdminCards;
+
