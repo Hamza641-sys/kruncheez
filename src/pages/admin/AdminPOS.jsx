@@ -63,7 +63,8 @@ const AdminPOS = () => {
         pricing:       { subtotal, discount: discountAmt, deliveryFee: 0, total },
         orderType:     orderType,
         paymentMethod: payMethod,
-        status:        'delivered', // POS orders are immediately delivered
+        paymentStatus: 'paid',       // POS = paid at counter immediately
+        status:        'delivered',  // POS orders are immediately delivered
         source:        'pos',
         notes:         '',
         createdAt:     serverTimestamp(),

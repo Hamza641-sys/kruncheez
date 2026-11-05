@@ -251,6 +251,19 @@ const AdminOrders = () => {
     setPayEditSaving(false);
   };
 
+  const fmtOrderTime = (order) => {
+    const d = order.createdAt?.toDate?.();
+    if (!d) return { label: '—', time: '', color: 'text-krunch-gray' };
+    const isToday = d.toDateString() === new Date().toDateString();
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    const isYest = d.toDateString() === yesterday.toDateString();
+    return {
+      label: isToday ? 'Today' : isYest ? 'Yesterday' : d.toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'2-digit' }),
+      time:  d.toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' }),
+      color: isToday ? 'text-green-400' : isYest ? 'text-amber-400' : 'text-krunch-gray',
+    };
+  };
+
   // Table orders quick view — only valid tables 1-7
   const VALID_TABLES = [1, 2, 3, 4, 5, 6, 7];
   const dineInOrders = orders.filter(o =>
@@ -439,17 +452,18 @@ const AdminOrders = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-krunch-border">
-                {['Order ID','Customer','Items','Total','Table/Type','Payment','Status','Actions'].map(h => (
+                {['Date/Time','Order ID','Customer','Items','Total','Type','Payment','Status','Actions'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-krunch-gray font-body text-xs uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={8} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No orders found</td></tr>
+                <tr><td colSpan={9} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">No orders found</td></tr>
               ) : filtered.map((order, i) => {
                 const st = statusConfig[order.status] || statusConfig.pending;
                 const next = nextStatus[order.status];
+                const ot = fmtOrderTime(order);
                 return (
                   <motion.tr key={order.id}
                     initial={{ opacity: 0 }}
@@ -457,6 +471,7 @@ const AdminOrders = () => {
                     transition={{ delay: i * 0.03 }}
                     className="border-b border-krunch-border hover:bg-krunch-card/50 transition-colors"
                   >
+                    <td className="px-4 py-3 whitespace-nowrap"><p className={`font-body font-bold text-xs ${ot.color}`}>{ot.label}</p><p className="text-krunch-gray font-body text-xs">{ot.time}</p></td>
                     <td className="px-4 py-3 font-body font-bold text-white text-sm">#{order.id.slice(0,8).toUpperCase()}</td>
                     <td className="px-4 py-3">
                       <p className="text-white font-body text-sm">{order.customer?.name || 'â€”'}</p>
@@ -904,6 +919,7 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+
 
 
 
