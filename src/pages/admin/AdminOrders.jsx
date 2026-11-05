@@ -103,7 +103,8 @@ const AdminOrders = () => {
   const [editItems, setEditItems]   = useState([]);
   const [editSearch, setEditSearch] = useState('');
   const [editSaving, setEditSaving] = useState(false);
-  const [editDiscount, setEditDiscount] = useState(0); // discount %
+  const [editDiscount, setEditDiscount] = useState(0);
+  const [editCustomer, setEditCustomer] = useState({ name: '', phone: '' });
   // Firestore menu items (live)
   const [liveMenu, setLiveMenu]     = useState([]);
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
@@ -191,6 +192,10 @@ const AdminOrders = () => {
     setEditDiscount(order.summary?.discount > 0
       ? Math.round((order.summary.discount / order.summary.subtotal) * 100)
       : 0);
+    setEditCustomer({
+      name:  order.customer?.name  || '',
+      phone: order.customer?.phone || '',
+    });
     setEditOrder(order);
     setEditSearch('');
     setSelected(null);
@@ -242,6 +247,8 @@ const AdminOrders = () => {
         'summary.subtotal': editSubtotal,
         'summary.discount': editDiscountAmt,
         'summary.total': editTotal,
+        'customer.name':  editCustomer.name  || editOrder.customer?.name  || '',
+        'customer.phone': editCustomer.phone || editOrder.customer?.phone || '',
         lastEditedBy: editorName,
         lastEditedAt: serverTimestamp(),
       });
@@ -810,6 +817,27 @@ const AdminOrders = () => {
               </div>
 
               <div className="overflow-y-auto flex-1 p-5 flex flex-col gap-4">
+
+                {/* Customer Info */}
+                <div>
+                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Customer Info</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-krunch-gray font-body text-xs mb-1 block">Name</label>
+                      <input type="text" value={editCustomer.name}
+                        onChange={e => setEditCustomer({ ...editCustomer, name: e.target.value })}
+                        placeholder="Customer name"
+                        className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+                    </div>
+                    <div>
+                      <label className="text-krunch-gray font-body text-xs mb-1 block">Phone</label>
+                      <input type="tel" value={editCustomer.phone}
+                        onChange={e => setEditCustomer({ ...editCustomer, phone: e.target.value })}
+                        placeholder="03XX-XXXXXXX"
+                        className="w-full bg-krunch-black border border-krunch-border rounded-xl px-3 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+                    </div>
+                  </div>
+                </div>
 
                 {/* Current Items */}
                 <div>
