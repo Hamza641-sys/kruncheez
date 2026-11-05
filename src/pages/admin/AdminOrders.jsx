@@ -103,6 +103,7 @@ const AdminOrders = () => {
   const [editItems, setEditItems]   = useState([]);
   const [editSearch, setEditSearch] = useState('');
   const [editSaving, setEditSaving] = useState(false);
+  const [editDiscount, setEditDiscount] = useState(0); // discount %
   // Firestore menu items (live)
   const [liveMenu, setLiveMenu]     = useState([]);
   const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
@@ -187,6 +188,9 @@ const AdminOrders = () => {
   // ── Open Edit Modal ──
   const openEdit = (order) => {
     setEditItems(order.items.map(i => ({ ...i, quantity: i.quantity || i.qty || 1 })));
+    setEditDiscount(order.summary?.discount > 0
+      ? Math.round((order.summary.discount / order.summary.subtotal) * 100)
+      : 0);
     setEditOrder(order);
     setEditSearch('');
     setSelected(null);
@@ -218,9 +222,10 @@ const AdminOrders = () => {
   };
 
   // ── Edit: compute totals ──
-  const editSubtotal = editItems.reduce((s, it) => s + it.price * it.quantity, 0);
-  const editDelivery = editOrder?.summary?.deliveryFee || 0;
-  const editTotal    = editSubtotal + editDelivery;
+  const editSubtotal    = editItems.reduce((s, it) => s + it.price * it.quantity, 0);
+  const editDiscountAmt = Math.round((editSubtotal * Math.min(editDiscount, 100)) / 100);
+  const editDelivery    = editOrder?.summary?.deliveryFee || 0;
+  const editTotal       = Math.max(editSubtotal - editDiscountAmt + editDelivery, 0);
 
   // ── Edit: save to Firestore ──
   const handleEditSave = async () => {
@@ -235,6 +240,7 @@ const AdminOrders = () => {
       await updateDoc(doc(db, 'orders', editOrder.id), {
         items: updatedItems,
         'summary.subtotal': editSubtotal,
+        'summary.discount': editDiscountAmt,
         'summary.total': editTotal,
         lastEditedBy: editorName,
         lastEditedAt: serverTimestamp(),
@@ -866,6 +872,34 @@ const AdminOrders = () => {
                     <span className="text-krunch-gray">Subtotal</span>
                     <span className="text-white">Rs.{editSubtotal.toLocaleString()}</span>
                   </div>
+                  {/* Discount */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-krunch-gray font-body text-sm">Discount %</span>
+                    <div className="flex items-center gap-2">
+                      {[0, 5, 10, 15, 20].map(d => (
+                        <button key={d} type="button"
+                          onClick={() => setEditDiscount(d)}
+                          className={`px-2.5 py-1 rounded-lg font-body font-bold text-xs transition-all ${
+                            editDiscount === d ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
+                          }`}>
+                          {d}%
+                        </button>
+                      ))}
+                      <input
+                        type="number" min={0} max={100}
+                        value={editDiscount}
+                        onChange={e => setEditDiscount(Math.min(100, Math.max(0, Number(e.target.value))))}
+                        className="w-14 bg-krunch-black border border-krunch-border rounded-lg px-2 py-1 text-white font-body text-xs text-center focus:outline-none focus:border-krunch-red"
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  {editDiscountAmt > 0 && (
+                    <div className="flex justify-between text-sm font-body mb-1">
+                      <span className="text-green-400">Discount ({editDiscount}%)</span>
+                      <span className="text-green-400">- Rs.{editDiscountAmt.toLocaleString()}</span>
+                    </div>
+                  )}
                   {editDelivery > 0 && (
                     <div className="flex justify-between text-sm font-body mb-1">
                       <span className="text-krunch-gray">Delivery</span>
