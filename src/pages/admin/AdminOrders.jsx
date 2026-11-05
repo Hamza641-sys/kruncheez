@@ -85,7 +85,12 @@ const AdminOrders = () => {
   const [search, setSearch]       = useState('');
   const [selected, setSelected]   = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [mainTab, setMainTab]     = useState('orders'); // 'orders' | 'pendingBills'
+  const [mainTab, setMainTab]     = useState('orders');
+  // Date filter
+  const [dateFilter, setDateFilter] = useState('shift'); // shift|today|week|all|custom
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [customFrom, setCustomFrom] = useState(todayStr + 'T11:00');
+  const [customTo,   setCustomTo]   = useState(todayStr + 'T03:00');
   // Payment confirm modal
   const [payConfirm, setPayConfirm] = useState(null);
   // Payment edit modal
@@ -115,7 +120,37 @@ const AdminOrders = () => {
     });
   }, []);
 
-  const filtered = orders.filter(o => {
+  // ── Date filter ──────────────────────────────────────────────────
+  const getDateStart = () => {
+    const now = new Date();
+    if (dateFilter === 'shift') {
+      const d = new Date();
+      if (now.getHours() < 3) d.setDate(d.getDate() - 1);
+      d.setHours(11, 0, 0, 0);
+      return { from: d, to: null };
+    }
+    if (dateFilter === 'today') { const d = new Date(); d.setHours(0,0,0,0); return { from: d, to: null }; }
+    if (dateFilter === 'week')  { const d = new Date(); d.setDate(d.getDate()-7); return { from: d, to: null }; }
+    if (dateFilter === 'custom') {
+      const from = customFrom ? new Date(customFrom) : null;
+      const to   = customTo   ? new Date(customTo)   : null;
+      if (from && to && to < from) to.setDate(to.getDate() + 1);
+      return { from, to };
+    }
+    return { from: null, to: null };
+  };
+
+  const dateFiltered = orders.filter(o => {
+    const { from, to } = getDateStart();
+    if (!from) return true;
+    const d = o.createdAt?.toDate?.();
+    if (!d) return true;
+    if (from && d < from) return false;
+    if (to   && d > to)   return false;
+    return true;
+  });
+
+  const filtered = dateFiltered.filter(o => {
     const matchFilter = filter === 'all' || o.status === filter;
     const matchType   = typeFilter === 'all' ||
       (typeFilter === 'dine-in'  && (o.orderType === 'dine-in' || o.tableNumber)) ||
@@ -280,8 +315,42 @@ const AdminOrders = () => {
     <div>
       <div className="mb-6">
         <h2 className="font-heading font-black text-2xl text-white uppercase">Orders Management</h2>
-        <p className="text-krunch-gray font-body text-sm mt-1">{orders.length} total orders</p>
+        <p className="text-krunch-gray font-body text-sm mt-1">{dateFiltered.length} orders shown · {orders.length} total</p>
       </div>
+
+      {/* Date Filter Tabs */}
+      <div className="flex gap-2 mb-3 overflow-x-auto pb-1" style={{ scrollbarWidth:'none' }}>
+        {[
+          { k: 'shift',  l: '🍽️ Today Shift' },
+          { k: 'today',  l: 'Today' },
+          { k: 'week',   l: 'This Week' },
+          { k: 'all',    l: 'All Time' },
+          { k: 'custom', l: '📅 Custom' },
+        ].map(d => (
+          <button key={d.k} onClick={() => setDateFilter(d.k)}
+            className={`flex-shrink-0 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
+              dateFilter === d.k ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
+            }`}>
+            {d.l}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom Range */}
+      {dateFilter === 'custom' && (
+        <div className="flex gap-3 mb-3 card-dark p-4">
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">From</label>
+            <input type="datetime-local" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">To</label>
+            <input type="datetime-local" value={customTo} onChange={e => setCustomTo(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+        </div>
+      )}
 
       {/* Main Tabs */}
       <div className="flex gap-3 mb-6">
@@ -289,13 +358,13 @@ const AdminOrders = () => {
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all ${
             mainTab === 'orders' ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
           }`}>
-          <ShoppingBag size={15} /> All Orders ({orders.length})
+          <ShoppingBag size={15} /> All Orders ({dateFiltered.length})
         </button>
         <button onClick={() => setMainTab('pendingBills')}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-heading font-bold text-sm transition-all ${
             mainTab === 'pendingBills' ? 'bg-amber-600 text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
           }`}>
-          ⏳ Pending Bills ({orders.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length})
+          ⏳ Pending Bills ({dateFiltered.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length})
         </button>
       </div>
 
@@ -313,11 +382,11 @@ const AdminOrders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length === 0 ? (
+                  {dateFiltered.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length === 0 ? (
                     <tr><td colSpan={7} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">
                       ✅ No pending bills
                     </td></tr>
-                  ) : orders
+                  ) : dateFiltered
                     .filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected')
                     .map((order, i) => {
                       const daysPending = order.createdAt?.toDate
