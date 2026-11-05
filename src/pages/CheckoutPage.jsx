@@ -73,7 +73,7 @@ const CheckoutPage = () => {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Apply loyalty card - Simple: card ID valid ho + Custom Deal ho = 10% off
+  // Apply loyalty card - Simple: card ID valid ho + Customize Deal ho = 10% off
   const handleCard = async () => {
     if (!cardNumber.trim()) { toast.error('Enter your card number', toastStyle); return; }
     setCardLoading(true);
@@ -82,22 +82,22 @@ const CheckoutPage = () => {
       if (!card) { toast.error('Card not found', toastStyle); setCardLoading(false); return; }
       if (!card.active) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
 
-      // Check if cart has Custom Deal item
+      // Check if cart has Customize Deal item
       const hasCustomDeal = cartItems.some(i => i.isCustomDeal === true);
 
       if (hasCustomDeal) {
-        // Apply 10% on custom deal total
+        // Apply 10% on Customize Deal total
         const customDealTotal = cartItems
           .filter(i => i.isCustomDeal === true)
           .reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
         const disc = Math.floor(customDealTotal * 0.10);
         setCardResult(card);
         setCardDiscount(disc);
-        toast.success(`🎉 10% loyalty discount on Custom Deal! Rs.${disc} off`, toastStyle);
+        toast.success(`🎉 10% loyalty discount on Customize Deal! Rs.${disc} off`, toastStyle);
       } else {
         setCardResult(card);
         setCardDiscount(0);
-        toast(`✅ Card verified! Add a Custom Deal to get 10% off.`, { icon: '🃏', ...toastStyle });
+        toast(`✅ Card verified! Add a Customize Deal to get 10% off.`, { icon: '🃏', ...toastStyle });
       }
     } catch { toast.error('Could not verify card', toastStyle); }
     finally { setCardLoading(false); }
@@ -531,7 +531,7 @@ const CheckoutPage = () => {
                   <span className="text-2xl">🃏</span> Loyalty Card
                 </h3>
                 <p className="text-krunch-gray font-body text-xs mb-4">
-                  Have a loyalty card? Enter your card ID to get <span className="text-krunch-red font-semibold">10% OFF</span> on Custom Deal orders
+                  Have a loyalty card? Enter your card ID to get <span className="text-krunch-red font-semibold">10% OFF</span> on Customize Deal orders
                 </p>
                 {cardResult ? (
                   <div className={`flex items-center justify-between rounded-xl px-4 py-3 border ${
@@ -677,3 +677,4 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
+

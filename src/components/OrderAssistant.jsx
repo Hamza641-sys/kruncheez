@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -79,7 +79,7 @@ const OrderAssistant = ({ cartItems = [] }) => {
                 {s.message}
                 {s.type === 'deal' && (
                   <Link to="/custom-deal" className="text-krunch-red font-semibold ml-1 hover:underline">
-                    Custom Deal →
+                    Customize Deal →
                   </Link>
                 )}
                 {s.type === 'platter' && (
@@ -101,3 +101,4 @@ const OrderAssistant = ({ cartItems = [] }) => {
 };
 
 export default OrderAssistant;
+

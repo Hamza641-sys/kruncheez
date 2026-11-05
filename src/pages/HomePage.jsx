@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+﻿import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowRight, Zap, Star, Truck, Shield } from 'lucide-react';
@@ -156,7 +156,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ── CUSTOM DEAL BANNER ───────────────────────────────── */}
+      {/* ── Customize Deal BANNER ───────────────────────────────── */}
       <section className="py-14 bg-krunch-black">
         <div className="max-w-7xl mx-auto px-4">
           <motion.div
@@ -315,3 +315,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+

@@ -67,7 +67,7 @@ const CustomDealPage = () => {
     }
     const dealItem = {
       id: `custom-deal-${Date.now()}`,
-      name: `My Custom Deal (${totalQty} items)`,
+      name: `My Customize Deal (${totalQty} items)`,
       price: total,
       quantity: 1,
       category: 'deals',
@@ -78,7 +78,7 @@ const CustomDealPage = () => {
     };
     addToCart(dealItem);
     setAdded(true);
-    toast.success(`Custom Deal added! You saved Rs. ${discount} 🎉`, {
+    toast.success(`Customize Deal added! You saved Rs. ${discount} 🎉`, {
       style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' },
       duration: 3000,
     });
@@ -180,8 +180,8 @@ const CustomDealPage = () => {
                 <div className="text-5xl mb-3">🍽️</div>
                 <p className="font-heading font-bold text-xl text-white uppercase">No items available</p>
                 <p className="text-krunch-gray font-body text-sm mt-2">
-                  Admin ne abhi koi item Custom Deal mein add nahi kiya.<br />
-                  Admin Panel → Menu → Item pe "Add to Custom Deal" click karo.
+                  Admin ne abhi koi item Customize Deal mein add nahi kiya.<br />
+                  Admin Panel → Menu → Item pe "Add to Customize Deal" click karo.
                 </p>
               </div>
             ) : (
@@ -442,3 +442,4 @@ const CustomDealPage = () => {
 };
 
 export default CustomDealPage;
+

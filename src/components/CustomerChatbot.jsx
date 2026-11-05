@@ -10,7 +10,7 @@ const QUICK_QUESTIONS = [
   '🚚 How long does delivery take?',
   '💰 Show me today\'s deals',
   '📍 Where are you located?',
-  '✨ What is the Custom Deal?',
+  '✨ What is the Customize Deal?',
   '🎁 How does the Loyalty Card work?',
 ];
 
@@ -257,3 +257,4 @@ const CustomerChatbot = () => {
 };
 
 export default CustomerChatbot;
+

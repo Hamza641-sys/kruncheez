@@ -158,11 +158,11 @@ const AdminCards = () => {
             <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:4px;">Crunch in Every Bite</div>
             <div style="font-size:30px;font-weight:900;color:white;letter-spacing:7px;margin-top:8px;">LOYALTY <span style="color:#E31E24;">CARD</span></div>
             <div style="display:flex;align-items:center;gap:12px;margin-top:7px;">
-              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">EAT</span>
+              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">FAST FOOD</span>
               <div style="width:5px;height:5px;background:#E31E24;border-radius:50%;"></div>
-              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">EARN</span>
+              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">CHINESE</span>
               <div style="width:5px;height:5px;background:#E31E24;border-radius:50%;"></div>
-              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">ENJOY</span>
+              <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:3px;">BBQ</span>
             </div>
           </div>
           <div style="position:absolute;bottom:0;left:0;right:0;z-index:6;padding:12px 24px;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);display:flex;justify-content:center;">
@@ -190,7 +190,7 @@ const AdminCards = () => {
                   <div style="font-size:42px;font-weight:900;color:white;line-height:1;">10%</div>
                   <div style="font-size:20px;font-weight:900;color:white;">OFF</div>
                 </div>
-                <div style="font-size:12px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;">ON CUSTOM DEAL</div>
+                <div style="font-size:12px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;">ON CUSTOMIZE DEAL</div>
                 <div style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:4px;">Enter Card ID at checkout</div>
               </div>
             </div>
@@ -200,7 +200,7 @@ const AdminCards = () => {
               <div style="font-size:16px;color:#E31E24;letter-spacing:5px;font-weight:900;display:block;margin-bottom:4px;">${card.cardId}</div>
               <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1px;margin-bottom:3px;">Terms &amp; Conditions:</div>
               <ul style="list-style:none;margin:0;padding:0;">
-                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Valid on Custom Deal orders only</li>
+                <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Valid ON CUSTOMIZE DEAL orders only</li>
                 <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• One card per customer</li>
                 <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Not valid with other offers</li>
                 <li style="font-size:8px;color:rgba(255,255,255,0.4);padding:1.5px 0;">• Keep this card safe</li>
@@ -350,9 +350,9 @@ const AdminCards = () => {
             <div class="f-tag">Crunch in Every Bite</div>
             <div class="f-lc">LOYALTY <span style="color:#E31E24">CARD</span></div>
             <div class="f-eat">
-              <span>EAT</span><div class="f-dot"></div>
-              <span>EARN</span><div class="f-dot"></div>
-              <span>ENJOY</span>
+              <span>FAST FOOD</span><div class="f-dot"></div>
+              <span>CHINESE</span><div class="f-dot"></div>
+              <span>BBQ</span>
             </div>
           </div>
           <div class="f-strip">
@@ -385,7 +385,7 @@ const AdminCards = () => {
               </div>
               <div class="ob">
                 <div class="obr"><div class="obp">10%</div><div class="obo">OFF</div></div>
-                <div class="obt">ON CUSTOM DEAL</div>
+                <div class="obt">ON CUSTOMIZE DEAL</div>
                 <div class="obs">Enter Card ID at checkout</div>
               </div>
             </div>
@@ -395,7 +395,7 @@ const AdminCards = () => {
               <span class="bsi">${card.cardId}</span>
               <div class="tt">Terms &amp; Conditions:</div>
               <ul class="tl">
-                <li>&#8226; Valid on Custom Deal orders only</li>
+                <li>&#8226; Valid ON CUSTOMIZE DEAL orders only</li>
                 <li>&#8226; One card per customer</li>
                 <li>&#8226; Not valid with other offers</li>
                 <li>&#8226; Keep this card safe</li>
@@ -421,7 +421,7 @@ const AdminCards = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="font-heading font-black text-2xl text-white uppercase">Loyalty Cards</h2>
-          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards - 10% off on Custom Deal</p>
+          <p className="text-krunch-gray font-body text-sm mt-1">{totalCards} cards - 10% off ON CUSTOMIZE DEAL</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Generate Cards */}
@@ -472,7 +472,7 @@ const AdminCards = () => {
       {/* Info Banner */}
       <div className="mb-5 bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-3">
         <p className="text-amber-400 font-body text-sm">
-          🃏 Generate cards → Print → Give to customers → Customer enters Card ID at checkout with Custom Deal → <span className="text-white font-semibold">10% discount auto applied!</span>
+          🃏 Generate cards → Print → Give to customers → Customer enters Card ID at checkout with Customize Deal → <span className="text-white font-semibold">10% discount auto applied!</span>
         </p>
       </div>
 
@@ -542,3 +542,4 @@ const AdminCards = () => {
 };
 
 export default AdminCards;
+

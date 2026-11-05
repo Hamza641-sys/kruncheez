@@ -14,7 +14,7 @@ const navLinks = [
   { name: 'Home',        path: '/' },
   { name: 'Menu',        path: '/menu' },
   { name: 'Offers',      path: '/offers' },
-  { name: 'Custom Deal', path: '/custom-deal' },
+  { name: 'Customize Deal', path: '/custom-deal' },
   { name: 'Locations',   path: '/locations' },
   { name: 'About Us',    path: '/about' },
   { name: 'Contact',     path: '/contact' },
@@ -362,3 +362,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

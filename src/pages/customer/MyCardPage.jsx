@@ -182,7 +182,7 @@ const MyCardPage = () => {
               '🎁 Get 1 card for free - instantly',
               '🏠 Earn visits with every dine-in order',
               '💰 10 visits = 10% discount on your bill',
-              '🎉 Get discount on Custom Deal orders',
+              '🎉 Get discount on Customize Deal orders',
               '🥇 Unlock Bronze -> Silver -> Gold tiers',
             ].map((b, i) => (
               <div key={i} className="flex items-center gap-2 py-1.5 border-b border-krunch-border last:border-0">
@@ -369,7 +369,7 @@ const MyCardPage = () => {
             {[
               { step: '01', text: 'Dine in or order online at KrunchEez', icon: '🍔' },
               { step: '02', text: 'Enter your card number at checkout (KC-XXXXX)', icon: '🃏' },
-              { step: '03', text: 'Get 10% off on Custom Deal orders', icon: '🎁' },
+              { step: '03', text: 'Get 10% off on Customize Deal orders', icon: '🎁' },
               { step: '04', text: 'Show card at counter for discount', icon: '✅' },
             ].map((s, i) => (
               <div key={i} className="flex items-center gap-3">
@@ -394,3 +394,4 @@ const MyCardPage = () => {
 };
 
 export default MyCardPage;
+
