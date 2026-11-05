@@ -350,13 +350,17 @@ const AdminSuppliers = () => {
                 <div>
                   <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Payment Method</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {['cash', 'bank', 'credit'].map(m => (
-                      <button key={m} type="button"
-                        onClick={() => setPayForm({ ...payForm, paymentMethod: m })}
-                        className={`py-2.5 rounded-xl font-body font-bold text-sm transition-all capitalize ${
-                          payForm.paymentMethod === m ? 'bg-krunch-red text-white' : 'bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white'
+                    {[
+                      { k: 'cash',      l: '💵 Cash' },
+                      { k: 'easypaisa', l: '📱 Easypaisa' },
+                      { k: 'pending',   l: '⏳ Pending' },
+                    ].map(m => (
+                      <button key={m.k} type="button"
+                        onClick={() => setPayForm({ ...payForm, paymentMethod: m.k })}
+                        className={`py-2.5 rounded-xl font-body font-bold text-sm transition-all ${
+                          payForm.paymentMethod === m.k ? 'bg-krunch-red text-white' : 'bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white'
                         }`}>
-                        {m === 'cash' ? '💵 Cash' : m === 'bank' ? '🏦 Bank' : '📋 Credit'}
+                        {m.l}
                       </button>
                     ))}
                   </div>
