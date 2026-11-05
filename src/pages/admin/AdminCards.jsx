@@ -1,8 +1,9 @@
 ﻿import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, ToggleLeft, ToggleRight,
-  Users, Gift, Printer, Download
+  Users, Gift, Printer, Download, Eye, X
 } from 'lucide-react';
 import { getAllCards, toggleCard, getNextCardNumber } from '../../firebase/cardService';
 import { collection, addDoc, serverTimestamp, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -17,6 +18,7 @@ const AdminCards = () => {
   const [search, setSearch]       = useState('');
   const [bulkCount, setBulkCount] = useState(10);
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [viewCard, setViewCard]   = useState(null); // card being previewed
 
   // Sequential card ID: KC-00001 format (5 digits for up to 10000)
   const formatCardId = (num) => `KC-${String(num).padStart(5, '0')}`;
@@ -526,10 +528,16 @@ const AdminCards = () => {
                     </button>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => downloadCard(card)}
-                      className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 rounded-lg bg-blue-900/20 border border-blue-700/30 hover:bg-blue-600 text-blue-400 hover:text-white font-bold whitespace-nowrap transition-all">
-                      <Download size={10} /> Download PNG
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setViewCard(card)}
+                        className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 rounded-lg bg-purple-900/20 border border-purple-700/30 hover:bg-purple-600 text-purple-400 hover:text-white font-bold whitespace-nowrap transition-all">
+                        <Eye size={10} /> View
+                      </button>
+                      <button onClick={() => downloadCard(card)}
+                        className="flex items-center gap-1 text-[10px] px-2.5 py-1.5 rounded-lg bg-blue-900/20 border border-blue-700/30 hover:bg-blue-600 text-blue-400 hover:text-white font-bold whitespace-nowrap transition-all">
+                        <Download size={10} /> PNG
+                      </button>
+                    </div>
                   </td>
                 </motion.tr>
               ))}
@@ -537,6 +545,98 @@ const AdminCards = () => {
           </table>
         </div>
       </div>
+      {/* ── VIEW CARD MODAL ── */}
+      <AnimatePresence>
+        {viewCard && (
+          <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+            onClick={() => setViewCard(null)}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ scale:0.9, y:20 }} animate={{ scale:1, y:0 }} exit={{ scale:0.9 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border">
+                <div>
+                  <h3 className="font-heading font-bold text-white uppercase">Card Preview</h3>
+                  <p className="text-krunch-gray font-body text-xs mt-0.5">{viewCard.cardId}</p>
+                </div>
+                <button onClick={() => setViewCard(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
+              </div>
+              {/* Front */}
+              <div className="p-5 flex flex-col gap-4">
+                <p className="text-krunch-gray font-body text-xs uppercase tracking-wider">Front Side</p>
+                <div className="w-full h-44 rounded-xl overflow-hidden relative bg-black">
+                  <div className="absolute inset-0" style={{backgroundImage:'radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px)',backgroundSize:'20px 20px'}}></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-krunch-red rounded-full -translate-y-1/2 translate-x-1/2 z-10"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-krunch-red/50 rounded-full translate-y-1/2 -translate-x-1/2 z-10"></div>
+                  <div className="absolute top-3 right-3 w-20 h-20 bg-krunch-red rounded-full z-20 flex flex-col items-center justify-center border-2 border-white/50">
+                    <span className="text-white text-[8px] font-black tracking-widest">GET</span>
+                    <span className="text-white text-xl font-black leading-none">10%</span>
+                    <span className="text-white text-xs font-black">OFF</span>
+                  </div>
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pb-4">
+                    <span className="text-krunch-red font-heading font-black text-3xl tracking-widest">KRUNCHEEZ</span>
+                    <span className="text-white/40 text-[10px] tracking-widest mt-1">Crunch in Every Bite</span>
+                    <span className="text-white font-heading font-black text-xl tracking-widest mt-2">LOYALTY <span className="text-krunch-red">CARD</span></span>
+                    <div className="flex items-center gap-3 mt-2">
+                      {['FAST FOOD','CHINESE','BBQ'].map((t,i) => (
+                        <span key={i} className="flex items-center gap-1">
+                          {i > 0 && <span className="w-1 h-1 bg-krunch-red rounded-full"></span>}
+                          <span className="text-white/40 text-[9px] font-bold tracking-widest">{t}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 z-20 py-2 flex justify-center bg-gradient-to-t from-black/70 to-transparent">
+                    <span className="text-krunch-red font-heading font-black text-base tracking-widest">{viewCard.cardId}</span>
+                  </div>
+                </div>
+
+                <p className="text-krunch-gray font-body text-xs uppercase tracking-wider">Back Side</p>
+                <div className="w-full h-44 rounded-xl overflow-hidden relative bg-gradient-to-br from-[#1a0505] via-[#2a0a0a] to-[#1a0505]">
+                  <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-krunch-red/30 -translate-y-1/2 translate-x-1/2"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-krunch-red/30 translate-y-1/2 -translate-x-1/2"></div>
+                  <div className="relative z-10 flex h-full p-4 pb-12 gap-3">
+                    <div className="flex-1">
+                      <p className="text-krunch-red font-heading font-black text-xl tracking-widest">KRUNCHEEZ</p>
+                      <p className="text-white/30 text-[9px] tracking-widest">Crunch in Every Bite</p>
+                    </div>
+                    <div className="w-36 flex flex-col gap-2">
+                      <div className="text-right">
+                        <p className="text-white/40 text-[10px]">Good Food Brings</p>
+                        <p className="text-white text-base font-bold">Together <span className="text-krunch-red">♥</span></p>
+                      </div>
+                      <div className="bg-gradient-to-br from-krunch-red to-red-700 rounded-lg p-2">
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-white text-2xl font-black">10%</span>
+                          <span className="text-white text-sm font-black">OFF</span>
+                        </div>
+                        <p className="text-white text-[9px] font-black tracking-wide">ON CUSTOMIZE DEAL</p>
+                        <p className="text-white/80 text-[8px] mt-0.5">Enter Card ID at checkout</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 z-20 px-4 py-2 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent">
+                    <span className="text-krunch-red font-heading font-black text-sm tracking-widest">{viewCard.cardId}</span>
+                    <span className="text-white/30 text-[8px]">Valid on Customize Deal only</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button onClick={() => { setViewCard(null); downloadCard(viewCard); }}
+                    className="flex-1 flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-600 text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">
+                    <Download size={15} /> Download PNG
+                  </button>
+                  <button onClick={() => setViewCard(null)}
+                    className="flex-1 bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
