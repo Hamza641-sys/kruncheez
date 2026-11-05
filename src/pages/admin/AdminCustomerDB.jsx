@@ -19,7 +19,11 @@ const AdminCustomerDB = () => {
   const [search, setSearch]     = useState('');
   const [expanded, setExpanded] = useState(null);
   const [sortBy, setSortBy]     = useState('totalSpent');
-  const [tab, setTab]           = useState('all'); // 'all' | 'member' | 'guest'
+  const [tab, setTab]           = useState('all');
+  const [dateFilter, setDateFilter] = useState('shift');
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [customFrom, setCustomFrom] = useState(todayStr + 'T11:00');
+  const [customTo,   setCustomTo]   = useState(todayStr + 'T03:00');
 
   useEffect(() => {
     getDocs(collection(db, 'orders')).then(snap => {
@@ -28,9 +32,39 @@ const AdminCustomerDB = () => {
     });
   }, []);
 
+  // ── Date range helper ─────────────────────────────────────────────────
+  const getDateRange = () => {
+    if (dateFilter === 'shift') {
+      const now = new Date();
+      const d = new Date();
+      if (now.getHours() < 3) d.setDate(d.getDate() - 1);
+      d.setHours(11, 0, 0, 0);
+      return { from: d, to: null };
+    }
+    if (dateFilter === 'today') { const d = new Date(); d.setHours(0,0,0,0); return { from: d, to: null }; }
+    if (dateFilter === 'week')  { const d = new Date(); d.setDate(d.getDate()-7); return { from: d, to: null }; }
+    if (dateFilter === 'custom') {
+      const from = customFrom ? new Date(customFrom) : null;
+      const to   = customTo   ? new Date(customTo)   : null;
+      if (from && to && to < from) to.setDate(to.getDate() + 1);
+      return { from, to };
+    }
+    return { from: null, to: null };
+  };
+
+  const inRange = (o) => {
+    const { from, to } = getDateRange();
+    if (!from) return true;
+    const d = o.createdAt?.toDate?.();
+    if (!d) return true;
+    if (from && d < from) return false;
+    if (to   && d > to)   return false;
+    return true;
+  };
+
   // ── Build customer profiles keyed by PHONE ────────────────────────────
   const customerMap = {};
-  orders.forEach(o => {
+  orders.filter(inRange).forEach(o => {
     const phone = o.customer?.phone?.trim();
     if (!phone) return;
     if (!customerMap[phone]) {
@@ -111,12 +145,46 @@ const AdminCustomerDB = () => {
   return (
     <div>
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-5">
         <h2 className="font-heading font-black text-2xl text-white uppercase">👥 Customer Database</h2>
         <p className="text-krunch-gray font-body text-sm mt-1">
           Customers identified by phone number — full order history
         </p>
       </div>
+
+      {/* Date Filter Tabs */}
+      <div className="flex gap-2 mb-3 overflow-x-auto pb-1" style={{ scrollbarWidth:'none' }}>
+        {[
+          { k: 'shift',  l: '🍽️ Today Shift (11am–3am)' },
+          { k: 'today',  l: 'Today' },
+          { k: 'week',   l: 'This Week' },
+          { k: 'all',    l: 'All Time' },
+          { k: 'custom', l: '📅 Custom Range' },
+        ].map(d => (
+          <button key={d.k} onClick={() => setDateFilter(d.k)}
+            className={`flex-shrink-0 px-4 py-2 rounded-xl font-body font-semibold text-sm transition-all ${
+              dateFilter === d.k ? 'bg-krunch-red text-white' : 'bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white'
+            }`}>
+            {d.l}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom Range inputs */}
+      {dateFilter === 'custom' && (
+        <div className="flex gap-3 mb-4 card-dark p-4">
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">From</label>
+            <input type="datetime-local" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+          <div className="flex-1">
+            <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">To</label>
+            <input type="datetime-local" value={customTo} onChange={e => setCustomTo(e.target.value)}
+              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors" />
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
