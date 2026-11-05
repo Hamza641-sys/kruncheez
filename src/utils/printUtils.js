@@ -36,6 +36,7 @@ export const printBill = (order) => {
     ? 'Dine-In (Table ' + order.tableNumber + ')'
     : order.orderType === 'dine-in' ? 'Dine-In'
     : order.orderType === 'pickup'  ? 'Self Pickup'
+    : order.orderType === 'delivery' ? 'Home Delivery'
     : order.source === 'pos'        ? 'Counter / POS'
     : 'Home Delivery';
 
@@ -114,9 +115,10 @@ export const printKitchen = (order) => {
 
   const orderType = order.tableNumber
     ? 'TABLE ' + order.tableNumber
-    : order.orderType === 'dine-in' ? 'DINE-IN'
-    : order.orderType === 'pickup'  ? 'PICKUP'
-    : order.source === 'pos'        ? 'COUNTER/POS'
+    : order.orderType === 'dine-in'  ? 'DINE-IN'
+    : order.orderType === 'pickup'   ? 'PICKUP'
+    : order.orderType === 'delivery' ? 'DELIVERY'
+    : order.source === 'pos'         ? 'COUNTER/POS'
     : 'DELIVERY';
 
   const itemsHtml = (order.items || []).map(item => {
