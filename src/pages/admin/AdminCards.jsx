@@ -11,6 +11,113 @@ import toast from 'react-hot-toast';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
 
+const ViewCardIframe = ({ card }) => {
+  const html = `<!DOCTYPE html><html><head><style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:Arial,sans-serif;background:#cdc5ba;padding:14px;display:flex;flex-direction:column;gap:10px;}
+    .lbl{font-size:10px;font-weight:700;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+    .card{width:100%;border-radius:16px;overflow:hidden;position:relative;background:#111;}
+    .front{height:260px;}
+    .dots{position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(255,255,255,0.06)1.5px,transparent 1.5px);background-size:20px 20px;}
+    .yc1{position:absolute;top:-45px;right:-45px;width:160px;height:160px;background:#E31E24;border-radius:50%;z-index:3;}
+    .yc2{position:absolute;bottom:-45px;left:-45px;width:140px;height:140px;background:#E31E24;border-radius:50%;z-index:3;opacity:0.5;}
+    .badge{position:absolute;top:12px;right:12px;width:90px;height:90px;background:#E31E24;border-radius:50%;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.5);}
+    .badge .g{font-size:8px;font-weight:900;color:white;letter-spacing:2px;}
+    .badge .p{font-size:28px;font-weight:900;color:white;line-height:1;}
+    .badge .o{font-size:12px;font-weight:900;color:white;}
+    .badge .s{font-size:6.5px;font-weight:700;color:rgba(255,255,255,0.8);text-align:center;line-height:1.4;margin-top:2px;}
+    .fpz{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;opacity:0.22;}
+    .fcnt{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+    .fb{font-size:36px;font-weight:900;color:#E31E24;letter-spacing:3px;text-shadow:0 3px 12px rgba(0,0,0,0.6);}
+    .ft{font-size:9px;color:rgba(255,255,255,0.5);letter-spacing:3px;margin-top:3px;}
+    .fl{font-size:22px;font-weight:900;color:white;letter-spacing:6px;margin-top:5px;}
+    .fe{display:flex;align-items:center;gap:8px;margin-top:5px;}
+    .fe span{font-size:9px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:2px;}
+    .fd{width:4px;height:4px;background:#E31E24;border-radius:50%;}
+    .fs{position:absolute;bottom:0;left:0;right:0;z-index:6;padding:8px 18px;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);display:flex;justify-content:center;}
+    .fid{font-size:14px;font-weight:900;color:#E31E24;letter-spacing:5px;}
+    .back{height:260px;background:linear-gradient(135deg,#1a0505,#2a0a0a,#1a0505);}
+    .y3{position:absolute;top:-35px;right:-35px;width:140px;height:140px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;}
+    .y4{position:absolute;bottom:-35px;left:-35px;width:120px;height:120px;background:radial-gradient(circle,#E31E24,rgba(227,30,36,0.3),transparent);border-radius:50%;z-index:2;}
+    .bi{position:relative;z-index:4;display:flex;height:100%;padding:14px 18px 72px;gap:14px;}
+    .bl{flex:1;}
+    .blb{font-size:20px;font-weight:900;color:#E31E24;letter-spacing:2px;text-transform:uppercase;}
+    .blt{font-size:8px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-bottom:6px;}
+    .br{width:170px;display:flex;flex-direction:column;gap:7px;}
+    .gf{text-align:right;}
+    .gf1{font-size:11px;color:rgba(255,255,255,0.45);}
+    .gf3{font-size:19px;color:white;}
+    .ob{background:linear-gradient(135deg,#E31E24,#c01a1f);border-radius:7px;padding:9px 12px;}
+    .obp{font-size:34px;font-weight:900;color:white;line-height:1;}
+    .obo{font-size:16px;font-weight:900;color:white;}
+    .obt{font-size:10px;font-weight:900;color:white;letter-spacing:1px;margin-top:2px;}
+    .obs{font-size:8px;color:rgba(255,255,255,0.85);font-weight:700;margin-top:2px;}
+    .bs{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:8px 16px 10px;background:linear-gradient(to top,rgba(0,0,0,0.98),rgba(0,0,0,0.8),transparent);display:flex;justify-content:space-between;align-items:flex-end;gap:8px;}
+    .bsl{flex:1;min-width:0;}
+    .bsi{font-size:12px;color:#E31E24;letter-spacing:4px;font-weight:900;display:block;margin-bottom:3px;}
+    .tt{font-size:7px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:1px;margin-bottom:2px;}
+    .tl{list-style:none;}
+    .tl li{font-size:6.5px;color:rgba(255,255,255,0.4);padding:1px 0;line-height:1.3;}
+    .qrw{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;}
+    .qrb{background:white;border-radius:5px;padding:3px;}
+    .qrb img{display:block;width:55px;height:55px;border-radius:3px;}
+    .qrl{font-size:5.5px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-align:center;}
+  </style></head><body>
+  <div class="lbl">Front</div>
+  <div class="card front">
+    <div class="dots"></div><div class="yc1"></div><div class="yc2"></div>
+    <img class="fpz" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800&q=90&auto=format&fit=crop" onerror="this.style.display='none'"/>
+    <div class="badge"><div class="g">GET</div><div class="p">10%</div><div class="o">OFF</div><div class="s">ON CUSTOMIZE<br/>DEAL</div></div>
+    <div class="fcnt">
+      <div class="fb">KRUNCHEEZ</div>
+      <div class="ft">Crunch in Every Bite</div>
+      <div class="fl">LOYALTY <span style="color:#E31E24">CARD</span></div>
+      <div class="fe"><span>FAST FOOD</span><div class="fd"></div><span>CHINESE</span><div class="fd"></div><span>BBQ</span></div>
+    </div>
+    <div class="fs"><div class="fid">${card.cardId}</div></div>
+  </div>
+  <div class="lbl" style="margin-top:8px">Back</div>
+  <div class="card back">
+    <div class="dots"></div><div class="y3"></div><div class="y4"></div>
+    <div class="bi">
+      <div class="bl"><div class="blb">KRUNCHEEZ</div><div class="blt">Crunch in Every Bite</div></div>
+      <div class="br">
+        <div class="gf"><div class="gf1">Good Food Brings People</div><div class="gf3">Together <span style="color:#E31E24">&#9829;</span></div></div>
+        <div class="ob">
+          <div style="display:flex;align-items:baseline;gap:2px"><div class="obp">10%</div><div class="obo">OFF</div></div>
+          <div class="obt">ON CUSTOMIZE DEAL</div>
+          <div class="obs">Enter Card ID at checkout</div>
+        </div>
+      </div>
+    </div>
+    <div class="bs">
+      <div class="bsl">
+        <span class="bsi">${card.cardId}</span>
+        <div class="tt">Terms &amp; Conditions:</div>
+        <ul class="tl">
+          <li>&#8226; Valid on Customize Deal orders only</li>
+          <li>&#8226; One card per customer</li>
+          <li>&#8226; Not valid with other offers</li>
+          <li>&#8226; Keep this card safe</li>
+        </ul>
+      </div>
+      <div class="qrw">
+        <div class="qrb"><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fkruncheez-pos.web.app%2Ffollow" width="55" height="55"/></div>
+        <div class="qrl">SCAN &amp; FOLLOW</div>
+      </div>
+    </div>
+  </div>
+  </body></html>`;
+  return (
+    <iframe
+      title="card-preview"
+      srcDoc={html}
+      className="w-full rounded-xl"
+      style={{ height: 700, border: 0, background: '#cdc5ba' }}
+    />
+  );
+};
+
 const AdminCards = () => {
   const [cards, setCards]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -544,7 +651,7 @@ const AdminCards = () => {
           </table>
         </div>
       </div>
-      {/* ── VIEW CARD MODAL ── */}
+      {/* VIEW CARD MODAL */}
       <AnimatePresence>
         {viewCard && (
           <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
@@ -552,79 +659,20 @@ const AdminCards = () => {
             className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <motion.div initial={{ scale:0.9, y:20 }} animate={{ scale:1, y:0 }} exit={{ scale:0.9 }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-w-lg bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden">
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border">
+              className="w-full max-w-2xl bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark z-10">
                 <div>
-                  <h3 className="font-heading font-bold text-white uppercase">Card Preview</h3>
-                  <p className="text-krunch-gray font-body text-xs mt-0.5">{viewCard.cardId}</p>
+                  <h3 className="font-heading font-bold text-white uppercase">Card Preview — {viewCard.cardId}</h3>
+                  <p className="text-krunch-gray font-body text-xs">Same design as printed/downloaded card</p>
                 </div>
-                <button onClick={() => setViewCard(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
+                <button onClick={() => setViewCard(null)} className="text-krunch-gray hover:text-white"><X size={18}/></button>
               </div>
-              {/* Front */}
-              <div className="p-5 flex flex-col gap-4">
-                <p className="text-krunch-gray font-body text-xs uppercase tracking-wider">Front Side</p>
-                <div className="w-full h-44 rounded-xl overflow-hidden relative bg-black">
-                  <div className="absolute inset-0" style={{backgroundImage:'radial-gradient(rgba(255,255,255,0.06) 1.5px,transparent 1.5px)',backgroundSize:'20px 20px'}}></div>
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-krunch-red rounded-full -translate-y-1/2 translate-x-1/2 z-10"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-krunch-red/50 rounded-full translate-y-1/2 -translate-x-1/2 z-10"></div>
-                  <div className="absolute top-3 right-3 w-20 h-20 bg-krunch-red rounded-full z-20 flex flex-col items-center justify-center border-2 border-white/50">
-                    <span className="text-white text-[8px] font-black tracking-widest">GET</span>
-                    <span className="text-white text-xl font-black leading-none">10%</span>
-                    <span className="text-white text-xs font-black">OFF</span>
-                  </div>
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pb-4">
-                    <span className="text-krunch-red font-heading font-black text-3xl tracking-widest">KRUNCHEEZ</span>
-                    <span className="text-white/40 text-[10px] tracking-widest mt-1">Crunch in Every Bite</span>
-                    <span className="text-white font-heading font-black text-xl tracking-widest mt-2">LOYALTY <span className="text-krunch-red">CARD</span></span>
-                    <div className="flex items-center gap-3 mt-2">
-                      {['FAST FOOD','CHINESE','BBQ'].map((t,i) => (
-                        <span key={i} className="flex items-center gap-1">
-                          {i > 0 && <span className="w-1 h-1 bg-krunch-red rounded-full"></span>}
-                          <span className="text-white/40 text-[9px] font-bold tracking-widest">{t}</span>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 z-20 py-2 flex justify-center bg-gradient-to-t from-black/70 to-transparent">
-                    <span className="text-krunch-red font-heading font-black text-base tracking-widest">{viewCard.cardId}</span>
-                  </div>
-                </div>
-
-                <p className="text-krunch-gray font-body text-xs uppercase tracking-wider">Back Side</p>
-                <div className="w-full h-44 rounded-xl overflow-hidden relative bg-gradient-to-br from-[#1a0505] via-[#2a0a0a] to-[#1a0505]">
-                  <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-krunch-red/30 -translate-y-1/2 translate-x-1/2"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-krunch-red/30 translate-y-1/2 -translate-x-1/2"></div>
-                  <div className="relative z-10 flex h-full p-4 pb-12 gap-3">
-                    <div className="flex-1">
-                      <p className="text-krunch-red font-heading font-black text-xl tracking-widest">KRUNCHEEZ</p>
-                      <p className="text-white/30 text-[9px] tracking-widest">Crunch in Every Bite</p>
-                    </div>
-                    <div className="w-36 flex flex-col gap-2">
-                      <div className="text-right">
-                        <p className="text-white/40 text-[10px]">Good Food Brings</p>
-                        <p className="text-white text-base font-bold">Together <span className="text-krunch-red">♥</span></p>
-                      </div>
-                      <div className="bg-gradient-to-br from-krunch-red to-red-700 rounded-lg p-2">
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-white text-2xl font-black">10%</span>
-                          <span className="text-white text-sm font-black">OFF</span>
-                        </div>
-                        <p className="text-white text-[9px] font-black tracking-wide">ON CUSTOMIZE DEAL</p>
-                        <p className="text-white/80 text-[8px] mt-0.5">Enter Card ID at checkout</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 z-20 px-4 py-2 flex justify-between items-center bg-gradient-to-t from-black/90 to-transparent">
-                    <span className="text-krunch-red font-heading font-black text-sm tracking-widest">{viewCard.cardId}</span>
-                    <span className="text-white/30 text-[8px]">Valid on Customize Deal only</span>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
+              <div className="p-4">
+                <ViewCardIframe card={viewCard} />
+                <div className="flex gap-3 mt-4">
                   <button onClick={() => { setViewCard(null); downloadCard(viewCard); }}
                     className="flex-1 flex items-center justify-center gap-2 bg-blue-700 hover:bg-blue-600 text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">
-                    <Download size={15} /> Download PNG
+                    <Download size={15}/> Download PNG
                   </button>
                   <button onClick={() => setViewCard(null)}
                     className="flex-1 bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">
@@ -641,4 +689,3 @@ const AdminCards = () => {
 };
 
 export default AdminCards;
-
