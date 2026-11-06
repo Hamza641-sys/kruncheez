@@ -73,31 +73,36 @@ const CheckoutPage = () => {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Apply loyalty card - Simple: card ID valid ho + Customize Deal ho = 10% off
+  // Apply loyalty card - any valid KC- format ID gets 10% off on Customize Deal
   const handleCard = async () => {
     if (!cardNumber.trim()) { toast.error('Enter your card number', toastStyle); return; }
     setCardLoading(true);
     try {
       const card = await getCardByCardId(cardNumber);
-      if (!card) { toast.error('Card not found', toastStyle); setCardLoading(false); return; }
-      if (!card.active) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
+      if (!card) { toast.error('Invalid card ID — use format KC-XXXXX', toastStyle); setCardLoading(false); return; }
+      if (card.active === false) { toast.error('This card is inactive', toastStyle); setCardLoading(false); return; }
 
       // Check if cart has Customize Deal item
       const hasCustomDeal = cartItems.some(i => i.isCustomDeal === true);
 
       if (hasCustomDeal) {
-        // Apply 10% on Customize Deal total
         const customDealTotal = cartItems
           .filter(i => i.isCustomDeal === true)
           .reduce((s, i) => s + (i.price * (i.quantity || 1)), 0);
         const disc = Math.floor(customDealTotal * 0.10);
         setCardResult(card);
         setCardDiscount(disc);
-        toast.success(`🎉 10% loyalty discount on Customize Deal! Rs.${disc} off`, toastStyle);
+        const msg = card.userName
+          ? `🎉 Welcome ${card.userName}! 10% off applied — Rs.${disc} saved`
+          : `🎉 10% loyalty discount on Customize Deal! Rs.${disc} off`;
+        toast.success(msg, toastStyle);
       } else {
         setCardResult(card);
         setCardDiscount(0);
-        toast(`✅ Card verified! Add a Customize Deal to get 10% off.`, { icon: '🃏', ...toastStyle });
+        const msg = card.userName
+          ? `✅ Card verified for ${card.userName}! Add a Customize Deal to get 10% off.`
+          : `✅ Card verified! Add a Customize Deal to get 10% off.`;
+        toast(msg, { icon: '🃏', ...toastStyle });
       }
     } catch { toast.error('Could not verify card', toastStyle); }
     finally { setCardLoading(false); }
