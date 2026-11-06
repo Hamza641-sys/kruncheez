@@ -104,7 +104,7 @@ const AdminCards = () => {
     try {
       const html2canvas = (await import('html2canvas')).default;
       const QRCode = (await import('qrcode')).default;
-      const qrDataUrl = await QRCode.toDataURL('https://THE KRUNCHEEZ-pos.web.app/follow', {
+      const qrDataUrl = await QRCode.toDataURL('https://kruncheez-pos.web.app/follow', {
         width: 160, margin: 1, color: { dark: '#000000', light: '#ffffff' }, errorCorrectionLevel: 'H',
       });
       const CARD_W = 720; const CARD_H = 340;
@@ -436,7 +436,7 @@ const AdminCards = () => {
                   <div class="lbl">Front (Blank — Printer adds ID)</div>
                   <div class="card front"><div class="dots"></div><div class="yc1"></div><div class="yc2"></div><img class="fpz" src="${PIZZA_URL}" onerror="this.style.display='none'"/><div class="badge"><div class="g">GET</div><div class="p">10%</div><div class="o">OFF</div><div class="s">ON CUSTOMIZE<br/>DEAL</div></div><div class="fcnt"><div class="fb">THE KRUNCHEEZ</div><div class="ft">In Every Bite</div><div class="fl">LOYALTY <span style="color:#E31E24">CARD</span></div><div class="fe"><span>FAST FOOD</span><div class="fd"></div><span>CHINESE</span><div class="fd"></div><span>BBQ</span></div></div></div>
                   <div class="lbl" style="margin-top:8px">Back</div>
-                  <div class="card back"><div class="dots"></div><div class="y3"></div><div class="y4"></div><div class="bi"><div class="bl"><div class="blb">THE KRUNCHEEZ</div><div class="blt">In Every Bite</div></div><div class="br"><div class="gf"><div class="gf1">Good Food Brings People</div><div class="gf3">Together <span style="color:#E31E24">&#9829;</span></div></div><div class="ob"><div style="display:flex;align-items:baseline;gap:2px"><div class="obp">10%</div><div class="obo">OFF</div></div><div class="obt">ON CUSTOMIZE DEAL</div><div class="obs">Enter Card ID at checkout</div></div></div></div><div class="bs"><div class="bsl"><div class="tt">Terms &amp; Conditions:</div><ul class="tl"><li>&#8226; Valid on Customize Deal orders only</li><li>&#8226; One card per customer</li><li>&#8226; Not valid with other offers</li><li>&#8226; Keep this card safe</li></ul></div><div class="qrw"><div class="qrb"><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2FTHE KRUNCHEEZ-pos.web.app%2Ffollow" width="55" height="55"/></div><div class="qrl">SCAN &amp; FOLLOW</div></div></div></div>
+                  <div class="card back"><div class="dots"></div><div class="y3"></div><div class="y4"></div><div class="bi"><div class="bl"><div class="blb">THE KRUNCHEEZ</div><div class="blt">In Every Bite</div></div><div class="br"><div class="gf"><div class="gf1">Good Food Brings People</div><div class="gf3">Together <span style="color:#E31E24">&#9829;</span></div></div><div class="ob"><div style="display:flex;align-items:baseline;gap:2px"><div class="obp">10%</div><div class="obo">OFF</div></div><div class="obt">ON CUSTOMIZE DEAL</div><div class="obs">Enter Card ID at checkout</div></div></div></div><div class="bs"><div class="bsl"><div class="tt">Terms &amp; Conditions:</div><ul class="tl"><li>&#8226; Valid on Customize Deal orders only</li><li>&#8226; One card per customer</li><li>&#8226; Not valid with other offers</li><li>&#8226; Keep this card safe</li></ul></div><div class="qrw"><div class="qrb"><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fkruncheez-pos.web.app%2Ffollow" width="55" height="55"/></div><div class="qrl">SCAN &amp; FOLLOW</div></div></div></div>
                   </body></html>`}
                 />
                 <div className="flex gap-3 mt-4">
@@ -459,6 +459,7 @@ const AdminCards = () => {
 };
 
 export default AdminCards;
+
 
 
 

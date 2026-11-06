@@ -56,11 +56,12 @@ export const sendWhatsAppStatusUpdate = (customerPhone, orderId, status) => {
   const msg = `🍔 *The KrunchEez Order Update*\n\n` +
     `Order #${orderId.slice(0,8).toUpperCase()}\n` +
     `${statusMessages[status] || 'Order status updated'}\n\n` +
-    `Track your order at: THE KRUNCHEEZ-pos.web.app/track/${orderId}`;
+    `Track your order at: kruncheez-pos.web.app/track/${orderId}`;
 
   const phone = customerPhone?.replace(/[^0-9]/g, '');
   const pkPhone = phone?.startsWith('0') ? '92' + phone.slice(1) : phone;
   const url = `https://wa.me/${pkPhone}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 };
+
 

@@ -7,7 +7,7 @@ import { db } from '../../firebase/config';
 import toast from 'react-hot-toast';
 
 const toastStyle = { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } };
-const BASE_URL = 'https://THE KRUNCHEEZ-pos.web.app';
+const BASE_URL = 'https://kruncheez-pos.web.app';
 
 const AdminQR = () => {
   const [tables, setTables]         = useState([]);
@@ -158,7 +158,7 @@ const AdminQR = () => {
           <div class="scan-text">📱 SCAN TO VIEW MENU & ORDER</div>
           <div class="emoji">🍔 🍕 🔥 🍜</div>
           <div class="footer">
-            <div class="footer-text">THE KRUNCHEEZ-pos.web.app • HALAL CERTIFIED</div>
+            <div class="footer-text">kruncheez-pos.web.app • HALAL CERTIFIED</div>
           </div>
         </div>
         <script>window.onload=()=>{window.print();window.close();}</script>
@@ -186,7 +186,7 @@ const AdminQR = () => {
           <div class="scan-text">📱 SCAN TO VIEW MENU & ORDER</div>
           <div class="emoji">🍔 🍕 🔥 🍜</div>
           <div class="footer">
-            <div class="footer-text">THE KRUNCHEEZ-pos.web.app • HALAL CERTIFIED</div>
+            <div class="footer-text">kruncheez-pos.web.app • HALAL CERTIFIED</div>
           </div>
         </div>
       `;
@@ -439,7 +439,7 @@ const AdminQR = () => {
                 <p className="text-krunch-gray font-body text-[10px] mt-1">🍔 🍕 🔥 🍜</p>
               </div>
               <div className="bg-krunch-dark p-3 border-t border-krunch-border text-center">
-                <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">THE KRUNCHEEZ-pos.web.app • Halal Certified</p>
+                <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">kruncheez-pos.web.app • Halal Certified</p>
               </div>
               <div className="flex gap-3 p-4">
                 <button onClick={() => printSingle(preview)}
@@ -464,4 +464,5 @@ const AdminQR = () => {
 };
 
 export default AdminQR;
+
 

@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
             try {
               // Use fetch keepalive — works in modern browsers on unload
               fetch(
-                `https://firestore.googleapis.com/v1/projects/THE KRUNCHEEZ-pos/databases/(default)/documents/users/${uid}?updateMask.fieldPaths=onlineStatus&updateMask.fieldPaths=lastSeen`,
+                `https://firestore.googleapis.com/v1/projects/kruncheez-pos/databases/(default)/documents/users/${uid}?updateMask.fieldPaths=onlineStatus&updateMask.fieldPaths=lastSeen`,
                 {
                   method: 'PATCH',
                   keepalive: true,
@@ -126,4 +126,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 

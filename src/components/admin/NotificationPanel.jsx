@@ -4,7 +4,7 @@ import { Bell, X, ShoppingBag, CheckCheck, Clock } from 'lucide-react';
 import { getAllOrders } from '../../firebase/orderService';
 import { useNavigate } from 'react-router-dom';
 
-const STORAGE_KEY = 'THE KRUNCHEEZ_read_notifications';
+const STORAGE_KEY = 'kruncheez_read_notifications';
 
 const getReadIds = () => {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
@@ -233,4 +233,5 @@ const NotificationPanel = () => {
 };
 
 export default NotificationPanel;
+
 

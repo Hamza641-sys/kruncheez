@@ -147,7 +147,7 @@ const MyCardPage = () => {
       navigator.share({
         title: 'My THE KRUNCHEEZ Loyalty Card',
         text: `My THE KRUNCHEEZ Loyalty Card: ${card?.cardId} - ${card?.visits}/${VISITS_FOR_DISCOUNT} visits to 10% discount!`,
-        url: 'https://THE KRUNCHEEZ-pos.web.app',
+        url: 'https://kruncheez-pos.web.app',
       });
     } else {
       navigator.clipboard.writeText(`THE KRUNCHEEZ Loyalty Card: ${card?.cardId}`);
@@ -321,7 +321,7 @@ const MyCardPage = () => {
 
           {/* Bottom bar */}
           <div className="bg-krunch-black px-6 py-3 flex items-center justify-between border-t border-krunch-border">
-            <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">THE KRUNCHEEZ-pos.web.app</p>
+            <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">kruncheez-pos.web.app</p>
             <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">✅ Halal Certified</p>
           </div>
         </motion.div>
@@ -394,5 +394,6 @@ const MyCardPage = () => {
 };
 
 export default MyCardPage;
+
 
 

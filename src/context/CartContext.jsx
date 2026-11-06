@@ -11,7 +11,7 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
     try {
-      const saved = localStorage.getItem('THE KRUNCHEEZ_cart');
+      const saved = localStorage.getItem('kruncheez_cart');
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -20,7 +20,7 @@ export const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('THE KRUNCHEEZ_cart', JSON.stringify(cartItems));
+    localStorage.setItem('kruncheez_cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (item) => {
@@ -71,4 +71,5 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
 

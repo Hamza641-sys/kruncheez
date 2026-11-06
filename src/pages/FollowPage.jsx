@@ -8,9 +8,9 @@ import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 const DEFAULT_LINKS = {
   instagram: 'https://www.instagram.com/theTHE KRUNCHEEZ.peshawer/',
   facebook:  'https://www.facebook.com/theTHE KRUNCHEEZ',
-  tiktok:    'https://www.tiktok.com/@theTHE KRUNCHEEZ',
-  youtube:   'https://www.youtube.com/@theTHE KRUNCHEEZ',
-  menu:      'https://THE KRUNCHEEZ-pos.web.app/menu',
+  tiktok:    'https://www.tiktok.com/@thekruncheez',
+  youtube:   'https://www.youtube.com/@thekruncheez',
+  menu:      'https://kruncheez-pos.web.app/menu',
 };
 
 const FollowPage = () => {
@@ -58,7 +58,7 @@ const FollowPage = () => {
     {
       id: 'menu',
       name: 'Order Online',
-      handle: 'THE KRUNCHEEZ-pos.web.app/menu',
+      handle: 'kruncheez-pos.web.app/menu',
       url: links.menu,
       color: 'from-krunch-red to-red-700',
       hoverShadow: '0 8px 30px rgba(227,30,36,0.5)',
@@ -73,7 +73,7 @@ const FollowPage = () => {
     {
       id: 'instagram',
       name: 'Instagram',
-      handle: '@theTHE KRUNCHEEZ.peshawer',
+      handle: '@thekruncheez.peshawer',
       url: links.instagram,
       color: 'from-purple-600 via-pink-500 to-orange-400',
       hoverShadow: '0 8px 30px rgba(236,72,153,0.5)',
@@ -88,7 +88,7 @@ const FollowPage = () => {
     {
       id: 'tiktok',
       name: 'TikTok',
-      handle: '@theTHE KRUNCHEEZ',
+      handle: '@thekruncheez',
       url: links.tiktok,
       color: 'from-gray-900 via-gray-800 to-black',
       hoverShadow: '0 8px 30px rgba(255,255,255,0.2)',
@@ -103,7 +103,7 @@ const FollowPage = () => {
     {
       id: 'youtube',
       name: 'YouTube',
-      handle: '@theTHE KRUNCHEEZ',
+      handle: '@thekruncheez',
       url: links.youtube,
       color: 'from-red-700 to-red-500',
       hoverShadow: '0 8px 30px rgba(239,68,68,0.5)',
@@ -248,7 +248,7 @@ const FollowPage = () => {
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-krunch-gray font-body text-[10px] uppercase tracking-widest">
-            THE KRUNCHEEZ-pos.web.app
+            kruncheez-pos.web.app
           </p>
         </div>
       </motion.div>
@@ -257,4 +257,5 @@ const FollowPage = () => {
 };
 
 export default FollowPage;
+
 

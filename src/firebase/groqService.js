@@ -15,7 +15,7 @@ RESTAURANT INFO:
 - Name: The KrunchEez
 - Location: New Officers Housing Society, Northern Bypass, Dalazak Road, Peshawar
 - Specialties: Fast Food, Chinese, BBQ
-- Website: THE KRUNCHEEZ-pos.web.app
+- Website: kruncheez-pos.web.app
 - Services: Dine-in, Home Delivery, Self Pickup
 - Delivery Time: 30-45 minutes
 - All food is 100% Halal
@@ -24,7 +24,7 @@ RESTAURANT INFO:
 MENU (sample): ${menuSummary}
 
 ORDERING:
-- Online order: THE KRUNCHEEZ-pos.web.app/menu
+- Online order: kruncheez-pos.web.app/menu
 - Dine-in: Scan QR code on table
 - Promo codes available for discounts
 - Loyalty card: 10% discount on Custom Deal
@@ -106,4 +106,5 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
 
   return suggestions.slice(0, 3);
 };
+
 
