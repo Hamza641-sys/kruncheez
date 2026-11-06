@@ -1,4 +1,4 @@
-import { useLogo } from '../context/LogoContext';
+﻿import { useLogo } from '../context/LogoContext';
 
 // Reusable logo circle — shows image if logoUrl set, else "K" text
 const LogoCircle = ({ size = 'md', className = '' }) => {
@@ -18,7 +18,7 @@ const LogoCircle = ({ size = 'md', className = '' }) => {
       {logoUrl ? (
         <img
           src={logoUrl}
-          alt="KrunchEez Logo"
+          alt="THE KRUNCHEEZ Logo"
           className="w-full h-full object-contain"
           onError={e => { e.target.style.display = 'none'; e.target.parentNode.querySelector('.logo-fallback').style.display = 'flex'; }}
         />
@@ -32,3 +32,4 @@ const LogoCircle = ({ size = 'md', className = '' }) => {
 };
 
 export default LogoCircle;
+

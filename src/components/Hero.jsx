@@ -12,7 +12,7 @@ const DEFAULT_SLIDES = [
     headline1: 'LOADED.',
     headline2: 'CHEESY.',
     headline3: 'AMAZING.',
-    sub: 'From 5" to XL - Chicken Tikka BBQ, Fajita, Supreme, Hot & Spicy, KrunchEez Special & more. Made fresh every time.',
+    sub: 'From 5" to XL - Chicken Tikka BBQ, Fajita, Supreme, Hot & Spicy, THE KRUNCHEEZ Special & more. Made fresh every time.',
     tag1: 'Cheesy', tag2: 'Fresh', tag3: 'Loaded',
     bgImg: '',
   },
@@ -321,3 +321,4 @@ const Hero = () => {
 };
 
 export default Hero;
+

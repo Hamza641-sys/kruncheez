@@ -6,11 +6,11 @@ import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 
 // Social links - admin can update from Firebase
 const DEFAULT_LINKS = {
-  instagram: 'https://www.instagram.com/thekruncheez.peshawer/',
-  facebook:  'https://www.facebook.com/thekruncheez',
-  tiktok:    'https://www.tiktok.com/@thekruncheez',
-  youtube:   'https://www.youtube.com/@thekruncheez',
-  menu:      'https://kruncheez-pos.web.app/menu',
+  instagram: 'https://www.instagram.com/theTHE KRUNCHEEZ.peshawer/',
+  facebook:  'https://www.facebook.com/theTHE KRUNCHEEZ',
+  tiktok:    'https://www.tiktok.com/@theTHE KRUNCHEEZ',
+  youtube:   'https://www.youtube.com/@theTHE KRUNCHEEZ',
+  menu:      'https://THE KRUNCHEEZ-pos.web.app/menu',
 };
 
 const FollowPage = () => {
@@ -58,7 +58,7 @@ const FollowPage = () => {
     {
       id: 'menu',
       name: 'Order Online',
-      handle: 'kruncheez-pos.web.app/menu',
+      handle: 'THE KRUNCHEEZ-pos.web.app/menu',
       url: links.menu,
       color: 'from-krunch-red to-red-700',
       hoverShadow: '0 8px 30px rgba(227,30,36,0.5)',
@@ -73,7 +73,7 @@ const FollowPage = () => {
     {
       id: 'instagram',
       name: 'Instagram',
-      handle: '@thekruncheez.peshawer',
+      handle: '@theTHE KRUNCHEEZ.peshawer',
       url: links.instagram,
       color: 'from-purple-600 via-pink-500 to-orange-400',
       hoverShadow: '0 8px 30px rgba(236,72,153,0.5)',
@@ -88,7 +88,7 @@ const FollowPage = () => {
     {
       id: 'tiktok',
       name: 'TikTok',
-      handle: '@thekruncheez',
+      handle: '@theTHE KRUNCHEEZ',
       url: links.tiktok,
       color: 'from-gray-900 via-gray-800 to-black',
       hoverShadow: '0 8px 30px rgba(255,255,255,0.2)',
@@ -103,7 +103,7 @@ const FollowPage = () => {
     {
       id: 'youtube',
       name: 'YouTube',
-      handle: '@thekruncheez',
+      handle: '@theTHE KRUNCHEEZ',
       url: links.youtube,
       color: 'from-red-700 to-red-500',
       hoverShadow: '0 8px 30px rgba(239,68,68,0.5)',
@@ -144,13 +144,13 @@ const FollowPage = () => {
             style={{ border: '3px solid #E31E24' }}
           >
             {logoUrl ? (
-              <img src={logoUrl} alt="KrunchEez Logo" className="w-full h-full object-contain rounded-full" />
+              <img src={logoUrl} alt="THE KRUNCHEEZ Logo" className="w-full h-full object-contain rounded-full" />
             ) : (
               <span className="text-krunch-red font-heading font-black text-3xl">K</span>
             )}
           </motion.div>
           <h1 className="font-heading font-black text-3xl text-white uppercase tracking-wider">
-            THE <span className="text-krunch-red">KRUNCHEEZ</span>
+            THE <span className="text-krunch-red">THE KRUNCHEEZ</span>
           </h1>
           <p className="text-krunch-gray font-body text-sm mt-1 tracking-widest uppercase">
             Fast Food • Chinese • BBQ
@@ -248,7 +248,7 @@ const FollowPage = () => {
         {/* Footer */}
         <div className="text-center mt-6">
           <p className="text-krunch-gray font-body text-[10px] uppercase tracking-widest">
-            kruncheez-pos.web.app
+            THE KRUNCHEEZ-pos.web.app
           </p>
         </div>
       </motion.div>
@@ -257,3 +257,4 @@ const FollowPage = () => {
 };
 
 export default FollowPage;
+

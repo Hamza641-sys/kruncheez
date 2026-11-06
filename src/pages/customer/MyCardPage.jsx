@@ -136,7 +136,7 @@ const MyCardPage = () => {
     canvas.toBlob(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `kruncheez-card-${card.cardId}.png`;
+      a.download = `THE KRUNCHEEZ-card-${card.cardId}.png`;
       a.click();
     });
     toast.success('Card downloaded!', toastStyle);
@@ -145,12 +145,12 @@ const MyCardPage = () => {
   const shareCard = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'My KrunchEez Loyalty Card',
-        text: `My KrunchEez Loyalty Card: ${card?.cardId} - ${card?.visits}/${VISITS_FOR_DISCOUNT} visits to 10% discount!`,
-        url: 'https://kruncheez-pos.web.app',
+        title: 'My THE KRUNCHEEZ Loyalty Card',
+        text: `My THE KRUNCHEEZ Loyalty Card: ${card?.cardId} - ${card?.visits}/${VISITS_FOR_DISCOUNT} visits to 10% discount!`,
+        url: 'https://THE KRUNCHEEZ-pos.web.app',
       });
     } else {
-      navigator.clipboard.writeText(`KrunchEez Loyalty Card: ${card?.cardId}`);
+      navigator.clipboard.writeText(`THE KRUNCHEEZ Loyalty Card: ${card?.cardId}`);
       toast.success('Card ID copied!', toastStyle);
     }
   };
@@ -176,7 +176,7 @@ const MyCardPage = () => {
         >
           <div className="text-7xl mb-5">🃏</div>
           <h2 className="font-heading font-black text-2xl text-white uppercase mb-3">No Card Yet</h2>
-          <p className="text-krunch-gray font-body text-sm mb-2">Get your free KrunchEez Loyalty Card and start earning rewards!</p>
+          <p className="text-krunch-gray font-body text-sm mb-2">Get your free THE KRUNCHEEZ Loyalty Card and start earning rewards!</p>
           <div className="bg-krunch-black border border-krunch-border rounded-xl p-4 mb-6 text-left">
             {[
               '🎁 Get 1 card for free - instantly',
@@ -321,7 +321,7 @@ const MyCardPage = () => {
 
           {/* Bottom bar */}
           <div className="bg-krunch-black px-6 py-3 flex items-center justify-between border-t border-krunch-border">
-            <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">kruncheez-pos.web.app</p>
+            <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">THE KRUNCHEEZ-pos.web.app</p>
             <p className="text-krunch-gray font-body text-[9px] uppercase tracking-widest">✅ Halal Certified</p>
           </div>
         </motion.div>
@@ -367,7 +367,7 @@ const MyCardPage = () => {
           <h3 className="font-heading font-bold text-white uppercase text-sm tracking-wider mb-4">How to Use</h3>
           <div className="flex flex-col gap-3">
             {[
-              { step: '01', text: 'Dine in or order online at KrunchEez', icon: '🍔' },
+              { step: '01', text: 'Dine in or order online at THE KRUNCHEEZ', icon: '🍔' },
               { step: '02', text: 'Enter your card number at checkout (KC-XXXXX)', icon: '🃏' },
               { step: '03', text: 'Get 10% off on Customize Deal orders', icon: '🎁' },
               { step: '04', text: 'Show card at counter for discount', icon: '✅' },
@@ -394,4 +394,5 @@ const MyCardPage = () => {
 };
 
 export default MyCardPage;
+
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -69,7 +69,7 @@ const AdminLayout = () => {
             <Link to="/admin" className="flex items-center gap-3">
               <LogoCircle size="sm" />
               <div>
-                <div className="font-heading font-black text-sm text-white leading-none">KRUNCHEEZ</div>
+                <div className="font-heading font-black text-sm text-white leading-none">THE KRUNCHEEZ</div>
                 <div className="text-krunch-gray text-[9px] uppercase tracking-widest">Admin Panel</div>
               </div>
             </Link>
@@ -169,3 +169,4 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+

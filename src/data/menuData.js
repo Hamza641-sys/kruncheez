@@ -109,7 +109,7 @@ export const menuItems = {
       img: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400&q=80&auto=format&fit=crop' },
     { id: 'p13', name: 'Asian Style', price: 1350, badge: 'TOP TRENDING', description: 'Asian fusion style pizza', sizes: { 'M': 1350, 'L': 1650, 'XL': 2099 }, category: 'pizza',
       img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&q=80&auto=format&fit=crop' },
-    { id: 'p14', name: 'KrunchEez Special', price: 1350, badge: 'SIGNATURE', description: 'Our very own signature special pizza', sizes: { 'M': 1350, 'L': 1650, 'XL': 2099 }, category: 'pizza',
+    { id: 'p14', name: 'THE KRUNCHEEZ Special', price: 1350, badge: 'SIGNATURE', description: 'Our very own signature special pizza', sizes: { 'M': 1350, 'L': 1650, 'XL': 2099 }, category: 'pizza',
       img: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=400&q=80&auto=format&fit=crop' },
     { id: 'p15', name: '4 Season', price: 1350, badge: '', description: '4 season loaded classic pizza', sizes: { 'M': 1350, 'L': 1650, 'XL': 2099 }, category: 'pizza',
       img: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&q=80&auto=format&fit=crop' },
@@ -197,9 +197,9 @@ export const menuItems = {
       img: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&q=80&auto=format&fit=crop' },
     { id: 'so4', name: 'Hot & Sour Soup (Family)', price: 550, badge: '', description: 'Tangy hot & sour soup family serving', category: 'soup',
       img: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&q=80&auto=format&fit=crop' },
-    { id: 'so5', name: 'KrunchEez Special Soup (Single)', price: 399, badge: 'SPECIAL', description: 'Our signature special soup', category: 'soup',
+    { id: 'so5', name: 'THE KRUNCHEEZ Special Soup (Single)', price: 399, badge: 'SPECIAL', description: 'Our signature special soup', category: 'soup',
       img: 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=400&q=80&auto=format&fit=crop' },
-    { id: 'so6', name: 'KrunchEez Special Soup (Family)', price: 650, badge: 'SPECIAL', description: 'Our signature special soup family size', category: 'soup',
+    { id: 'so6', name: 'THE KRUNCHEEZ Special Soup (Family)', price: 650, badge: 'SPECIAL', description: 'Our signature special soup family size', category: 'soup',
       img: 'https://images.unsplash.com/photo-1562707666-0de088890919?w=400&q=80&auto=format&fit=crop' },
   ],
   platter: [
@@ -249,3 +249,4 @@ export const menuItems = {
 };
 
 export const allMenuItems = Object.values(menuItems).flat();
+

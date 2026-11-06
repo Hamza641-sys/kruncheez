@@ -65,7 +65,7 @@ const Navbar = () => {
           <LogoCircle size="md" className="group-hover:border-white transition-colors duration-300" />
           <div className="hidden sm:block">
             <div className="font-heading font-black text-lg text-white leading-none tracking-wider">
-              THE <span className="text-krunch-red">KRUNCHEEZ</span>
+              THE <span className="text-krunch-red">THE KRUNCHEEZ</span>
             </div>
             <div className="text-krunch-gray text-[9px] uppercase tracking-widest">
               Fast Food, Chinese & BBQ
@@ -362,4 +362,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 

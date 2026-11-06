@@ -218,7 +218,7 @@ const AdminReports = () => {
     };
 
     const rows = [
-      ['=== KRUNCHEEZ BUSINESS REPORT ==='],
+      ['=== THE KRUNCHEEZ BUSINESS REPORT ==='],
       ['Period', period, 'Generated', new Date().toLocaleDateString('en-PK')],
       [],
       ['=== REVENUE SUMMARY ==='],
@@ -277,7 +277,7 @@ const AdminReports = () => {
     const blob = new Blob(['\uFEFF' + csv], { type:'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `kruncheez-full-report-${period}-${new Date().toLocaleDateString('en-PK').replace(/\//g,'-')}.csv`;
+    a.download = `THE KRUNCHEEZ-full-report-${period}-${new Date().toLocaleDateString('en-PK').replace(/\//g,'-')}.csv`;
     a.click();
   };
 
@@ -1027,3 +1027,4 @@ const AdminReports = () => {
 };
 
 export default AdminReports;
+

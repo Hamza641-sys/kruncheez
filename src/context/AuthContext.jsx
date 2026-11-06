@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+﻿import { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthChange, getUserData, logout } from '../firebase/authService';
 import { doc, updateDoc, serverTimestamp, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
             try {
               // Use fetch keepalive — works in modern browsers on unload
               fetch(
-                `https://firestore.googleapis.com/v1/projects/kruncheez-pos/databases/(default)/documents/users/${uid}?updateMask.fieldPaths=onlineStatus&updateMask.fieldPaths=lastSeen`,
+                `https://firestore.googleapis.com/v1/projects/THE KRUNCHEEZ-pos/databases/(default)/documents/users/${uid}?updateMask.fieldPaths=onlineStatus&updateMask.fieldPaths=lastSeen`,
                 {
                   method: 'PATCH',
                   keepalive: true,
@@ -126,3 +126,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+

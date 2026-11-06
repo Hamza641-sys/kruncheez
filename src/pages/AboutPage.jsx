@@ -72,7 +72,7 @@ const AboutPage = () => {
               <div className="card-dark p-10 text-center border-krunch-red/20">
                 <LogoCircle size="xl" className="mx-auto mb-6" />
                 <div className="font-heading font-black text-3xl text-white leading-none mb-1">THE</div>
-                <div className="font-heading font-black text-4xl text-krunch-red leading-none mb-3">KRUNCHEEZ</div>
+                <div className="font-heading font-black text-4xl text-krunch-red leading-none mb-3">THE KRUNCHEEZ</div>
                 <div className="text-krunch-gray text-xs font-body uppercase tracking-widest mb-8">
                   Fast Food • Chinese • BBQ
                 </div>
@@ -204,3 +204,4 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
+

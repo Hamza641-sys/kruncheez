@@ -25,7 +25,7 @@ const SignupPage = () => {
     setLoading(true);
     try {
       await registerWithEmail(form.name, form.email, form.password, form.phone);
-      toast.success('Account created! Welcome to KrunchEez 🎉', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } });
+      toast.success('Account created! Welcome to THE KRUNCHEEZ 🎉', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } });
       navigate('/dashboard');
     } catch (err) {
       const msg = err.code === 'auth/email-already-in-use' ? 'Email already registered. Login instead.' : err.message;
@@ -39,7 +39,7 @@ const SignupPage = () => {
     setGoogleLoading(true);
     try {
       await loginWithGoogle();
-      toast.success('Welcome to KrunchEez! 🎉', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } });
+      toast.success('Welcome to THE KRUNCHEEZ! 🎉', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } });
       navigate('/dashboard');
     } catch {
       toast.error('Google signup failed.', { style: { background: '#1A1A1A', color: '#fff', border: '1px solid #E31E24' } });
@@ -65,7 +65,7 @@ const SignupPage = () => {
               <span className="text-krunch-red font-heading font-black text-lg">K</span>
             </div>
             <div className="text-left">
-              <div className="font-heading font-black text-xl text-white leading-none">THE <span className="text-krunch-red">KRUNCHEEZ</span></div>
+              <div className="font-heading font-black text-xl text-white leading-none">THE <span className="text-krunch-red">THE KRUNCHEEZ</span></div>
               <div className="text-krunch-gray text-[10px] uppercase tracking-widest">Fast Food • Chinese • BBQ</div>
             </div>
           </Link>
@@ -73,7 +73,7 @@ const SignupPage = () => {
 
         <div className="card-dark p-8">
           <h2 className="font-heading font-black text-2xl text-white uppercase mb-1">Create Account</h2>
-          <p className="text-krunch-gray font-body text-sm mb-6">Join KrunchEez - Order faster, earn points!</p>
+          <p className="text-krunch-gray font-body text-sm mb-6">Join THE KRUNCHEEZ - Order faster, earn points!</p>
 
           {/* Google Signup */}
           <button onClick={handleGoogle} disabled={googleLoading}
@@ -169,3 +169,4 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
+

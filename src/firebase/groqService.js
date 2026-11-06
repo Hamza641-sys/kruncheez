@@ -1,4 +1,4 @@
-// ── Groq AI Service ─────────────────────────────────────────────────────────
+﻿// ── Groq AI Service ─────────────────────────────────────────────────────────
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'qwen/qwen3.8-27b';
@@ -15,7 +15,7 @@ RESTAURANT INFO:
 - Name: The KrunchEez
 - Location: New Officers Housing Society, Northern Bypass, Dalazak Road, Peshawar
 - Specialties: Fast Food, Chinese, BBQ
-- Website: kruncheez-pos.web.app
+- Website: THE KRUNCHEEZ-pos.web.app
 - Services: Dine-in, Home Delivery, Self Pickup
 - Delivery Time: 30-45 minutes
 - All food is 100% Halal
@@ -24,7 +24,7 @@ RESTAURANT INFO:
 MENU (sample): ${menuSummary}
 
 ORDERING:
-- Online order: kruncheez-pos.web.app/menu
+- Online order: THE KRUNCHEEZ-pos.web.app/menu
 - Dine-in: Scan QR code on table
 - Promo codes available for discounts
 - Loyalty card: 10% discount on Custom Deal
@@ -106,3 +106,4 @@ export const getOrderSuggestions = (cartItems = [], allMenuItems = []) => {
 
   return suggestions.slice(0, 3);
 };
+

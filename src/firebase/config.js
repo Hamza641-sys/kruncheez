@@ -1,12 +1,12 @@
-import { initializeApp } from 'firebase/app';
+﻿import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC0dgHGMjbWeurlKAGNBakp3R-Eg8EIx7Y",
-  authDomain: "kruncheez-pos.firebaseapp.com",
-  projectId: "kruncheez-pos",
-  storageBucket: "kruncheez-pos.firebasestorage.app",
+  authDomain: "THE KRUNCHEEZ-pos.firebaseapp.com",
+  projectId: "THE KRUNCHEEZ-pos",
+  storageBucket: "THE KRUNCHEEZ-pos.firebasestorage.app",
   messagingSenderId: "328549789635",
   appId: "1:328549789635:web:5e3470128cecbcc7a5d776",
 };
@@ -19,3 +19,4 @@ export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export default app;
+

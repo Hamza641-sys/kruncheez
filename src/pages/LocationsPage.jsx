@@ -129,7 +129,7 @@ const LocationsPage = () => {
           <div className="relative bg-krunch-dark h-80 flex items-center justify-center overflow-hidden">
             {/* Google Maps iframe — Peshawar: Northern Bypass / Dalazak Road */}
             <iframe
-              title="KrunchEez Location"
+              title="THE KRUNCHEEZ Location"
               src={`https://maps.google.com/maps?q=${mapsQuery}&output=embed`}
               width="100%"
               height="100%"
@@ -164,3 +164,4 @@ const LocationsPage = () => {
 };
 
 export default LocationsPage;
+

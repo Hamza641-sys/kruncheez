@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, onSnapshot, updateDoc, deleteDoc, doc, orderBy, query } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -64,7 +64,7 @@ const AdminMessages = () => {
 
   // WhatsApp reply
   const replyWhatsApp = (msg) => {
-    const text = `Assalam o Alaikum ${msg.name}!\n\nThank you for contacting The KrunchEez.\n\nRe: ${msg.subject}\n\nWe have received your message and will get back to you shortly.\n\nTeam KrunchEez\n📞 0317-7787648`;
+    const text = `Assalam o Alaikum ${msg.name}!\n\nThank you for contacting The KrunchEez.\n\nRe: ${msg.subject}\n\nWe have received your message and will get back to you shortly.\n\nTeam THE KRUNCHEEZ\n📞 0317-7787648`;
     window.open(`https://wa.me/92${msg.phone?.replace(/^0/, '').replace(/-/g, '')}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -321,3 +321,4 @@ const AdminMessages = () => {
 };
 
 export default AdminMessages;
+

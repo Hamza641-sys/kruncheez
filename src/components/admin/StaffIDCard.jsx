@@ -333,7 +333,7 @@ const StaffIDCard = ({ staff, onClose }) => {
 
                     {/* Footer */}
                     <div style={{ background: 'rgba(227,30,36,0.12)', borderTop: '1px solid rgba(227,30,36,0.25)', padding: '5px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '7px', color: '#555', letterSpacing: '0.5px' }}>kruncheez-pos.web.app</span>
+                      <span style={{ fontSize: '7px', color: '#555', letterSpacing: '0.5px' }}>THE KRUNCHEEZ-pos.web.app</span>
                       <span style={{ fontSize: '8px', color: '#E31E24', fontWeight: 700, letterSpacing: '2px' }}>{empId}</span>
                     </div>
                   </div>
@@ -401,7 +401,7 @@ const StaffIDCard = ({ staff, onClose }) => {
                           flexDirection: 'column', padding: '6px',
                         }}>
                           <div style={{ fontSize: '22px', fontWeight: 900, color: '#E31E24', lineHeight: 1 }}>K</div>
-                          <div style={{ fontSize: '6px', color: '#333', fontWeight: 700, textAlign: 'center', marginTop: '2px', letterSpacing: '0.5px' }}>KRUNCHEEZ</div>
+                          <div style={{ fontSize: '6px', color: '#333', fontWeight: 700, textAlign: 'center', marginTop: '2px', letterSpacing: '0.5px' }}>THE KRUNCHEEZ</div>
                         </div>
                         <div style={{ fontSize: '7px', color: '#555', fontWeight: 600, textAlign: 'center', letterSpacing: '0.5px' }}>OFFICIAL</div>
                         <div style={{ width: '64px', height: '2px', background: '#E31E24', borderRadius: '1px' }} />
@@ -441,3 +441,4 @@ const StaffIDCard = ({ staff, onClose }) => {
 };
 
 export default StaffIDCard;
+

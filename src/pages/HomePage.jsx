@@ -250,7 +250,7 @@ const HomePage = () => {
           <div className="grid sm:grid-cols-3 gap-6">
             {[
               { name: 'Ali Hassan', text: "Best burgers in Peshawar, hands down! The zinger burger is absolutely FIRE 🔥", stars: 5, item: 'Zinger Burger' },
-              { name: 'Sarah Malik', text: "The KrunchEez Special pizza is mind-blowing. Cheesy, fresh, and loaded. Ordered 3 times this week!", stars: 5, item: 'KrunchEez Special Pizza' },
+              { name: 'Sarah Malik', text: "The KrunchEez Special pizza is mind-blowing. Cheesy, fresh, and loaded. Ordered 3 times this week!", stars: 5, item: 'THE KRUNCHEEZ Special Pizza' },
               { name: 'Ahmed Raza', text: "BBQ platters are incredible. The Karachi Angara is the spiciest and most delicious thing I've had!", stars: 5, item: 'Karachi Angara' },
             ].map((r, i) => (
               <motion.div
@@ -315,4 +315,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
