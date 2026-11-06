@@ -1,4 +1,4 @@
-// Shared Print Utilities - Used by AdminOrders AND AdminPOS
+﻿// Shared Print Utilities - Used by AdminOrders AND AdminPOS
 
 const printViaIframe = (html) => {
   const iframe = document.createElement('iframe');
@@ -166,3 +166,4 @@ export const printBoth = (order) => {
   printBill(order);
   setTimeout(() => printKitchen(order), 1500);
 };
+
