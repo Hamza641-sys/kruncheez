@@ -168,6 +168,87 @@ const AdminExpenses = () => {
     a.click();
   };
 
+  const printExpensesPDF = () => {
+    const periodLabel = period === 'shift' ? 'Today Shift (11am–3am)'
+      : period === 'today' ? 'Today'
+      : period === 'week'  ? 'This Week'
+      : period === 'month' ? 'This Month'
+      : period === 'custom' ? 'Custom Range'
+      : 'All Time';
+
+    const date = new Date().toLocaleDateString('en-PK', { day:'2-digit', month:'long', year:'numeric' });
+    const time = new Date().toLocaleTimeString('en-PK', { hour:'2-digit', minute:'2-digit' });
+    const totalAmt = manualExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
+
+    // Group by category
+    const byCat = {};
+    manualExpenses.forEach(e => {
+      const lbl = categories.find(c => c.id === e.category)?.label || e.category;
+      byCat[lbl] = (byCat[lbl] || 0) + Number(e.amount || 0);
+    });
+    const catRows = Object.entries(byCat).sort((a,b) => b[1]-a[1])
+      .map(([cat, amt]) => `<tr><td>${cat}</td><td class="amount">Rs. ${amt.toLocaleString()}</td></tr>`).join('');
+
+    const expRows = manualExpenses.map((e, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${e.date || e.createdAt?.toDate?.()?.toLocaleDateString('en-PK') || '—'}</td>
+        <td>${categories.find(c => c.id === e.category)?.label || e.category}</td>
+        <td>${e.description || '—'}</td>
+        <td class="amount">Rs. ${Number(e.amount||0).toLocaleString()}</td>
+        <td>${e.paymentMethod === 'easypaisa' ? 'Easypaisa' : e.paymentMethod === 'pending' ? 'Pending' : 'Cash'}</td>
+        <td>${e.notes || '—'}</td>
+      </tr>`).join('');
+
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>Expenses Report</title>
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box;}
+      @page{size:A4;margin:15mm;}
+      body{font-family:Arial,sans-serif;font-size:12px;color:#000;background:#fff;}
+      .header{text-align:center;border-bottom:2px solid #000;padding-bottom:12px;margin-bottom:16px;}
+      .title{font-size:18px;font-weight:bold;margin:6px 0;}
+      .sub{font-size:11px;color:#555;}
+      .section-title{font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;background:#f5f5f5;padding:6px 8px;margin:14px 0 6px;}
+      table{width:100%;border-collapse:collapse;margin:4px 0;}
+      td,th{border:1px solid #ddd;padding:7px 10px;font-size:11px;}
+      th{background:#f0f0f0;font-weight:bold;text-transform:uppercase;}
+      .amount{text-align:right;font-weight:bold;}
+      .total-row td{background:#f0f0f0;font-weight:bold;font-size:13px;}
+      .sign-row{display:flex;justify-content:space-between;margin-top:30px;}
+      .sign-box{text-align:center;width:45%;}
+      .sign-line{border-top:1px solid #000;padding-top:4px;margin-top:30px;font-size:10px;}
+      @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+    </style></head><body>
+    <div class="header">
+      <div class="sub">THE KRUNCHEEZ RESTAURANT — PESHAWAR</div>
+      <div class="title">DAILY EXPENSES REPORT</div>
+      <div class="sub">Period: <b>${periodLabel}</b> &nbsp;|&nbsp; Date: ${date} at ${time}</div>
+    </div>
+
+    <div class="section-title">Expenses by Category</div>
+    <table>
+      <tr><th>Category</th><th class="amount">Amount</th></tr>
+      ${catRows}
+      <tr class="total-row"><td><b>TOTAL EXPENSES</b></td><td class="amount">Rs. ${totalAmt.toLocaleString()}</td></tr>
+    </table>
+
+    <div class="section-title">Expense Details (${manualExpenses.length} entries)</div>
+    <table>
+      <tr><th>#</th><th>Date</th><th>Category</th><th>Description</th><th class="amount">Amount</th><th>Payment</th><th>Notes</th></tr>
+      ${expRows}
+      <tr class="total-row"><td colspan="4"><b>TOTAL</b></td><td class="amount">Rs. ${totalAmt.toLocaleString()}</td><td colspan="2"></td></tr>
+    </table>
+
+    <div class="sign-row">
+      <div class="sign-box"><div class="sign-line">Manager Signature</div></div>
+      <div class="sign-box"><div class="sign-line">Owner: Hamid Ali</div></div>
+    </div>
+    <script>window.onload=()=>{window.print();window.close();}<\/script>
+    </body></html>`);
+    win.document.close();
+  };
+
   return (
     <div>
       {/* Header */}
@@ -179,9 +260,13 @@ const AdminExpenses = () => {
           </p>
         </div>
         <div className="flex gap-2">
+          <button onClick={printExpensesPDF}
+            className="flex items-center gap-2 bg-krunch-red hover:bg-krunch-darkred text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all shadow-red-glow">
+            <Download size={15} /> PDF Report
+          </button>
           <button onClick={downloadCSV}
             className="flex items-center gap-2 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-sm px-4 py-2.5 rounded-xl transition-all">
-            <Download size={15} /> Export
+            <Download size={15} /> Export CSV
           </button>
           <button onClick={() => setShowForm(true)}
             className="flex items-center gap-2 btn-primary text-sm">
