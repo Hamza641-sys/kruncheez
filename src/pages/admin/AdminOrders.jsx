@@ -404,7 +404,7 @@ const AdminOrders = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dateFiltered.filter(o => (o.paymentStatus === 'pending' || !o.paymentStatus) && o.status !== 'rejected').length === 0 ? (
+                  {dateFiltered.filter(o => (o.paymentStatus === 'pending' || o.paymentStatus === 'partial' || !o.paymentStatus) && o.status !== 'rejected').length === 0 ? (
                     <tr><td colSpan={7} className="px-4 py-12 text-center text-krunch-gray font-body text-sm">
                       ✅ No pending bills
                     </td></tr>
@@ -445,7 +445,6 @@ const AdminOrders = () => {
                           <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">
                             {dateStr}
                           </td>
-                              {daysPending === 0 ? 'Today' : `${daysPending} day${daysPending > 1 ? 's' : ''}`}
                           <td className="px-4 py-3">
                             <button onClick={() => openPayEdit(order)}
                               className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-900/20 border border-amber-700/30 text-amber-400 hover:bg-amber-600 hover:text-white font-body text-xs font-bold transition-all whitespace-nowrap">
