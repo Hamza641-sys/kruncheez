@@ -442,8 +442,12 @@ const AdminOrders = () => {
                     .filter(o => (o.paymentStatus === 'pending' || o.paymentStatus === 'partial' || !o.paymentStatus) && o.status !== 'rejected')
                     .map((order, i) => {
                       const total = order.summary?.total || 0;
-                      const collected = order.paidAmount || (order.paymentStatus === 'paid' ? total : 0);
-                      const pending = total - collected;
+                      // Calculate collected: splitCash + splitEasypaisa, or paidAmount, or full if paid
+                      const splitTotal = (order.splitCash || 0) + (order.splitEasypaisa || 0);
+                      const collected = order.paymentStatus === 'paid' ? total
+                                      : splitTotal > 0 ? splitTotal
+                                      : order.paidAmount || 0;
+                      const pendingAmt = Math.max(total - collected, 0);
                       const d = order.createdAt?.toDate?.();
                       const dateStr = d ? d.toLocaleDateString('en-PK',{day:'2-digit',month:'short'}) + ' ' + d.toLocaleTimeString('en-PK',{hour:'2-digit',minute:'2-digit'}) : '—';
                       return (
@@ -469,7 +473,7 @@ const AdminOrders = () => {
                           </td>
                           <td className="px-4 py-3">
                             <span className="text-amber-400 font-body font-bold text-sm">
-                              Rs.{pending.toLocaleString()}
+                              Rs.{pendingAmt.toLocaleString()}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-krunch-gray font-body text-xs whitespace-nowrap">
@@ -617,13 +621,20 @@ const AdminOrders = () => {
                       <span className={`text-xs font-body font-semibold ${order.paymentMethod === 'easypaisa' ? 'text-green-400' : 'text-krunch-gray'}`}>
                         {order.paymentMethod === 'easypaisa' ? 'Easypaisa' : 'Cash'}
                       </span>
-                      <div className="mt-0.5">
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border ${
+                      <div className="mt-0.5 flex flex-col gap-0.5">
+                        {/* Split payment detail */}
+                        {order.splitCash > 0 && <span className="text-[10px] text-krunch-gray">💵 Rs.{order.splitCash.toLocaleString()}</span>}
+                        {order.splitEasypaisa > 0 && <span className="text-[10px] text-green-400">📱 Rs.{order.splitEasypaisa.toLocaleString()}</span>}
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full border w-fit ${
                           order.paymentStatus === 'paid'
                             ? 'text-green-400 bg-green-400/10 border-green-400/20'
+                            : order.paymentStatus === 'partial'
+                            ? 'text-blue-400 bg-blue-400/10 border-blue-400/20'
                             : 'text-amber-400 bg-amber-400/10 border-amber-400/20'
                         }`}>
-                          {order.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Pending'}
+                          {order.paymentStatus === 'paid' ? '✅ Collected'
+                           : order.paymentStatus === 'partial' ? '🔄 Partial'
+                           : '⏳ Pending'}
                         </span>
                       </div>
                     </td>
