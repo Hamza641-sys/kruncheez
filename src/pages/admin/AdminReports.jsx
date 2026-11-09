@@ -136,9 +136,15 @@ const AdminReports = () => {
   );
   const paidAmount    = paidOrders.reduce((s,o) => s + (o.summary?.total||0), 0);
   const pendingPayAmt = pendingPayOrders.reduce((s,o) => s + (o.summary?.total||0), 0);
-  // Cash vs Easypaisa (from paid orders)
-  const cashAmount    = delivered.filter(o => o.paymentMethod !== 'easypaisa').reduce((s,o) => s + (o.summary?.total||0), 0);
-  const easypaisaAmt  = delivered.filter(o => o.paymentMethod === 'easypaisa').reduce((s,o) => s + (o.summary?.total||0), 0);
+  // Cash vs Easypaisa (from delivered orders — including split payments)
+  const cashAmount    = delivered.reduce((s,o) => {
+    if (o.splitCash > 0 || o.splitEasypaisa > 0) return s + (o.splitCash || 0);
+    return o.paymentMethod !== 'easypaisa' ? s + (o.summary?.total||0) : s;
+  }, 0);
+  const easypaisaAmt  = delivered.reduce((s,o) => {
+    if (o.splitCash > 0 || o.splitEasypaisa > 0) return s + (o.splitEasypaisa || 0);
+    return o.paymentMethod === 'easypaisa' ? s + (o.summary?.total||0) : s;
+  }, 0);
 
   // ── Filter salaries by period ─────────────────────────────────────────
   const filteredSalaries = period === 'custom' ? filterCustom(salaries) : filterByPeriod(salaries, period);

@@ -1057,6 +1057,21 @@ const AdminOrders = () => {
                     </div>
                   </div>
 
+                  {/* Payment Method — only when fully collected (pending=all cash/ep) */}
+                  {payEditStatus === 'pending' && (
+                    <div>
+                      <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Payment Method</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {[{k:'cash',l:'💵 Cash'},{k:'easypaisa',l:'📱 Easypaisa'}].map(m=>(
+                          <button key={m.k} type="button" onClick={()=>setPayEditMethod(m.k)}
+                            className={`py-3 rounded-xl font-body font-bold text-sm transition-all border ${payEditMethod===m.k?'bg-krunch-red border-krunch-red text-white':'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'}`}>
+                            {m.l}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Split payment amounts — show for partial or paid */}
                   {(payEditStatus === 'partial' || payEditStatus === 'paid') && (
                     <div>
