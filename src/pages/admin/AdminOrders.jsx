@@ -99,6 +99,9 @@ const AdminOrders = () => {
   const [payEditStatus, setPayEditStatus] = useState('pending');
   const [payEditSaving, setPayEditSaving] = useState(false);
   const [payEditPaidAmt, setPayEditPaidAmt] = useState('');
+  // Split payment
+  const [splitCash, setSplitCash]           = useState('');
+  const [splitEasypaisa, setSplitEasypaisa] = useState('');
   // Edit order modal
   const [editOrder, setEditOrder]   = useState(null);
   const [editItems, setEditItems]   = useState([]);
@@ -283,6 +286,8 @@ const AdminOrders = () => {
     setPayEditMethod(order.paymentMethod || 'cash');
     setPayEditStatus(order.paymentStatus || 'pending');
     setPayEditPaidAmt(order.paidAmount ? String(order.paidAmount) : '');
+    setSplitCash(order.splitCash ? String(order.splitCash) : '');
+    setSplitEasypaisa(order.splitEasypaisa ? String(order.splitEasypaisa) : '');
     setPayEdit({ order });
     setSelected(null);
   };
@@ -294,12 +299,37 @@ const AdminOrders = () => {
     try {
       const total = payEdit.order.summary?.total || 0;
       let paidAmt = null;
+      let cashAmt = Number(splitCash) || 0;
+      let epAmt   = Number(splitEasypaisa) || 0;
+
       if (payEditStatus === 'partial') {
-        paidAmt = Number(payEditPaidAmt) || 0;
-        if (paidAmt <= 0) { toast.error('Enter paid amount', toastStyle); setPayEditSaving(false); return; }
-        if (paidAmt >= total) { toast.error('Amount >= total — use Paid instead', toastStyle); setPayEditSaving(false); return; }
+        // Use split amounts if entered, else use paidAmt field
+        if (cashAmt > 0 || epAmt > 0) {
+          paidAmt = cashAmt + epAmt;
+        } else {
+          paidAmt = Number(payEditPaidAmt) || 0;
+        }
+        if (paidAmt <= 0) { toast.error('Enter collected amount', toastStyle); setPayEditSaving(false); return; }
+        if (paidAmt >= total) { toast.error('Amount >= total — use Collected instead', toastStyle); setPayEditSaving(false); return; }
       }
+
+      // Build extra data
+      const extra = {};
+      if (cashAmt > 0) extra.splitCash = cashAmt;
+      if (epAmt > 0)   extra.splitEasypaisa = epAmt;
+      if (payEditStatus === 'paid' && (cashAmt > 0 || epAmt > 0)) {
+        extra.splitCash      = cashAmt;
+        extra.splitEasypaisa = epAmt;
+        paidAmt = null;
+      }
+
       await updateOrderPayment(payEdit.order.id, payEditMethod, payEditStatus, paidAmt);
+      // Save split amounts separately if needed
+      if (Object.keys(extra).length > 0) {
+        const { updateDoc, doc } = await import('firebase/firestore');
+        const { db } = await import('../../firebase/config');
+        await updateDoc(doc(db, 'orders', payEdit.order.id), extra);
+      }
       toast.success('Payment updated! ✅', toastStyle);
       setPayEdit(null);
     } catch(e) {
@@ -968,83 +998,103 @@ const AdminOrders = () => {
       </AnimatePresence>
       {/* PAYMENT EDIT MODAL */}
       <AnimatePresence>
-        {payEdit && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
-              className="w-full max-w-sm bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-krunch-border">
-                <div>
-                  <h3 className="font-heading font-bold text-white uppercase">Payment</h3>
-                  <p className="text-krunch-gray font-body text-xs mt-0.5">#{payEdit.order.id.slice(0,8).toUpperCase()} — {payEdit.order.customer?.name}</p>
-                </div>
-                <button onClick={() => setPayEdit(null)} className="text-krunch-gray hover:text-white"><X size={18} /></button>
-              </div>
-              <div className="p-5 flex flex-col gap-4">
-                {/* Order info */}
-                <div className="bg-krunch-black border border-krunch-border rounded-xl p-4">
-                  <div className="flex justify-between text-xs font-body mb-1"><span className="text-krunch-gray">Date</span><span className="text-white">{payEdit.order.createdAt?.toDate?.()?.toLocaleString('en-PK',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})||'—'}</span></div>
-                  <div className="flex justify-between text-xs font-body mb-1"><span className="text-krunch-gray">Customer</span><span className="text-white">{payEdit.order.customer?.name||'—'} · {payEdit.order.customer?.phone||'—'}</span></div>
-                  <div className="flex justify-between text-xs font-body mb-2"><span className="text-krunch-gray">Items</span><span className="text-white text-right max-w-[60%]">{payEdit.order.items?.map(i=>`${i.name} x${i.quantity||1}`).join(', ')||'—'}</span></div>
-                  <div className="flex justify-between border-t border-krunch-border pt-2">
-                    <span className="text-krunch-gray font-body text-sm font-bold">Order Total</span>
-                    <span className="text-krunch-red font-heading font-black text-xl">Rs.{(payEdit.order.summary?.total||0).toLocaleString()}</span>
-                  </div>
-                </div>
-                {/* Payment Method */}
-                <div>
-                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Payment Method</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {[{k:'cash',l:'💵 Cash'},{k:'easypaisa',l:'📱 Easypaisa'}].map(m=>(
-                      <button key={m.k} type="button" onClick={()=>setPayEditMethod(m.k)}
-                        className={`py-3 rounded-xl font-body font-bold text-sm transition-all border ${payEditMethod===m.k?'bg-krunch-red border-krunch-red text-white':'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'}`}>
-                        {m.l}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {/* Collection Status */}
-                <div>
-                  <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Collection Status</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      {k:'pending',   l:'⏳ Pending',   cls:'bg-amber-700 border-amber-700'},
-                      {k:'partial',   l:'🔄 Partial',   cls:'bg-blue-700 border-blue-700'},
-                      {k:'paid',      l:'✅ Collected', cls:'bg-green-700 border-green-700'},
-                    ].map(s=>(
-                      <button key={s.k} type="button" onClick={()=>setPayEditStatus(s.k)}
-                        className={`py-2.5 rounded-xl font-body font-bold text-xs transition-all border ${payEditStatus===s.k?s.cls+' text-white':'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'}`}>
-                        {s.l}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {/* Partial — collected amount */}
-                {payEditStatus==='partial' && (
+        {payEdit && (() => {
+          const total = payEdit.order.summary?.total || 0;
+          const cashN = Number(splitCash) || 0;
+          const epN   = Number(splitEasypaisa) || 0;
+          const collected = payEditStatus === 'paid' ? total
+                          : payEditStatus === 'partial' ? (cashN + epN > 0 ? cashN + epN : Number(payEditPaidAmt) || 0)
+                          : 0;
+          const pendingAmt = Math.max(total - collected, 0);
+          return (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
+                className="w-full max-w-sm bg-krunch-dark border border-krunch-border rounded-2xl overflow-hidden max-h-[92vh] overflow-y-auto">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-krunch-border sticky top-0 bg-krunch-dark">
                   <div>
-                    <label className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-1.5 block">Amount Collected (Rs.)</label>
-                    <input type="number" value={payEditPaidAmt} onChange={e=>setPayEditPaidAmt(e.target.value)}
-                      placeholder="Enter collected amount..."
-                      className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-3 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
-                    {payEditPaidAmt && Number(payEditPaidAmt)>0 && Number(payEditPaidAmt)<(payEdit.order.summary?.total||0) && (
-                      <div className="flex justify-between mt-2 px-1">
-                        <span className="text-green-400 font-body text-xs">✅ Collected: Rs.{Number(payEditPaidAmt).toLocaleString()}</span>
-                        <span className="text-amber-400 font-body text-xs">⏳ Pending: Rs.{((payEdit.order.summary?.total||0)-Number(payEditPaidAmt)).toLocaleString()}</span>
-                      </div>
-                    )}
+                    <h3 className="font-heading font-bold text-white uppercase">Payment</h3>
+                    <p className="text-krunch-gray font-body text-xs mt-0.5">#{payEdit.order.id.slice(0,8).toUpperCase()} — {payEdit.order.customer?.name}</p>
                   </div>
-                )}
-                {payEditStatus==='paid' && <p className="text-green-400 font-body text-xs text-center">✅ Full amount collected — Rs.{(payEdit.order.summary?.total||0).toLocaleString()}</p>}
-                <div className="grid grid-cols-2 gap-3">
-                  <button onClick={()=>setPayEdit(null)} className="bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">Cancel</button>
-                  <button onClick={handlePayEditSave} disabled={payEditSaving} className="bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl text-sm transition-all disabled:opacity-60">
-                    {payEditSaving?'Saving...':'Save'}
-                  </button>
+                  <button onClick={() => setPayEdit(null)} className="text-krunch-gray hover:text-white"><X size={18}/></button>
                 </div>
-              </div>
+                <div className="p-5 flex flex-col gap-4">
+                  {/* Order summary */}
+                  <div className="bg-krunch-black border border-krunch-border rounded-xl p-4">
+                    <div className="flex justify-between text-xs font-body mb-1"><span className="text-krunch-gray">Date</span><span className="text-white">{payEdit.order.createdAt?.toDate?.()?.toLocaleString('en-PK',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})||'—'}</span></div>
+                    <div className="flex justify-between text-xs font-body mb-1"><span className="text-krunch-gray">Customer</span><span className="text-white">{payEdit.order.customer?.name||'—'} · {payEdit.order.customer?.phone||'—'}</span></div>
+                    <div className="flex justify-between border-t border-krunch-border pt-2 mt-1">
+                      <span className="text-krunch-gray font-body text-sm font-bold">Order Total</span>
+                      <span className="text-krunch-red font-heading font-black text-xl">Rs.{total.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-2">Collection Status</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        {k:'pending', l:'⏳ Pending',   cls:'bg-amber-700 border-amber-700'},
+                        {k:'partial', l:'🔄 Partial',   cls:'bg-blue-700 border-blue-700'},
+                        {k:'paid',    l:'✅ Collected', cls:'bg-green-700 border-green-700'},
+                      ].map(s=>(
+                        <button key={s.k} type="button" onClick={()=>setPayEditStatus(s.k)}
+                          className={`py-2.5 rounded-xl font-body font-bold text-xs transition-all border ${payEditStatus===s.k?s.cls+' text-white':'bg-krunch-black border-krunch-border text-krunch-gray hover:text-white'}`}>
+                          {s.l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Split payment amounts — show for partial or paid */}
+                  {(payEditStatus === 'partial' || payEditStatus === 'paid') && (
+                    <div>
+                      <p className="text-krunch-gray font-body text-xs uppercase tracking-wider mb-3">How was it paid?</p>
+                      <div className="flex flex-col gap-3">
+                        <div>
+                          <label className="text-krunch-gray font-body text-xs mb-1 block">💵 Cash Amount (Rs.)</label>
+                          <input type="number" value={splitCash} onChange={e=>setSplitCash(e.target.value)}
+                            placeholder="0"
+                            className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
+                        </div>
+                        <div>
+                          <label className="text-krunch-gray font-body text-xs mb-1 block">📱 Easypaisa Amount (Rs.)</label>
+                          <input type="number" value={splitEasypaisa} onChange={e=>setSplitEasypaisa(e.target.value)}
+                            placeholder="0"
+                            className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-green-500 transition-colors"/>
+                        </div>
+                        {payEditStatus === 'partial' && cashN === 0 && epN === 0 && (
+                          <div>
+                            <label className="text-krunch-gray font-body text-xs mb-1 block">Total Collected (Rs.)</label>
+                            <input type="number" value={payEditPaidAmt} onChange={e=>setPayEditPaidAmt(e.target.value)}
+                              placeholder="Enter total collected..."
+                              className="w-full bg-krunch-black border border-krunch-border rounded-xl px-4 py-2.5 text-white font-body text-sm focus:outline-none focus:border-krunch-red transition-colors"/>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Live summary */}
+                      <div className="mt-3 bg-krunch-black border border-krunch-border rounded-xl p-3 flex flex-col gap-1.5">
+                        {cashN > 0 && <div className="flex justify-between text-xs font-body"><span className="text-krunch-gray">💵 Cash</span><span className="text-white font-bold">Rs.{cashN.toLocaleString()}</span></div>}
+                        {epN > 0  && <div className="flex justify-between text-xs font-body"><span className="text-krunch-gray">📱 Easypaisa</span><span className="text-green-400 font-bold">Rs.{epN.toLocaleString()}</span></div>}
+                        {collected > 0 && <div className="flex justify-between text-xs font-body border-t border-krunch-border pt-1.5 mt-0.5"><span className="text-green-400 font-bold">✅ Total Collected</span><span className="text-green-400 font-bold">Rs.{collected.toLocaleString()}</span></div>}
+                        {pendingAmt > 0 && <div className="flex justify-between text-xs font-body"><span className="text-amber-400 font-bold">⏳ Still Pending</span><span className="text-amber-400 font-bold">Rs.{pendingAmt.toLocaleString()}</span></div>}
+                        {payEditStatus === 'paid' && pendingAmt === 0 && <div className="text-center text-green-400 font-body text-xs font-bold">✅ Fully Collected — Rs.{total.toLocaleString()}</div>}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={()=>setPayEdit(null)} className="bg-krunch-card border border-krunch-border text-krunch-gray hover:text-white font-heading font-bold py-3 rounded-xl text-sm transition-all">Cancel</button>
+                    <button onClick={handlePayEditSave} disabled={payEditSaving} className="bg-krunch-red hover:bg-krunch-darkred text-white font-heading font-bold py-3 rounded-xl text-sm transition-all disabled:opacity-60">
+                      {payEditSaving?'Saving...':'Save'}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
+          );
+        })()}
       </AnimatePresence>
     </div>
   );
