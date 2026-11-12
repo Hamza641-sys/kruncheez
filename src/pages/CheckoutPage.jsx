@@ -160,7 +160,6 @@ const CheckoutPage = () => {
       toast.success('Order placed! 🎉', toastStyle);
     } catch (err) {
       toast.error('Failed to place order. Try again.', toastStyle);
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -572,7 +571,7 @@ const CheckoutPage = () => {
                       </button>
                     </div>
                     <p className="text-krunch-gray font-body text-xs mt-2">
-                      🃏 10 visits = 10% discount on your order
+                      🃏 Enter your KC-XXXXX card ID for 10% off on Customize Deal
                     </p>
                   </div>
                 )}

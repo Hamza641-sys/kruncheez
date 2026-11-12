@@ -313,23 +313,9 @@ const AdminOrders = () => {
         if (paidAmt >= total) { toast.error('Amount >= total — use Collected instead', toastStyle); setPayEditSaving(false); return; }
       }
 
-      // Build extra data
-      const extra = {};
-      if (cashAmt > 0) extra.splitCash = cashAmt;
-      if (epAmt > 0)   extra.splitEasypaisa = epAmt;
-      if (payEditStatus === 'paid' && (cashAmt > 0 || epAmt > 0)) {
-        extra.splitCash      = cashAmt;
-        extra.splitEasypaisa = epAmt;
-        paidAmt = null;
-      }
+      // Build extra data - no longer needed (handled in updateOrderPayment)
 
-      await updateOrderPayment(payEdit.order.id, payEditMethod, payEditStatus, paidAmt);
-      // Save split amounts separately if needed
-      if (Object.keys(extra).length > 0) {
-        const { updateDoc, doc } = await import('firebase/firestore');
-        const { db } = await import('../../firebase/config');
-        await updateDoc(doc(db, 'orders', payEdit.order.id), extra);
-      }
+      await updateOrderPayment(payEdit.order.id, payEditMethod, payEditStatus, paidAmt, cashAmt || null, epAmt || null);
       toast.success('Payment updated! ✅', toastStyle);
       setPayEdit(null);
     } catch(e) {

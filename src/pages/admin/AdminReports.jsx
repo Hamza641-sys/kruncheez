@@ -76,7 +76,7 @@ const AdminReports = () => {
         setExpenses(eData.sort(sortDesc));
         setPurchases(spData.sort(sortDesc));
         setSalaries(salData.sort(sortDesc));
-      } catch(e) { console.error(e); }
+      } catch(e) {  }
       setLoading(false);
     };
     load();
@@ -1033,4 +1033,5 @@ const AdminReports = () => {
 };
 
 export default AdminReports;
+
 

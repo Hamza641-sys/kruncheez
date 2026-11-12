@@ -65,7 +65,7 @@ const Navbar = () => {
           <LogoCircle size="md" className="group-hover:border-white transition-colors duration-300" />
           <div className="hidden sm:block">
             <div className="font-heading font-black text-lg text-white leading-none tracking-wider">
-              THE <span className="text-krunch-red">THE KRUNCHEEZ</span>
+              THE <span className="text-krunch-red">KRUNCHEEZ</span>
             </div>
             <div className="text-krunch-gray text-[9px] uppercase tracking-widest">
               Fast Food, Chinese & BBQ
@@ -211,16 +211,12 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
           ) : (
-            /* Not logged in - show Login + Signup */
+            /* Not logged in - show Login only */
             <div className="hidden md:flex items-center gap-2">
               <Link to="/login"
                 className="flex items-center gap-1.5 border border-krunch-border hover:border-krunch-red text-krunch-gray hover:text-white font-body font-semibold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full transition-all duration-200">
                 <User size={13} />
                 Login
-              </Link>
-              <Link to="/signup"
-                className="flex items-center gap-1.5 bg-krunch-red hover:bg-krunch-darkred text-white font-body font-semibold text-xs uppercase tracking-wider px-4 py-2.5 rounded-full transition-all duration-200 shadow-red-glow">
-                Sign Up
               </Link>
             </div>
           )}
@@ -338,9 +334,6 @@ const Navbar = () => {
                 <div className="flex gap-2">
                   <Link to="/login" className="flex-1 flex items-center justify-center gap-2 border border-krunch-border text-white font-body font-semibold text-sm py-2.5 rounded-xl hover:border-krunch-red transition-all">
                     <User size={14} /> Login
-                  </Link>
-                  <Link to="/signup" className="flex-1 flex items-center justify-center gap-2 bg-krunch-red text-white font-body font-semibold text-sm py-2.5 rounded-xl hover:bg-krunch-darkred transition-all">
-                    Sign Up
                   </Link>
                 </div>
               )}

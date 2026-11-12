@@ -6,8 +6,7 @@ import { useRestaurantSettings } from '../hooks/useRestaurantSettings';
 
 // Social links - admin can update from Firebase
 const DEFAULT_LINKS = {
-  instagram: 'https://www.instagram.com/theTHE KRUNCHEEZ.peshawer/',
-  facebook:  'https://www.facebook.com/theTHE KRUNCHEEZ',
+  instagram: 'https://www.instagram.com/thekruncheez.peshawer/',
   tiktok:    'https://www.tiktok.com/@thekruncheez',
   youtube:   'https://www.youtube.com/@thekruncheez',
   menu:      'https://kruncheez-pos.web.app/menu',
@@ -150,7 +149,7 @@ const FollowPage = () => {
             )}
           </motion.div>
           <h1 className="font-heading font-black text-3xl text-white uppercase tracking-wider">
-            THE <span className="text-krunch-red">THE KRUNCHEEZ</span>
+            THE <span className="text-krunch-red">KRUNCHEEZ</span>
           </h1>
           <p className="text-krunch-gray font-body text-sm mt-1 tracking-widest uppercase">
             Fast Food • Chinese • BBQ
@@ -257,5 +256,6 @@ const FollowPage = () => {
 };
 
 export default FollowPage;
+
 
 

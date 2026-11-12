@@ -27,21 +27,18 @@ export const placeOrder = async (orderData) => {
 };
 
 // ── Update Payment (Admin) ───────────────────────────────────────
-export const updateOrderPayment = async (orderId, paymentMethod, paymentStatus, paidAmount = null) => {
+export const updateOrderPayment = async (orderId, paymentMethod, paymentStatus, paidAmount = null, splitCash = null, splitEasypaisa = null) => {
   const data = {
     paymentMethod,
     paymentStatus,
     updatedAt: serverTimestamp(),
   };
-  if (paidAmount !== null) {
-    data.paidAmount = Number(paidAmount);
-  }
+  if (paidAmount !== null) data.paidAmount = Number(paidAmount);
+  if (splitCash !== null) data.splitCash = Number(splitCash);
+  if (splitEasypaisa !== null) data.splitEasypaisa = Number(splitEasypaisa);
   if (paymentStatus === 'paid') {
     data.clearedAt = serverTimestamp();
-    data.paidAmount = null; // fully paid, no partial
-  }
-  if (paymentStatus === 'partial') {
-    data.clearedAt = null;
+    data.paidAmount = null;
   }
   await updateDoc(doc(db, 'orders', orderId), data);
 };

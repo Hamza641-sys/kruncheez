@@ -74,7 +74,7 @@ const LoginPage = () => {
           <Link to="/" className="inline-flex items-center gap-3 group">
             <LogoCircle size="lg" className="group-hover:border-white transition-colors duration-300" />
             <div className="text-left">
-              <div className="font-heading font-black text-xl text-white leading-none">THE <span className="text-krunch-red">THE KRUNCHEEZ</span></div>
+              <div className="font-heading font-black text-xl text-white leading-none">THE <span className="text-krunch-red">KRUNCHEEZ</span></div>
               <div className="text-krunch-gray text-[10px] uppercase tracking-widest">Fast Food • Chinese • BBQ</div>
             </div>
           </Link>
@@ -190,4 +190,5 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
 

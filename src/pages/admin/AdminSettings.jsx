@@ -30,12 +30,7 @@ const DEFAULT_SETTINGS = {
   emailNotify: false,
   acceptingOrders: true,
   logoUrl: '',
-  heroSlides: [
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1544025162-d76694265947?w=1920&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=1920&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=1920&q=90&auto=format&fit=crop',
-  ],
+  heroSlides: ['', '', '', ''],
 };
 
 // ── UI Helpers - OUTSIDE component to prevent re-render focus loss ──
@@ -125,7 +120,7 @@ const AdminSettings = () => {  const { userData } = useAuth();
           setSettings({ ...DEFAULT_SETTINGS, ...snap.data() });
         }
       } catch (e) {
-        console.error('Settings load error:', e);
+        
       }
       setLoading(false);
     };
@@ -494,3 +489,4 @@ const AdminSettings = () => {  const { userData } = useAuth();
 };
 
 export default AdminSettings;
+

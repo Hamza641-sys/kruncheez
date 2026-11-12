@@ -12,9 +12,9 @@ const values = [
 
 const stats = [
   { value: '50,000+', label: 'Happy Customers' },
-  { value: '100+', label: 'Menu Items' },
-  { value: '3+', label: 'Locations' },
-  { value: '5★', label: 'Avg Rating' },
+  { value: '100+',    label: 'Menu Items' },
+  { value: '1',       label: 'Location' },
+  { value: '5★',      label: 'Avg Rating' },
 ];
 
 const team = [
