@@ -365,24 +365,22 @@ const CheckoutPage = () => {
                 <h3 className="font-heading font-bold text-lg text-white uppercase mb-4 flex items-center gap-2">
                   <Truck size={18} className="text-krunch-red" /> Order Type
                 </h3>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   {[
-                    { value: 'delivery', label: 'Home Delivery', icon: <Truck size={16} />, desc: 'Delivered to door' },
-                    { value: 'pickup',   label: 'Self Pickup',   icon: <Store size={16} />, desc: 'Pick from branch' },
-                    { value: 'dine-in',  label: 'Dine In',       icon: <QrCode size={16} />, desc: tableNumber ? `Table ${tableNumber}` : 'At restaurant' },
+                    { value: 'delivery', label: 'Home Delivery', icon: <Truck size={15} />, desc: 'To door' },
+                    { value: 'pickup',   label: 'Self Pickup',   icon: <Store size={15} />, desc: 'At branch' },
+                    { value: 'dine-in',  label: 'Dine In',       icon: <QrCode size={15} />, desc: tableNumber ? `Table ${tableNumber}` : 'Restaurant' },
                   ].map(opt => (
                     <button key={opt.value} type="button"
                       onClick={() => setForm({ ...form, orderType: opt.value })}
-                      className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                      className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all text-center ${
                         form.orderType === opt.value
                           ? 'border-krunch-red bg-krunch-red/10 text-white'
                           : 'border-krunch-border bg-krunch-black text-krunch-gray hover:border-krunch-red/50'
                       }`}>
                       <span className={form.orderType === opt.value ? 'text-krunch-red' : ''}>{opt.icon}</span>
-                      <div>
-                        <div className="font-body font-bold text-sm">{opt.label}</div>
-                        <div className="font-body text-xs opacity-70">{opt.desc}</div>
-                      </div>
+                      <div className="font-body font-bold text-xs leading-tight">{opt.label}</div>
+                      <div className="font-body text-[10px] opacity-70 leading-tight">{opt.desc}</div>
                     </button>
                   ))}
                 </div>
