@@ -182,14 +182,6 @@ const MenuPage = () => {
         </div>
       </div>
 
-      {/* Floating cart button (mobile) */}
-      {cartCount > 0 && (
-        <motion.button initial={{ scale: 0 }} animate={{ scale: 1 }}
-          onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-6 left-6 lg:hidden bg-krunch-red text-white font-heading font-bold px-5 py-3 rounded-full shadow-red-glow-lg flex items-center gap-2 z-40">
-          🛒 Cart ({cartCount})
-        </motion.button>
-      )}
     </div>
   );
 };
