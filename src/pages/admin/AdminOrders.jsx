@@ -466,10 +466,16 @@ const AdminOrders = () => {
                             {dateStr}
                           </td>
                           <td className="px-4 py-3">
-                            <button onClick={() => openPayEdit(order)}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-900/20 border border-amber-700/30 text-amber-400 hover:bg-amber-600 hover:text-white font-body text-xs font-bold transition-all whitespace-nowrap">
-                              💳 Update
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <button onClick={() => setSelected(order)}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-krunch-black border border-krunch-border text-krunch-gray hover:text-white font-body text-xs font-bold transition-all whitespace-nowrap">
+                                <Eye size={11} /> View
+                              </button>
+                              <button onClick={() => openPayEdit(order)}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-900/20 border border-amber-700/30 text-amber-400 hover:bg-amber-600 hover:text-white font-body text-xs font-bold transition-all whitespace-nowrap">
+                                💳 Update
+                              </button>
+                            </div>
                           </td>
                         </motion.tr>
                       );
