@@ -682,6 +682,7 @@ const AdminOrders = () => {
           </table>
         </div>
       </div>
+      </>)}
 
       {/* Order Detail Modal */}
       <AnimatePresence>
@@ -766,7 +767,6 @@ const AdminOrders = () => {
           </>
         )}
       </AnimatePresence>
-      </>)}
       {/* PAYMENT CONFIRM MODAL */}
       <AnimatePresence>
         {payConfirm && (
